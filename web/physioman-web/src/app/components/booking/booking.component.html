@@ -1,0 +1,27 @@
+<h1>New Booking Request</h1>
+<form class="container jumbotron bg-transparent text-white" #bookingForm="ngForm" (ngSubmit)="onBookingRequest(bookingForm)">
+  <div class="form-group">
+    <label for="ailment"><h5>Tell us about your current symptoms</h5></label>
+    <textarea rows="5" class="form-control" ngModel id ="ailment" name="ailment" #ailment="ngModel"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="genderPreference"><h5>Gender preference</h5></label>
+    <select class="form-control" ngModel id ="genderPreference" name="genderPreference" #genderPreference="ngModel">
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="paymentMode"><h5>Payment mode</h5></label>
+    <select class="form-control" [(ngModel)]="paymentMode" name="paymentMode" (change)="openModal()" required>
+      <option value="card" data-toggle="modal" data-target="#payment">Card</option>
+      <option value="cash">Cash</option>
+    </select>
+    <div *ngIf="paymentMode==='card' ">
+      <app-payment [amount]="bookingPrice" (successMessage)="onPaymentCompletion($event)"></app-payment>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary btn-lg btn-space" #submit [disabled]="bookingForm.invalid">Submit Request</button>
+</form>
+
+

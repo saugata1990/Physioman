@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,700');
+
+
+
+@media (max-width: 992px) {
+
+}
+
+@media (max-width: 768px) {
+    
+}
+
+@media (max-width: 576px) {
+    
+}
+
+/* firefox bug fixes to be added */
+
+body {
+    font-family: sans-serif;
+    background-image: url("./assets/img/background.jpg");
+    background-position: top;
+}
+
+/* .carousel-inner>.carousel-item>img, .carousel-inner>.carousel-item>a>img {
+    display: block;
+    max-height: 400px;
+    max-width: 100%;
+    line-height: 1;
+    margin:auto;
+    width: 100%; 
+} */
+
+h1 {
+    font-family: serif !important;
+    font-weight: 700;
+    text-align: center;
+    color: white;
+}
+
+h2, h3 {
+    font-family: serif !important;
+    font-weight: 700;
+    text-align: center;
+}
+
+.btn-space {
+    margin-right: 20px;
+}
+
+.btn-space-top {
+    margin-top: 10px;
+}
+
+.btn-space-bottom {
+    margin-bottom: 10px;
+}
+
+.modal {
+    color: black;
+}
+
+.modal-lg {
+    max-width: 80% !important;
+}
+
+.shadow {
+    text-shadow: 0 2px blue !important;
+}
+
+.center {
+    text-align: center;
+}

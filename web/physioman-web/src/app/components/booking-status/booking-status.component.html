@@ -1,0 +1,8 @@
+<div class="container-fluid jumbotron bg-transparent text-white center">
+  <h4>Booking status: {{ booking_data.status }}
+    <span *ngIf="!booking_data.sessions_fixed_by_consultant">, Consultation pending</span></h4><br>
+  <h5 *ngIf="booking_data.status!=='Confirmed'">Request date: {{ booking_data.request_timestamp | date: 'dd/MM/yyyy' }}</h5><br>
+  <h5 *ngIf="booking_data.status!=='Confirmed'">Consultation payment mode: {{ booking_data.consultation_payment_mode }}</h5><br>
+  <h5 *ngIf="booking_data.status==='Processed'">Serviced on: {{ booking_data.serviced_at | date: 'dd/MM/yyyy' }}</h5><br>
+  <!-- more to come -->
+</div>

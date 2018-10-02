@@ -1,0 +1,31 @@
+<ion-grid>
+  <ion-row justify-content-center>
+    <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
+      <ion-list-header>Login as</ion-list-header>
+      <ion-radio-group [(ngModel)]="userType">
+        <ion-item>
+          <ion-label>Physio</ion-label>
+          <ion-radio value="physio" checked></ion-radio>
+        </ion-item>
+        <ion-item>
+          <ion-label>Consultant</ion-label>
+          <ion-radio value="consultant"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+      <form #loginForm="ngForm" (ngSubmit)="onLogin()">
+        <div padding>
+          <ion-item>
+            <ion-input type="text" [(ngModel)]="username" name="username" placeholder="Username" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input type="password" [(ngModel)]="password" name="password" placeholder="Password" required></ion-input>
+          </ion-item>
+        </div>
+        <div padding>
+          <ion-button type="submit" size="large" expand="block" [disabled]="loginForm.invalid">Login</ion-button>
+        </div>
+        <div *ngIf="invalid_creds">Incorrect username/ password</div>
+      </form>
+    </ion-col>
+  </ion-row>
+</ion-grid>

@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>My Appointments</ion-title>
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-split-pane>
+  <ion-menu content="main">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content padding>
+      <ion-list>
+        <ion-menu-toggle>
+          <ion-item *ngIf="otherAccount">Switch to {{ alternateAcct }} account</ion-item>
+          <!-- <ion-item *ngIf="loggedInAs==='physio'">Switch to consultant account</ion-item> -->
+          <ion-item (click)="logout()">Log Out</ion-item>
+        </ion-menu-toggle>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+  <ion-content main padding *ngIf="loggedInAs==='consultant'">
+    <ion-list *ngFor="let request of requests">
+      <ion-card (click)="processAppointment(request._id, request.consultation_payment_mode)">
+        <ion-item text-wrap>Patient: {{ request.name }}</ion-item>
+        <ion-item text-wrap>Contact: {{ request.phone }}</ion-item>
+        <ion-item text-wrap>Symptoms: {{ request.ailment_description }}</ion-item>
+        <ion-item text-wrap>Address: {{ request.address }}</ion-item>
+        <ion-item text-wrap>Payment: {{ request.consultation_payment_mode }}</ion-item>  
+      </ion-card>
+    </ion-list>
+  </ion-content>
+</ion-split-pane>

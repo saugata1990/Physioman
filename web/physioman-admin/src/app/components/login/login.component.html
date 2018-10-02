@@ -1,0 +1,15 @@
+<div class="modal container" id="login" data-backdrop="static" data-keyboard=false>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form class="modal-body" #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
+        <div class="form-group">
+          <label for="admin_id">Admin ID</label>
+          <input type="text" class="form-control" ngModel name="admin_id" id="admin_id" #admin_id="ngModel" required>
+          <label for="password">Password</label>
+          <input type="password" class="form-control" ngModel name="password" id="password" #password="ngModel" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="loginForm.invalid">Login</button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="center">
+    <button *ngIf="hasBooking" type="button" class="btn btn-outline-light btn-lg btn-space" routerLink="/booking-status">Booking Status</button>
+    <button *ngIf="hasOrdered" type="button" class="btn btn-outline-light btn-lg btn-space" routerLink="/order-status">Order Status</button>
+    <button *ngIf="!hasBooking" type="button" class="btn btn-outline-light btn-lg btn-space" routerLink="/new-booking">Book a Physio</button>
+    <button type="button" class="btn btn-outline-light btn-lg btn-space" routerLink="/shop">Shop</button>
+    <!-- <button type="button" class="btn btn-outline-light btn-lg btn-space">Update contact details</button> -->
+  </div>
+  <div class="jumbotron bg-transparent">
+    <h1>My Profile</h1>
+    <dl class="dl-horizontal jumbotron bg-transparent text-white center">
+      <dt>Name</dt>
+      <dd>{{ patient.name }}</dd>
+      <dt>Registered Phone Number</dt>
+      <dd>{{ patient.id }}</dd>
+      <dt>Contact Number</dt>
+      <dd>{{ patient.phone }}</dd>
+      <dt>Email id</dt>
+      <dd>{{ patient.email }}</dd>
+      <dt>Gender</dt>
+      <dd>{{ patient.gender }}</dd>
+      <dt>Date of Birth</dt>
+      <dd>{{ patient.dob | date: 'dd/MM/yyyy'}}</dd>
+      <dt>Address</dt>
+      <dd><address>{{ patient.address }}</address></dd>
+      <dt>Ailment History</dt>
+      <dd>{{ patient.ailment }}</dd>
+    </dl>
+  </div>
+  
+</div>
+
+<!-- will use div instead of table -->

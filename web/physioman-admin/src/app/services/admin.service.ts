@@ -1,0 +1,75 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AdminService {
+
+  private login_url = 'api/admin/login';
+  private physio_create_url = 'api/physios/new-account';
+  private consultant_create_url = 'api/consultants/new-consultant';
+  private incidents_url = 'api/incidents?status=';
+  private requests_url = 'api/bookings/requests/';
+  private patient_name_url = 'api/patients/name?patient_id=';
+  private consultant_list_url = 'api/consultants';
+
+  constructor(private http: HttpClient) { }
+
+  private setHeader(token) {
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    });
+  }
+
+
+  login(admin_id, password) {
+    return this.http.post(this.login_url, {admin_id, password});
+  }
+
+  createPhysio(physio_id, password, physio_name, physio_email, physio_phone, physio_gender, physio_dob, date_joined, isConsultant) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.post(this.physio_create_url, {physio_id, password, physio_name, physio_email,
+           physio_phone, physio_gender, physio_dob, date_joined, isConsultant}, {headers: this.setHeader(token)});
+  }
+
+  createConsultant(consultant_id, password, consultant_name, consultant_email, consultant_phone, consultant_gender, date_joined) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    console.log(consultant_name);
+    return this.http.post(this.consultant_create_url, {consultant_id, password,
+           consultant_name, consultant_email, consultant_phone, consultant_gender, date_joined}, {headers: this.setHeader(token)});
+  }
+
+  getIncidents(incidentStatus) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.get(this.incidents_url + incidentStatus, {headers: this.setHeader(token)});
+  }
+
+  getBookingRequestData(request_id) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.get(this.requests_url + request_id, {headers: this.setHeader(token)});
+  }
+
+  getCustomerName(id) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.get(this.patient_name_url + id, {headers: this.setHeader(token)});
+  }
+
+  getConsultants() {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.get(this.consultant_list_url, {headers: this.setHeader(token)});
+  }
+
+  assignConsultant(url, consultant_id) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.post(url, {consultant_id}, {headers: this.setHeader(token)});
+  }
+
+  processOrder(url) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.post(url, {}, {headers: this.setHeader(token)});
+  }
+
+
+}

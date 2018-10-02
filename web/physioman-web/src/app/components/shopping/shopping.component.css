@@ -1,0 +1,15 @@
+.jumbotron {
+    padding-top: 1%;
+}
+
+.container {
+    display: flex;
+}
+
+.item-description {
+    flex: 3;
+}
+
+.item-photo {
+    flex: 1;
+}

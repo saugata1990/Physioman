@@ -1,0 +1,31 @@
+@media (min-width: 615px) {
+    .carousel-btn {
+        width:50%;
+    } 
+}
+
+
+
+.jumbotron {
+    padding-top: 1%;
+}
+
+#why, #equipment {
+    word-wrap: break-word;
+}
+
+.carousel-item.active,
+.carousel-item-next,
+.carousel-item-prev {
+  display: block;
+}
+
+.carousel-item>img{
+    height:95vh;
+    width: 100%;
+    /* background-size:cover !important;
+    background-position:center !important; */
+}
+
+
+

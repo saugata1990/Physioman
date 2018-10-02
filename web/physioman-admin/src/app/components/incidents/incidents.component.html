@@ -1,0 +1,42 @@
+<div class="container">
+  <h5>Filter incidents by status</h5>
+  <select [(ngModel)]="incidentStatus" name="incidentStatus" (ngModelChange)="loadIncidents()">
+    <option value="new">New</option>
+    <option value="intermediate">Intermediate</option>
+    <option value="processed">Processed</option>
+  </select>
+  <div class="container jumbotron bg-transparent">
+    <ul *ngFor="let incident of incidents">
+      <div (click)="onOpenIncident(incident, incident.incident_id)">
+        <div><h5>{{ incident.incident_title }}</h5></div>
+        <small>{{ incident.customer_name }}<br>{{ incident.customer }}</small>
+      </div>
+      <hr>
+    </ul>
+  </div>
+</div>
+
+<!-- template for assigning consultant -->
+<div class="modal container" id="assignConsultant" data-backdrop="static" data-keyboard=false>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Assign Consultant</h5>
+      </div>
+      <div class="modal-body">
+        <h5>Patient name: {{ incident.customer_name }}</h5><br>
+        <h5> Request type: {{ incident.incident_title }}</h5><br>
+        <h5>Physio gender preference: {{ booking.physio_gender_preference }}</h5>
+        <form #consultantform="ngForm" (ngSubmit)="onAssignConsultant(incident, consultantform)">
+          <h5>Choose consultant to assign</h5>
+          <select ngModel name="assigned_consultant" #assigned_consultant="ngModel" required>
+            <option *ngFor="let consultant of consultants" value="{{ consultant.consultant_id }}">
+              {{ consultant.consultant_id }} 
+            </option>
+          </select>
+          <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="consultantform.invalid">Assign</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

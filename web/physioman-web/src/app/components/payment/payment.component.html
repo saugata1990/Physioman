@@ -1,0 +1,32 @@
+<!-- <script id="bolt" src="https://sboxcheckout-static.citruspay.com/bolt/run/bolt.min.js" bolt-
+color="<color-code>" bolt-logo="<image path>"></script> -->
+
+<div class="modal" id="payment" data-backdrop="static" data-keyboard=false>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Online Payment</h3>
+      </div>
+      <div class="modal-body">
+        <form class="container" #paymentForm="ngForm" (ngSubmit)="onPayment(paymentForm)">
+          <div class="form-group">
+            <label for="amount">Amount</label>
+            <input type="text" class="form-control" value={{amount}} readonly>
+          </div>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" [(ngModel)]="patient.name" name="name" value={{patient.name}} required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" [(ngModel)]="patient.email" name="email" value={{patient.email}} required>
+          </div>
+          <button type="submit" class="btn btn-danger btn-space" [disabled]="paymentForm.invalid">Proceed to payment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

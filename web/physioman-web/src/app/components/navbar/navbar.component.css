@@ -1,0 +1,14 @@
+.dropdown .dropdown-menu a:hover
+{
+  color: #fff;
+  background-color: blue;
+  border-color: #fff;
+}
+
+navbar {
+    background-color: transparent !important;
+}
+
+.dropdown-menu {
+    background-color: transparent !important;
+}
