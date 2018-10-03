@@ -16,6 +16,7 @@ export class IncidentsComponent implements OnInit {
   private incidents = new Array<Incident>();
   private incident = new Incident();
   private consultants = new Array();
+  private physios = new Array();
   private incidentStatus;
 
   constructor(private adminService: AdminService, private router: Router) { }
@@ -78,6 +79,10 @@ export class IncidentsComponent implements OnInit {
       },
       error => console.log(error));
     }
+    // tslint:disable-next-line:one-line
+    else if (incident.incident_title === 'Request Ready for Booking') {
+      console.log('incident', incident);
+    }
   }
 
   // handleIntermediateIncident (incident, id) {
@@ -92,6 +97,7 @@ export class IncidentsComponent implements OnInit {
         // @ts-ignore
         $('#assignConsultant').modal('hide');
       });
+      this.reloadIncidents();
     }, error => console.log(error));
   }
 

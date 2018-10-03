@@ -13,6 +13,7 @@ export class AdminService {
   private requests_url = 'api/bookings/requests/';
   private patient_name_url = 'api/patients/name?patient_id=';
   private consultant_list_url = 'api/consultants';
+  private physio_list_url = 'api/physios';
 
   constructor(private http: HttpClient) { }
 
@@ -64,6 +65,16 @@ export class AdminService {
   assignConsultant(url, consultant_id) {
     const token = JSON.parse(localStorage.getItem('adminToken'));
     return this.http.post(url, {consultant_id}, {headers: this.setHeader(token)});
+  }
+
+  getPhysios() {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.get(this.physio_list_url, {headers: this.setHeader(token)});
+  }
+
+  assignPhysio(url, physio_id) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.post(url, {physio_id}, {headers: this.setHeader(token)});
   }
 
   processOrder(url) {

@@ -4,13 +4,13 @@ const Physio = require('../models/physioModel')
 const Consultant = require('../models/consultantModel')
 const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
 const {phoneExists, emailExists, verifyToken} = require('../utils/helper')
-const { patient_secret_key, admin_secret_key, physio_secret_key } = require('../config/keys')
+const { patient_secret_key, admin_secret_key, physio_secret_key, consultant_secret_key } = require('../config/keys')
 const bcrypt = require('bcrypt')
 const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
 
 // only admin can view
-physios.get('/',(req, res) => {
+physios.get('/', verifyToken(admin_secret_key), (req, res) => {
     Physio.find(req.query).sort('number_of_patients').exec()
     .then((physios) => {
         res.status(200).json({physios: physios})

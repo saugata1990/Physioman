@@ -7,7 +7,7 @@ const consultants = express.Router()
 const bcrypt = require('bcrypt')
 const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
-const { consultant_secret_key, admin_secret_key } = require('../config/keys')
+const { consultant_secret_key, admin_secret_key, physio_secret_key } = require('../config/keys')
 
 // TODO: routes for login and other stuff
 

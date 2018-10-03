@@ -95,20 +95,14 @@ bookings.get('/requests/:request_id', verifyToken(admin_secret_key), (req, res) 
 
 
 // it is assumed that the browser will load request details
-bookings.post('/new', verifyToken(admin_secret_key), (req, res) => {
+bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
     return Promise.all([
-        Booking.findOne({booked_for_patient: req.body.booked_for_patient, closed: false}).exec(),
-        Request.findOne({requested_by_patient: req.body.booked_for_patient, 
-            ready_for_booking: true, 
-            closed: false}).exec(),
+        Request.findOne({_id: req.params.request_id, ready_for_booking: true, closed: false}).exec(),
         Physio.findOne({physio_id: req.body.physio_id}).exec()
     ])
-    .then(([booking, request, physio]) => {
-        if(booking){
-            res.status(403).json({message: 'patient already has an open booking'})
-        }
-        else if(!request){
-            res.status(400).json({message: 'no requests ready for booking for this patient'})
+    .then(([request, physio]) => {
+        if(!request){
+            res.status(403).json({message: 'invalid request'})
         }
         else{
             request.closed = true
@@ -198,40 +192,42 @@ bookings.put('/assign-sessions/:request_id', verifyToken(consultant_secret_key),
             res.status(403).json({message: 'Invalid OTP'})
         }
         else{
-            request.sessions_fixed_by_consultant = req.body.sessions_fixed
-            request.booking_payment_mode = req.body.booking_payment_mode
-            request.processed_by_consultant = true;
-            if(request.booking_payment_mode === 'cash'){
-                request.booking_payment_received = req.body.booking_payment_received
-            }
-            if(request.booking_payment_mode === 'cash' && request.booking_payment_received 
-            || request.booking_payment_mode === 'card'){
-                request.ready_for_booking = true
-            }
-            consultant.number_of_consultations++
-            consultant.pending_consultations--
-            consultant.patients_to_visit = 
-                consultant.patients_to_visit.filter(patient_id => patient_id !== request.requested_by_patient)
-            consultant.last_consultation_date = new Date()
-            return Promise.all([
-                request.save(),
-                consultant.save()
-            ])
-            .then(() => {
-                if(!request.ready_for_booking){
-                    res.status(200).json({message: 'Booking payment pending'})
+            Incident.findOne({customer: request.requested_by_patient}).exec() 
+            .then(incident => {
+                request.sessions_fixed_by_consultant = req.body.sessions_fixed
+                request.booking_payment_mode = req.body.booking_payment_mode
+                request.processed_by_consultant = true;
+                if(request.booking_payment_mode === 'cash'){
+                    request.booking_payment_received = req.body.booking_payment_received
                 }
-                else{
-                    new Incident({
-                        action_route: 'api/bookings/new',
-                        customer: request.requested_by_patient,
-                        priority: 1,
-                        status: 'new',
-                        timestamp: consultant.last_consultation_date,
-                        incident_title: 'Request Ready for Booking'
-                    }).save()
-                    .then(() => res.status(200).json({message: 'Ready for booking'}))
-                }   
+                if(request.booking_payment_mode === 'cash' && request.booking_payment_received 
+                || request.booking_payment_mode === 'card'){
+                    request.ready_for_booking = true
+                }
+                consultant.number_of_consultations++
+                consultant.pending_consultations--
+                consultant.patients_to_visit = 
+                    consultant.patients_to_visit.filter(patient_id => patient_id !== request.requested_by_patient)
+                consultant.last_consultation_date = new Date()
+                return Promise.all([
+                    request.save(),
+                    consultant.save()
+                ])
+                .then(() => {
+                    if(!request.ready_for_booking){
+                        res.status(200).json({message: 'Booking payment pending'})
+                    }
+                    else{
+                        incident.action_route = 'api/bookings/new/' + request._id
+                        incident.status = 'new'
+                        incident.timestamp = consultant.last_consultation_date
+                        incident.incident_title = 'Request Ready for Booking'
+                        incident.priority = 1,
+                        incident.info = 'Ready for booking'
+                        incident.save()
+                        .then(() => res.status(200).json({message: 'Ready for booking'}))
+                    }   
+                })
             })
         }
     })
