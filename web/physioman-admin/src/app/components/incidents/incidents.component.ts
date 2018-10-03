@@ -90,7 +90,7 @@ export class IncidentsComponent implements OnInit {
       console.log(response);
       $(document).ready(() => {
         // @ts-ignore
-        $('#assignConsultant').modal('hide`');
+        $('#assignConsultant').modal('hide');
       });
     }, error => console.log(error));
   }
