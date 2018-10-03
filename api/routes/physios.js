@@ -46,6 +46,7 @@ physios.post('/new-account', verifyToken(admin_secret_key), (req, res) => {
                     physio_email: req.body.physio_email,
                     physio_phone: req.body.physio_phone,
                     physio_gender: req.body.physio_gender,
+                    number_of_patients: 0,
                     rating: 0,
                     sessions_completed: 0,
                     physio_dob: date.parse(req.body.physio_dob.toString(), 'YYYY-MM-DD'),

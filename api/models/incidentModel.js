@@ -8,7 +8,7 @@ const incidentSchema = new Schema({
     action_route: String, 
     customer: String,
     priority: Number, // 1-->very high, 4-->low
-    status: String, // new, processed
+    status: String, // new, intermediate, processed
     timestamp: Date,
     incident_title: String,
     info: String

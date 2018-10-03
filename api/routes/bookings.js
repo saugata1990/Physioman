@@ -98,9 +98,10 @@ bookings.get('/requests/:request_id', verifyToken(admin_secret_key), (req, res) 
 bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
     return Promise.all([
         Request.findOne({_id: req.params.request_id, ready_for_booking: true, closed: false}).exec(),
-        Physio.findOne({physio_id: req.body.physio_id}).exec()
+        Physio.findOne({physio_id: req.body.physio_id}).exec(),
+        Incident.findOne({action_route: 'api/bookings/new/' + req.params.request_id, status: 'new'}).exec()
     ])
-    .then(([request, physio]) => {
+    .then(([request, physio, incident]) => {
         if(!request){
             res.status(403).json({message: 'invalid request'})
         }
@@ -108,6 +109,7 @@ bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
             request.closed = true
             physio.current_patients.push(request.requested_by_patient)
             physio.number_of_patients++
+            incident.status = 'processed'
             return Promise.all([
                 new Booking({
                     booked_for_patient: request.requested_by_patient,
@@ -119,7 +121,8 @@ bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
                     closed: false
                 }).save(),
                 request.save(),
-                physio.save()
+                physio.save(),
+                incident.save()
             ])
             .then(() => res.status(200).json({message: 'Booking created'}))        
         }

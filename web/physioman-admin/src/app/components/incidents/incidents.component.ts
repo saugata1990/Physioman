@@ -81,7 +81,18 @@ export class IncidentsComponent implements OnInit {
     }
     // tslint:disable-next-line:one-line
     else if (incident.incident_title === 'Request Ready for Booking') {
-      console.log('incident', incident);
+      const request_id = incident.action_route.split('/').pop();
+      this.adminService.getBookingRequestData(request_id)
+      .subscribe(response => {
+        this.booking.populate(response);
+        $(document).ready(() => {
+          // @ts-ignore
+          $('#assignPhysio').modal('show');
+        });
+      },
+      error => console.log(error));
+      this.adminService.getPhysios()
+      .subscribe(response => this.physios = (response as any).physios, error => console.log(error));
     }
   }
 
@@ -101,5 +112,16 @@ export class IncidentsComponent implements OnInit {
     }, error => console.log(error));
   }
 
+  onAssignPhysio(incident, frm) {
+    this.adminService.assignPhysio(incident.action_route, frm.value.assigned_physio)
+    .subscribe(response => {
+      console.log(response);
+      $(document).ready(() => {
+        // @ts-ignore
+        $('#assignPhysio').modal('hide');
+      });
+      this.reloadIncidents();
+    }, error => console.log(error));
+  }
 
 }

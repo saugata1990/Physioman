@@ -40,3 +40,28 @@
     </div>
   </div>
 </div>
+
+<!-- template for assigning physio -->
+<div class="modal container" id="assignPhysio" data-backdrop="static" data-keyboard=false>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Assign Physio</h5>
+      </div>
+      <div class="modal-body">
+        <h5>Patient name: {{ incident.customer_name }}</h5><br>
+        <h5> Request type: {{ incident.incident_title }}</h5><br>
+        <h5>Physio gender preference: {{ booking.physio_gender_preference }}</h5>
+        <form #physioform="ngForm" (ngSubmit)="onAssignPhysio(incident, physioform)">
+          <h5>Choose physio to assign</h5>
+          <select ngModel name="assigned_physio" #assigned_physio="ngModel" required>
+            <option *ngFor="let physio of physios" value="{{ physio.physio_id }}">
+              {{ physio.physio_id }} 
+            </option>
+          </select>
+          <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="physioform.invalid">Assign</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

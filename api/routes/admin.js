@@ -7,6 +7,10 @@ const Booking = require('../models/bookingModel')
 const Consultant = require('../models/consultantModel')
 const Patient = require('../models/patientModel')
 const Physio = require('../models/physioModel')
+const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
+const Incident = require('../models/incidentModel')
+const Order = require('../models/orderModel')
+const Product = require('../models/productModel')
 const Admin = require('../models/adminModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -84,7 +88,19 @@ admin.post('/login', (req, res) => {
 })
 
 
-
+// this route is to be removed in production
+admin.get('/delete-all', (req, res) => {
+    Physio.collection.drop()
+    Consultant.collection.drop()
+    Incident.collection.drop()
+    Patient.collection.drop()
+    Request.collection.drop()  
+    Booking.collection.drop()
+    PhoneAndEmail.collection.drop()
+    Order.collection.drop()
+    Product.collection.drop()
+    res.status(200).json({message: 'Collections deleted'})
+})
 
 
 
