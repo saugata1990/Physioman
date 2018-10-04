@@ -15,6 +15,7 @@ export class DashboardPage implements OnInit {
 
   private loggedInAs;
   private requests = new Array();
+  private bookings = new Array();
   private token;
   private otherAccount;
   private alternateAcct;
@@ -27,20 +28,22 @@ export class DashboardPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (this.loggedInAs === 'physio') {
-      this.alternateAcct =  'consultant';
-    } else {
-      this.alternateAcct =  'physio';
-    }
     this.storage.get('loggedInAs')
     .then(val => {
       this.loggedInAs = val;
+      if (this.loggedInAs === 'physio') {
+        this.alternateAcct =  'consultant';
+      } else {
+        this.alternateAcct =  'physio';
+      }
       this.storage.get(this.loggedInAs)
       .then(token => {
         this.token = token;
         this.hasOtherAccount();
         if (this.loggedInAs === 'consultant') {
           this.getAppointments();
+        } else {
+          this.getBookings();
         }
       });
     });
@@ -62,6 +65,14 @@ export class DashboardPage implements OnInit {
           request.address = (details as any).patient_address;
         });
       });
+    });
+  }
+
+  getBookings() {
+    this.apiService.getAssignedBookings(this.token)
+    .subscribe(response => {
+      this.bookings = (response as any).bookings;
+      console.log(this.bookings);
     });
   }
 

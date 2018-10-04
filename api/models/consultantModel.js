@@ -17,7 +17,8 @@ const consultantSchema = new Schema({
     last_consultation_date: Date,
     number_of_consultations: Number,
     pending_consultations: Number,
-    patients_to_visit: [String]
+    patients_to_visit: [String],
+    terminated: Boolean
 })
 
 const Consultant = db.model('Consultant', consultantSchema)

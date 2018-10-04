@@ -9,9 +9,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class UserManagementComponent implements OnInit {
 
+
+
   constructor(private adminService: AdminService, private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit() {
+
   }
 
   onCreateUser() {
@@ -21,5 +24,9 @@ export class UserManagementComponent implements OnInit {
   onEditUser() {
     this.router.navigate(['edit'], {relativeTo: this.route});
   }
+
+  // onViewUsers() {
+  //   console.log(this.physios);
+  // }
 
 }

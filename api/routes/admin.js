@@ -14,7 +14,7 @@ const Product = require('../models/productModel')
 const Admin = require('../models/adminModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const {sendSMS, sendSMSmock, generateOTP, phoneExists, emailExists} = require('../utils/helper')
+const {sendSMS, sendSMSmock, generateOTP, verifyToken, phoneExists, emailExists} = require('../utils/helper')
 const { admin_secret_key } = require('../config/keys')
 
 
@@ -80,12 +80,23 @@ admin.post('/login', (req, res) => {
                 else{
                     res.status(403).json({message: 'Invalid password'})
                 }
-            })
-            
+            })    
         }
     })
     .catch(error => res.status(500).json({error}))
 })
+
+
+// admin.get('/users', verifyToken(admin_secret_key), (req, res) => {
+//     return Promise.all([
+//         Physio.find({}).exec(),
+//         Consultant.find({}).exec()
+//     ])
+//     .then(([physios, consultants]) => {
+//         res.status(200).json({physios, consultants})
+//     })
+//     .catch(error => res.status(500).json({error}))    
+// })
 
 
 // this route is to be removed in production

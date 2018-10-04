@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { IncidentsComponent } from './components/incidents/incidents.component';
 import { UserManagementComponent } from './components/user-management/user-management.component';
 import { UserCreationComponent } from './components/user-creation/user-creation.component';
+import { UserListComponent } from './components/user-list/user-list.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { UserCreationComponent } from './components/user-creation/user-creation.
     LoginComponent,
     IncidentsComponent,
     UserManagementComponent,
-    UserCreationComponent
+    UserCreationComponent,
+    UserListComponent
   ],
   imports: [
     BrowserModule,

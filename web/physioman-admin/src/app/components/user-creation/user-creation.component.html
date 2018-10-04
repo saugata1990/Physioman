@@ -41,11 +41,11 @@
   </div> 
   <div class="form-group">
     <label for="physio_dob">Physio date of birth</label><br>
-    <input type="date" class="form-control" ngModel name="physio_dob" #physio_dob="ngModel" required>
+    <input type="date" class="form-control" ngModel name="physio_dob" #physio_dob="ngModel">
   </div> 
   <div class="form-group">
     <label for="date_joined">Date joined</label><br>
-    <input type="date" class="form-control" ngModel name="date_joined" #date_joined="ngModel" required>
+    <input type="date" class="form-control" ngModel name="date_joined" #date_joined="ngModel">
   </div> 
   <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="physioForm.invalid" >Submit</button>
 </form>
@@ -80,7 +80,7 @@
     </div> 
     <div class="form-group">
       <label for="date_joined">Date joined</label><br>
-      <input type="date" class="form-control" ngModel name="date_joined" #date_joined="ngModel" required>
+      <input type="date" class="form-control" ngModel name="date_joined" #date_joined="ngModel">
     </div> 
     <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="consultantForm.invalid" >Submit</button>
 </form>

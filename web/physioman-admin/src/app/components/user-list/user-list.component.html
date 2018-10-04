@@ -1,0 +1,18 @@
+<div class="container">
+  <h5>Consultants</h5><br>
+  <ul *ngFor="let consultant of consultants">
+    <div (click)="onView('consultant', consultant._id)">
+      <div>{{ consultant.consultant_name }}</div>
+      <div>{{ consultant.consultant_id }}</div>
+      <hr>
+    </div>
+  </ul>
+  <h5>Physios</h5><br>
+  <ul *ngFor="let physio of physios">
+    <div (click)="onView('physio', physio._id)">
+      <div>{{ physio.physio_name }}</div>
+      <div>{{ physio.physio_id }}</div>
+      <hr>
+    </div>
+  </ul>
+</div>

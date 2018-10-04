@@ -7,7 +7,7 @@ const Patient = require('../models/patientModel')
 const Consultant = require('../models/consultantModel')
 const Incident = require('../models/incidentModel')
 const {verifyToken, phoneExists, emailExists, generateOTP, sendSMSmock} = require('../utils/helper')
-const { patient_secret_key, admin_secret_key, consultant_secret_key } = require('../config/keys')
+const { patient_secret_key, admin_secret_key, consultant_secret_key, physio_secret_key } = require('../config/keys')
 
 
 bookings.get('/', verifyToken(admin_secret_key), (req, res) => {
@@ -242,6 +242,12 @@ bookings.get('/pending-consultations', verifyToken(consultant_secret_key), (req,
     Request.find({mapped_consultant: req.authData.consultant, processed_by_consultant: false}).exec()
     .then(requests => res.status(200).json({requests}))
     .catch(error => res.status(500).json({error}))
+})
+
+bookings.get('/assigned-bookings', verifyToken(physio_secret_key), (req,res) => {
+    Booking.find({assigned_physio: req.authData.physio, closed: false}).exec()
+    .then(bookings => res.status(200).json({bookings}))
+    .catch(error => res.status(500).json({error}));
 })
 
 

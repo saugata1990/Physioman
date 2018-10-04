@@ -28,21 +28,21 @@ payments.post('/payumoney-response', (req, res) => {
     sha.update(hashString)
     const hash = sha.getHash('HEX')
     if(hash == pd.hash) {
-        res.status(200).json({'message': 'payment successful'})
+        res.status(200).json({message: 'payment successful'})
     }
     else{
-        res.status(400).json({'message': 'error occurred'})
+        res.status(400).json({message: 'error occurred'})
     }
 })
 
 payments.get('/success', (req, res) => {
     console.log('success route hit')
-    res.status(201).json({'message': 'success'})
+    res.status(201).json({message: 'success'})
 })
 
 payments.get('/failure', (req, res) => {
     console.log('failure route hit')
-    res.status(400).json({'message': 'failure'})
+    res.status(400).json({message: 'failure'})
 })
 
 

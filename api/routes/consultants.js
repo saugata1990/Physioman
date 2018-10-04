@@ -9,7 +9,6 @@ const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
 const { consultant_secret_key, admin_secret_key, physio_secret_key } = require('../config/keys')
 
-// TODO: routes for login and other stuff
 
 consultants.post('/login', (req, res) => {
     Consultant.findOne({consultant_id: req.body.consultant_id}).exec()
@@ -35,7 +34,7 @@ consultants.post('/login', (req, res) => {
 
 
 consultants.get('/', verifyToken(admin_secret_key), (req, res) => {
-    Consultant.find().sort('pending_consultations').exec()
+    Consultant.find({terminated: false}).sort('pending_consultations').exec()
     .then((consultants) => {
         res.status(200).json({consultants})
     })
@@ -72,7 +71,8 @@ consultants.post('/new-consultant', verifyToken(admin_secret_key), (req, res) =>
                     date_joined: req.body.date_joined ? date.parse(req.body.date_joined.toString(), 'YYYY-MM-DD') 
                                                       : new Date(),
                     number_of_consultations: 0,
-                    pending_consultations: 0
+                    pending_consultations: 0,
+                    terminated: false
                 }).save(),
                 new PhoneAndEmail({
                     registered_phone_number: req.body.consultant_phone,

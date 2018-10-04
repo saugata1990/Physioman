@@ -23,6 +23,7 @@ const physioSchema = new Schema({
     current_location: String, // location data
     sessions_completed: Number,
     demerit_points: Number,
+    terminated: Boolean,
     rating: Number
 })
 

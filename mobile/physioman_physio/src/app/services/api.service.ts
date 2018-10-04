@@ -13,6 +13,7 @@ export class ApiService {
   private assign_sessions_url = 'http://localhost:3000/api/bookings/assign-sessions/';
   private consultant_details_url = 'http://localhost:3000/api/consultants/details';
   private physio_details_url = 'http://localhost:3000/api/physios/details';
+  private assigned_bookings_url = 'http://localhost:3000/api/bookings/assigned-bookings';
 
   constructor(private http: HttpClient) { }
 
@@ -34,6 +35,10 @@ export class ApiService {
 
   getPendingConsultations(userToken) {
     return this.http.get(this.pending_consultations_url, {headers: this.setHeader(userToken)});
+  }
+
+  getAssignedBookings(userToken) {
+    return this.http.get(this.assigned_bookings_url, {headers: this.setHeader(userToken)});
   }
 
   getPatientAddress(id, userToken) {

@@ -4,6 +4,7 @@ import { IncidentsComponent } from './components/incidents/incidents.component';
 import { UserManagementComponent } from './components/user-management/user-management.component';
 import { UserCreationComponent } from './components/user-creation/user-creation.component';
 import { LoginComponent } from './components/login/login.component';
+import { UserListComponent } from './components/user-list/user-list.component';
 
 const routes: Routes = [
   { path: '', component: IncidentsComponent },
@@ -12,8 +13,9 @@ const routes: Routes = [
   { path: 'manage-users',
     component: UserManagementComponent,
     children: [
+      {path: '', redirectTo: 'users', pathMatch: 'full'},
       { path: 'create', component: UserCreationComponent },
-      { path: 'edit', component: IncidentsComponent } // just a placeholder
+      { path: 'users', component: UserListComponent }
     ]
   }
 ];
