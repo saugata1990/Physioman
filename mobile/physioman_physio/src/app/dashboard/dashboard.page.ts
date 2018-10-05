@@ -76,6 +76,10 @@ export class DashboardPage implements OnInit {
     });
   }
 
+  async processBooking(booking_id) {
+    //
+  }
+
   async processAppointment(request_id, payment_mode) {
     const modal = await this.modalController.create({
       component: ProcessAppointmentPage,

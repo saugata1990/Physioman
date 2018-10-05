@@ -9,6 +9,7 @@
 </ion-header>
 
 <ion-split-pane>
+  
   <ion-menu content="main">
     <ion-header>
       <ion-toolbar>
@@ -24,7 +25,8 @@
       </ion-list>
     </ion-content>
   </ion-menu>
-  <ion-content padding *ngIf="loggedInAs==='consultant'; else physioView">
+
+  <ion-content main padding *ngIf="loggedInAs==='consultant'">
     <ion-list *ngFor="let request of requests">
       <ion-card (click)="processAppointment(request._id, request.consultation_payment_mode)">
         <ion-item text-wrap>Patient: {{ request.name }}</ion-item>
@@ -36,18 +38,16 @@
     </ion-list>
   </ion-content>
 
-  <ion-content padding *ngIf="loggedInAs==='physio'">
-    <button ion-button>content to follow</button>
-      <!-- <ion-list *ngFor="let booking of bookings">
-        <ion-card (click)="processAppointment(request._id, request.consultation_payment_mode)">
-          <ion-item text-wrap>Patient: {{ request.name }}</ion-item>
-          <ion-item text-wrap>Contact: {{ request.phone }}</ion-item>
-          <ion-item text-wrap>Symptoms: {{ request.ailment_description }}</ion-item>
-          <ion-item text-wrap>Address: {{ request.address }}</ion-item>
-          <ion-item text-wrap>Payment: {{ request.consultation_payment_mode }}</ion-item>  
-        </ion-card>
-      </ion-list> -->
+  <ion-content main padding *ngIf="loggedInAs==='physio'">
+    <ion-list *ngFor="let booking of bookings">
+      <ion-card (click)="processBooking(request._id)">
+        <ion-item text-wrap>Patient: {{ request.name }}</ion-item>
+        <ion-item text-wrap>Contact: {{ request.phone }}</ion-item>
+        <ion-item text-wrap>Symptoms: {{ request.ailment_description }}</ion-item>
+        <ion-item text-wrap>Address: {{ request.address }}</ion-item>
+        <ion-item text-wrap>Payment: {{ request.consultation_payment_mode }}</ion-item>  
+      </ion-card>
+    </ion-list>
   </ion-content>
-  
-  <ion-router-outlet main></ion-router-outlet>
+
 </ion-split-pane>

@@ -94,7 +94,6 @@ bookings.get('/requests/:request_id', verifyToken(admin_secret_key), (req, res) 
 })
 
 
-// it is assumed that the browser will load request details
 bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
     return Promise.all([
         Request.findOne({_id: req.params.request_id, ready_for_booking: true, closed: false}).exec(),
@@ -116,6 +115,7 @@ bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
                     assigned_physio: req.body.physio_id,
                     allotted_sessions: request.sessions_fixed_by_consultant,
                     sessions_completed: 0,
+                    session_status: 'not started',
                     booked_at: new Date(),
                     payment_mode: request.booking_payment_mode, 
                     closed: false

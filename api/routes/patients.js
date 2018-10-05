@@ -61,9 +61,9 @@ patients.post('/signup', (req, res) => {
                     patient_phone: req.body.patient_phone,
                     password_hash: hash,
                     patient_name: req.body.patient_name,
-                    patient_email: req.body.patient_email,
+                    patient_email: req.body.patient_email || null,
                     patient_gender: req.body.patient_gender,
-                    patient_dob: date.parse(req.body.patient_dob.toString(), 'YYYY-MM-DD'),
+                    patient_dob: date.parse(req.body.patient_dob.toString(), 'YYYY-MM-DD') || null,
                     date_joined: new Date(),
                     patient_address: req.body.patient_address,
                     ailment_history: date.format(new Date(), 'DD/MM/YYYY').toString()+':--> '+req.body.ailment_history,
@@ -155,7 +155,6 @@ patients.get('/viewBookingStatus', verifyToken(patient_secret_key), (req, res) =
 })
 
 
-// only admin can view
 patients.get('/:patient_id', verifyToken(admin_secret_key), (req, res) => {
     Patient.findOne({patient_id: req.params.patient_id}).exec()
     .then((patient) => {

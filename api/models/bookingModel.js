@@ -8,10 +8,11 @@ mongoose.Promise = global.Promise
 const db = mongoose.createConnection(url)
 
 const bookingSchema = new Schema({
-    booked_for_patient: String,         // patient_id
+    booked_for_patient: String,         
     assigned_physio: String,
     allotted_sessions: Number,
     sessions_completed: Number,
+    session_status: String,
     booked_at: Date,
     booking_updated_at: Date,
     payment_mode: String,

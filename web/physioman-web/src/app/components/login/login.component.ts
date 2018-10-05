@@ -39,14 +39,14 @@ export class LoginComponent implements OnInit {
         action: HASBOOKING
       });
       localStorage.setItem('bookingActive', 'true');
-    }, error => {});
+    }, error => console.log(error));
     this.patientService.getOrderStatus()
     .subscribe(response => {
       this.patientService.updateState({
         action: HASORDERED
       });
       localStorage.setItem('orderActive', 'true');
-    }, error => {});
+    }, error => console.log(error));
   }
 
 

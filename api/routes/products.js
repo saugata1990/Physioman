@@ -8,7 +8,7 @@ const fs = require('fs')
 const { patient_secret_key, admin_secret_key } = require('../config/keys')
 
 
-products.get('/search', verifyToken(patient_secret_key), (req, res) => {    // 
+products.get('/search', verifyToken(patient_secret_key), (req, res) => {
     Product.search(req.query.q)
     .then(products => res.status(200).json({products, count: products.length}))
     .catch(error => res.status(500).json({error}))
@@ -21,7 +21,7 @@ products.get('/:product_model', (req, res) => {
     .then(product => res.status(200).json({product}))
 })
 
-products.get('/',  (req, res) => { // verifyToken(admin_secret_key),
+products.get('/', verifyToken(admin_secret_key), (req, res) => { 
     Product.find(req.query).exec()
     .then(products => {
         if(products.length){

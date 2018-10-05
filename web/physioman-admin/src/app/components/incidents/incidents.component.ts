@@ -55,50 +55,56 @@ export class IncidentsComponent implements OnInit {
   onOpenIncident(incident, id) {
     this.incident = incident;
     // TODO: if incident status is intermediate, view incident details
-    if (incident.incident_title === 'Booking Request') {
-      const request_id = incident.action_route.split('/').pop();
-      this.adminService.getBookingRequestData(request_id)
-      .subscribe(response => {
-        this.booking.populate(response);
-        $(document).ready(() => {
-          // @ts-ignore
-          $('#assignConsultant').modal('show');
-        });
-      },
-      error => console.log(error)
-      );
-      this.adminService.getConsultants()
-      .subscribe(response => this.consultants = (response as any).consultants, error => console.log(error));
-    }
-    // tslint:disable-next-line:one-line
-    else if (incident.incident_title === 'Equipment Order') {
-      this.adminService.processOrder(incident.action_route)
-      .subscribe(response => {
-        console.log(response);
-        this.reloadIncidents();
-      },
-      error => console.log(error));
-    }
-    // tslint:disable-next-line:one-line
-    else if (incident.incident_title === 'Request Ready for Booking') {
-      const request_id = incident.action_route.split('/').pop();
-      this.adminService.getBookingRequestData(request_id)
-      .subscribe(response => {
-        this.booking.populate(response);
-        $(document).ready(() => {
-          // @ts-ignore
-          $('#assignPhysio').modal('show');
-        });
-      },
-      error => console.log(error));
-      this.adminService.getPhysios()
-      .subscribe(response => this.physios = (response as any).physios, error => console.log(error));
+    if (this.incidentStatus === 'intermediate') {
+      this.handleIntermediateIncident(incident, id);
+    } else if (this.incidentStatus === 'processed') {
+      console.log('already processed');
+    } else {
+      if (incident.incident_title === 'Booking Request') {
+        const request_id = incident.action_route.split('/').pop();
+        this.adminService.getBookingRequestData(request_id)
+        .subscribe(response => {
+          this.booking.populate(response);
+          $(document).ready(() => {
+            // @ts-ignore
+            $('#assignConsultant').modal('show');
+          });
+        },
+        error => console.log(error)
+        );
+        this.adminService.getConsultants()
+        .subscribe(response => this.consultants = (response as any).consultants, error => console.log(error));
+      }
+      // tslint:disable-next-line:one-line
+      else if (incident.incident_title === 'Equipment Order') {
+        this.adminService.processOrder(incident.action_route)
+        .subscribe(response => {
+          console.log(response);
+          this.reloadIncidents();
+        },
+        error => console.log(error));
+      }
+      // tslint:disable-next-line:one-line
+      else if (incident.incident_title === 'Request Ready for Booking') {
+        const request_id = incident.action_route.split('/').pop();
+        this.adminService.getBookingRequestData(request_id)
+        .subscribe(response => {
+          this.booking.populate(response);
+          $(document).ready(() => {
+            // @ts-ignore
+            $('#assignPhysio').modal('show');
+          });
+        },
+        error => console.log(error));
+        this.adminService.getPhysios()
+        .subscribe(response => this.physios = (response as any).physios, error => console.log(error));
+      }
     }
   }
 
-  // handleIntermediateIncident (incident, id) {
-  //   //
-  // }
+  handleIntermediateIncident (incident, id) {
+    console.log('intermediate state to be handled');
+  }
 
   onAssignConsultant(incident, frm) {
     this.adminService.assignConsultant(incident.action_route, frm.value.assigned_consultant)

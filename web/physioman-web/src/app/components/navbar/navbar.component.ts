@@ -16,21 +16,13 @@ export class NavbarComponent implements OnInit {
   constructor(private patientService: PatientService, private router: Router) { }
 
   ngOnInit() {
+    this.checkBookingsAndOrders();
     this.checkState();
   }
 
 
 
   checkState() {
-    // if (localStorage.getItem('patientToken')) {
-    //   this.patientService.updateState({action: LOGGEDIN});
-    // }
-    // if (localStorage.getItem('bookingActive')) {
-    //   this.patientService.updateState({action: HASBOOKING});
-    // }
-    // if (localStorage.getItem('orderActive')) {
-    //   this.patientService.updateState({action: HASORDERED});
-    // }
     this.patientService.getState()
     .subscribe(state => {
       this.loggedIn = state.loggedIn;
@@ -38,6 +30,23 @@ export class NavbarComponent implements OnInit {
       this.hasOrdered = state.hasOrdered;
       console.log(state);
     });
+  }
+
+  checkBookingsAndOrders() {
+    this.patientService.getBookingStatus()
+    .subscribe(response => {
+      this.patientService.updateState({
+        action: HASBOOKING
+      });
+      localStorage.setItem('bookingActive', 'true');
+    }, error => console.log(error));
+    this.patientService.getOrderStatus()
+    .subscribe(response => {
+      this.patientService.updateState({
+        action: HASORDERED
+      });
+      localStorage.setItem('orderActive', 'true');
+    }, error => console.log(error));
   }
 
 
