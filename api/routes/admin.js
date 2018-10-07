@@ -87,29 +87,37 @@ admin.post('/login', (req, res) => {
 })
 
 
-// admin.get('/users', verifyToken(admin_secret_key), (req, res) => {
-//     return Promise.all([
-//         Physio.find({}).exec(),
-//         Consultant.find({}).exec()
-//     ])
-//     .then(([physios, consultants]) => {
-//         res.status(200).json({physios, consultants})
-//     })
-//     .catch(error => res.status(500).json({error}))    
-// })
-
+admin.post('/booking-payment-due/:patient_id', verifyToken(admin_secret_key), (req, res) => {
+    return Promise.all([
+        Patient.findOne({patient_id: req.params.patient_id}).exec(),
+        Incident.findOne({action_route: '/booking-payment-due/' + req.params.patient_id}).exec()
+    ])
+    .then(([patient, incident]) => {
+        if(req.body.payment_received){
+            sendSMSmock(patient.patient_phone, 'We have received your payment by cash.')
+            incident.status = 'processed'
+        }
+        else{
+            sendSMSmock(patient.patient_phone, 'We are yet to receive payment for your booking.')
+        }
+        incident.save()
+        .then(() => res.status(200).json({message: 'SMS sent'}))
+    })
+    .catch(error => res.status(500).json({error}))
+})
 
 // this route is to be removed in production
 admin.get('/delete-all', (req, res) => {
-    Physio.collection.drop()
-    Consultant.collection.drop()
+    // Physio.collection.drop()
+    // Consultant.collection.drop()
     Incident.collection.drop()
-    Patient.collection.drop()
+    // Patient.collection.drop()
     Request.collection.drop()  
     Booking.collection.drop()
-    PhoneAndEmail.collection.drop()
+    // PhoneAndEmail.collection.drop()
     Order.collection.drop()
     Product.collection.drop()
+    Session.collection.drop()
     res.status(200).json({message: 'Collections deleted'})
 })
 

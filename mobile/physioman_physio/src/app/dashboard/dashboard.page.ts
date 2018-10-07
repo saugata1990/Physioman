@@ -4,6 +4,7 @@ import { ApiService } from '../services/api.service';
 import { ModalController } from '@ionic/angular';
 import { ProcessAppointmentPage } from '../process-appointment/process-appointment.page';
 import { Router } from '@angular/router';
+import { ProcessBookingPage } from '../process-booking/process-booking.page';
 
 
 @Component({
@@ -73,11 +74,23 @@ export class DashboardPage implements OnInit {
     .subscribe(response => {
       this.bookings = (response as any).bookings;
       console.log(this.bookings);
+      this.bookings.map(booking => {
+        this.apiService.getPatientAddress(booking.booked_for_patient, this.token)
+        .subscribe(details => {
+          booking.name = (details as any).patient_name;
+          booking.phone = (details as any).patient_phone;
+          booking.address = (details as any).patient_address;
+        });
+      });
     });
   }
 
-  async processBooking(booking_id) {
-    //
+  async processBooking(booking_id, session_status) {
+    const modal = await this.modalController.create({
+      component: ProcessBookingPage,
+      componentProps: {booking_id, session_status, token: this.token}
+    });
+    await modal.present();
   }
 
   async processAppointment(request_id, payment_mode) {

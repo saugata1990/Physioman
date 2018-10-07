@@ -108,7 +108,15 @@ bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
             request.closed = true
             physio.current_patients.push(request.requested_by_patient)
             physio.number_of_patients++
-            incident.status = 'processed'
+            if(request.booking_amount_payable > request.booking_amount_received){
+                incident.action_route = 'api/admin/booking-payment-due/' + request.requested_by_patient
+                incident.status = 'intermediate'
+                incident.timestamp = Date.now()
+                incident.incident_title = 'Booking Payment Pending'
+            }
+            else{
+                incident.status = 'processed'
+            }
             return Promise.all([
                 new Booking({
                     booked_for_patient: request.requested_by_patient,
@@ -117,7 +125,7 @@ bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
                     sessions_completed: 0,
                     session_status: 'not started',
                     booked_at: new Date(),
-                    payment_mode: request.booking_payment_mode, 
+                    amount_payable: request.booking_amount_payable - request.booking_amount_received, 
                     closed: false
                 }).save(),
                 request.save(),
@@ -130,7 +138,7 @@ bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json(error))
 })
 
-bookings.put('/extend', verifyToken(admin_secret_key), (req, res) => {
+bookings.put('/extend', verifyToken(consultant_secret_key), (req, res) => {
     //
 })
 
@@ -142,9 +150,9 @@ bookings.post('/assign-consultant/:request_id', verifyToken(admin_secret_key), (
         Incident.findOne({action_route: 'api/bookings/assign-consultant/' + req.params.request_id}).exec()
     ])
     .then(([request, consultant, incident]) => {
-        console.log(request)
-        console.log(consultant)
-        console.log(incident)
+        // console.log(request)
+        // console.log(consultant)
+        // console.log(incident)
         request.serviced_at = new Date()
         request.serviced_by = req.authData.admin
         consultant.pending_consultations++
@@ -198,39 +206,27 @@ bookings.put('/assign-sessions/:request_id', verifyToken(consultant_secret_key),
             Incident.findOne({customer: request.requested_by_patient}).exec() 
             .then(incident => {
                 request.sessions_fixed_by_consultant = req.body.sessions_fixed
-                request.booking_payment_mode = req.body.booking_payment_mode
-                request.processed_by_consultant = true;
-                if(request.booking_payment_mode === 'cash'){
-                    request.booking_payment_received = req.body.booking_payment_received
-                }
-                if(request.booking_payment_mode === 'cash' && request.booking_payment_received 
-                || request.booking_payment_mode === 'card'){
-                    request.ready_for_booking = true
-                }
+                request.processed_by_consultant = true
+                request.ready_for_booking = true
+                request.booking_amount_payable = req.body.booking_amount_payable
+                request.booking_amount_received = req.body.booking_amount_received
                 consultant.number_of_consultations++
                 consultant.pending_consultations--
                 consultant.patients_to_visit = 
                     consultant.patients_to_visit.filter(patient_id => patient_id !== request.requested_by_patient)
                 consultant.last_consultation_date = new Date()
+                incident.action_route = 'api/bookings/new/' + request._id
+                incident.status = 'new'
+                incident.timestamp = consultant.last_consultation_date
+                incident.incident_title = 'Request Ready for Booking'
+                incident.priority = 1,
+                incident.info = 'Ready for booking'
                 return Promise.all([
                     request.save(),
-                    consultant.save()
+                    consultant.save(),
+                    incident.save()
                 ])
-                .then(() => {
-                    if(!request.ready_for_booking){
-                        res.status(200).json({message: 'Booking payment pending'})
-                    }
-                    else{
-                        incident.action_route = 'api/bookings/new/' + request._id
-                        incident.status = 'new'
-                        incident.timestamp = consultant.last_consultation_date
-                        incident.incident_title = 'Request Ready for Booking'
-                        incident.priority = 1,
-                        incident.info = 'Ready for booking'
-                        incident.save()
-                        .then(() => res.status(200).json({message: 'Ready for booking'}))
-                    }   
-                })
+                .then(() => res.status(200).json({message: 'Ready for booking'}))
             })
         }
     })

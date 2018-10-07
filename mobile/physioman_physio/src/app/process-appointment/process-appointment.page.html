@@ -21,16 +21,12 @@
       <ion-label>Set booking payment details</ion-label>
     </ion-item>
     <ion-item>
-      <ion-radio-group [(ngModel)]="bookingPaymentMode" name="bookingPaymentMode">
-        <ion-label>Cash</ion-label>
-        <ion-radio value="cash" checked></ion-radio>
-        <ion-label>Card</ion-label>
-        <ion-radio value="card"></ion-radio>
-      </ion-radio-group>
+      <ion-label>Booking amount payable</ion-label>
+      <ion-input type="text" [(ngModel)]="amountPayable" name="amountPayable"></ion-input>
     </ion-item>
-    <ion-item *ngIf="bookingPaymentMode==='cash'">
-      <ion-checkbox [(ngModel)]="bookingPaymentReceived" name="bookingPaymentReceived"></ion-checkbox>
-      <ion-label text-wrap>Booking payment received</ion-label>
+    <ion-item>
+      <ion-label>Booking amount receved</ion-label>
+      <ion-input type="text" [(ngModel)]="amountReceived" name="amountReceived"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label>Enter OTP</ion-label>

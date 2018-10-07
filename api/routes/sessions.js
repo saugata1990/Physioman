@@ -10,54 +10,64 @@ const { patient_secret_key, admin_secret_key, physio_secret_key } = require('../
 
 
 // to be used by physio before each session 
-sessions.post('/:booking_id/sendOTP', verifyToken(physio_secret_key), (req, res) => {
+sessions.post('/sendOTP/:booking_id', verifyToken(physio_secret_key), (req, res) => {
     let otp = generateOTP()
-    Booking.findOne({_id: req.params.booking_id}).exec()
-    .then((booking) => {
-        if(booking){
-            booking.session_status = 'otp sent'
+    return Promise.all([
+        Booking.findOne({_id: req.params.booking_id}).exec(),
+        Session.findOne({booking_id: req.params.booking_id}).exec()
+    ])
+    .then(([booking, session]) => {
+        if(!session){
+            const session = new Session({
+                booking_id: req.params.booking_id,
+                session_otp: otp,
+                session_date: new Date(),
+                session_started: false,
+                session_ended: false
+            })
+        }
+        else{
+            session.session_otp = otp
+        }
+        booking.session_status = 'otp sent'
+        return Promise.all([
+            session.save(),
+            booking.save()
+        ])
+        .then(() => {
+            sendSMSmock(booking.booked_for_patient, otp)
+            res.status(200).json({session})
+        })
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
+
+sessions.post('/start-session/:booking_id', verifyToken(physio_secret_key), (req, res) => {
+    return Promise.all([
+        Booking.findOne({_id: req.params.booking_id}).exec(),
+        Session.findOne({booking_id: req.params.booking_id}).exec()
+    ])
+    .then(([booking, session]) => {
+        console.log('session otp', session.session_otp)
+        console.log('input otp', req.body.otp)
+        if(session.session_otp === req.body.otp){
+            session.session_started = true
+            booking.session_status = 'started'
             return Promise.all([
-                new Session({
-                    patient_id: req.body.patient_id,
-                    physio_id: req.body.physio_id,
-                    session_date: new Date(),
-                    session_started: false,
-                    session_ended: false,
-                    session_otp: otp
-                }).save(),
+                session.save(),
                 booking.save()
             ])
-            .then(() => {
-                sendSMSmock(booking.booked_for_patient, otp)
-                res.status(200).json({message: otp})
-            })
+            .then(() => res.status(200).json({message: 'Session started'}))
+        }
+        else{
+            res.status(403).json({message: 'Invalid OTP'})
         }
     })
     .catch(error => res.status(500).json({error}))
 })
 
-// to be used by physio before starting a session(might require changes)
-sessions.post('/start-session', verifyToken(physio_secret_key), (req, res) => {
-    Session.findOne({session_otp: req.body.otp}).exec()
-    .then((session) => {
-        if(!session){
-            res.status(403).json({message: 'invalid OTP'})
-        } 
-        else{
-            Booking.findOne({_id: session.booking_id}).exec()
-            .then(booking => {
-                session.session_started = true
-                booking.session_status = 'started'
-                return Promise.all([
-                    session.save(),
-                    booking.save()
-                ])
-                .then(() => res.status(200).json({message: 'Session started'}))
-            })     
-        }
-    })
-    .catch(error => res.status(500).json({error}))
-})
+
 
 // to be used by physio to end session(might require changes)
 sessions.post('/end-session/:session_id', verifyToken(physio_secret_key), (req, res) => {

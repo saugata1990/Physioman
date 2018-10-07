@@ -14,6 +14,8 @@ export class ApiService {
   private consultant_details_url = 'http://localhost:3000/api/consultants/details';
   private physio_details_url = 'http://localhost:3000/api/physios/details';
   private assigned_bookings_url = 'http://localhost:3000/api/bookings/assigned-bookings';
+  private session_otp_url = 'http://localhost:3000/api/sessions/sendOTP/';
+  private session_start_url = 'http://localhost:3000/api/sessions/start-session/';
 
   constructor(private http: HttpClient) { }
 
@@ -45,10 +47,19 @@ export class ApiService {
     return this.http.get(this.patient_address_url + id, {headers: this.setHeader(userToken)});
   }
 
-  assignSessions(request_id, consultant_otp, sessions_fixed, booking_payment_mode, booking_payment_received, userToken) {
+  assignSessions(request_id, consultant_otp, sessions_fixed, booking_amount_payable, booking_amount_received, userToken) {
     return this.http.put(this.assign_sessions_url + request_id,
-      {consultant_otp, sessions_fixed, booking_payment_mode, booking_payment_received}, {headers: this.setHeader(userToken)});
+      {consultant_otp, sessions_fixed, booking_amount_payable, booking_amount_received}, {headers: this.setHeader(userToken)});
   }
+
+  sendSessionOTP(userToken, booking_id) {
+    return this.http.post(this.session_otp_url + booking_id, {}, {headers: this.setHeader(userToken)});
+  }
+
+  startSession(booking_id, otp, userToken) {
+    return this.http.post(this.session_start_url + booking_id, {otp}, {headers: this.setHeader(userToken)});
+  }
+
 
   checkForOtherAccount(loggedInAs, userToken) {
     if (loggedInAs === 'consultant') {

@@ -15,7 +15,7 @@ const bookingSchema = new Schema({
     session_status: String,
     booked_at: Date,
     booking_updated_at: Date,
-    payment_mode: String,
+    amount_payable: Number,
     closed: Boolean,
     cancellation_requested: Boolean,
     reason_for_cancellation: String

@@ -28,7 +28,7 @@ patients.get('/name', verifyToken(admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json({error}))
 })
 
-patients.get('/details', verifyToken(consultant_secret_key), (req, res) => {
+patients.get('/details', (req, res) => {
     Patient.findOne({patient_id: req.query.patient_id}).exec()
     .then((details) => {
         res.status(200).json(details)

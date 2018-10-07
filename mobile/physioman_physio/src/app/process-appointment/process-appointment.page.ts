@@ -15,8 +15,8 @@ export class ProcessAppointmentPage implements OnInit {
   private token;
   private numSessions;
   private cpr;
-  private bookingPaymentMode;
-  private bookingPaymentReceived = false;
+  private amountPayable;
+  private amountReceived;
   private otp;
 
   constructor(private apiService: ApiService, private modalController: ModalController, private navParams: NavParams) { }
@@ -28,8 +28,8 @@ export class ProcessAppointmentPage implements OnInit {
   }
 
   setSessions() {
-    this.apiService.assignSessions(this.request_id, this.otp, this.numSessions, this.bookingPaymentMode,
-       this.bookingPaymentReceived, this.token).subscribe(response => console.log(response),
+    this.apiService.assignSessions(this.request_id, this.otp, this.numSessions, this.amountPayable,
+       this.amountReceived, this.token).subscribe(response => console.log(response),
       error => console.log(error));
     this.close();
   }

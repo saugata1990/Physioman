@@ -11,8 +11,8 @@ const requestSchema = new Schema({
     ailment_description: String,
     physio_gender_preference: String,
     consultation_payment_mode: String, 
-    booking_payment_mode: String,
-    booking_payment_received: Boolean,
+    booking_amount_payable: Number,
+    booking_amount_received: Number,
     request_timestamp: Date,
     serviced_by: String, //admin id
     serviced_at: Date,
