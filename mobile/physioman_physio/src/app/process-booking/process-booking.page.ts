@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { ModalController, NavParams } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-process-booking',
@@ -15,7 +16,10 @@ export class ProcessBookingPage implements OnInit {
   private session_otp;
   private session_id;
 
-  constructor(private apiService: ApiService, private modalController: ModalController, private navParams: NavParams) { }
+  constructor(private apiService: ApiService,
+              private modalController: ModalController,
+              private navParams: NavParams,
+              private storage: Storage) { }
 
   ngOnInit() {
     this.booking_id = this.navParams.get('booking_id');
@@ -27,6 +31,8 @@ export class ProcessBookingPage implements OnInit {
     this.apiService.sendSessionOTP(this.token, this.booking_id)
     .subscribe(response => {
       this.session_id = (response as any).session._id;
+      this.session_status = 'otp sent';
+      this.storage.set('session_id', this.session_id);
       console.log('session has been created', response);
     },
        error => console.log(error));
@@ -40,8 +46,16 @@ export class ProcessBookingPage implements OnInit {
     });
   }
 
-  onEndSession() {
-    //
+  async onEndSession() {
+    if (!this.session_id) {
+      this.session_id = await this.storage.get('session_id');
+    }
+    this.apiService.endSession(this.session_id, this.token)
+    .subscribe(response => {
+      console.log(response);
+      this.session_status = 'ended';
+      this.close();
+    }, error => console.log(error));
   }
 
   close() {

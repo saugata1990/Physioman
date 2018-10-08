@@ -18,7 +18,7 @@ sessions.post('/sendOTP/:booking_id', verifyToken(physio_secret_key), (req, res)
     ])
     .then(([booking, session]) => {
         if(!session){
-            const session = new Session({
+            session = new Session({
                 booking_id: req.params.booking_id,
                 session_otp: otp,
                 session_date: new Date(),
@@ -77,6 +77,7 @@ sessions.post('/end-session/:session_id', verifyToken(physio_secret_key), (req, 
         .then(booking => {
             booking.session_status = 'not started'
             booking.sessions_completed++
+            booking.closed = booking.sessions_completed === booking.allotted_sessions ? true : false
             booking.session_otp_sent = false
             session.session_started = false
             session.session_ended = true

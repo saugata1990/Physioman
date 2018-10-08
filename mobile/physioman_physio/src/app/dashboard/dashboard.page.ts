@@ -69,6 +69,10 @@ export class DashboardPage implements OnInit {
     });
   }
 
+  reloadBookings() {
+    this.getBookings();
+  }
+
   getBookings() {
     this.apiService.getAssignedBookings(this.token)
     .subscribe(response => {
@@ -91,6 +95,7 @@ export class DashboardPage implements OnInit {
       componentProps: {booking_id, session_status, token: this.token}
     });
     await modal.present();
+    await modal.onDidDismiss().then(() => this.reloadBookings());
   }
 
   async processAppointment(request_id, payment_mode) {

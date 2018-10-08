@@ -16,6 +16,7 @@ export class ApiService {
   private assigned_bookings_url = 'http://localhost:3000/api/bookings/assigned-bookings';
   private session_otp_url = 'http://localhost:3000/api/sessions/sendOTP/';
   private session_start_url = 'http://localhost:3000/api/sessions/start-session/';
+  private session_end_url = 'http://localhost:3000/api/sessions/end-session/';
 
   constructor(private http: HttpClient) { }
 
@@ -58,6 +59,10 @@ export class ApiService {
 
   startSession(booking_id, otp, userToken) {
     return this.http.post(this.session_start_url + booking_id, {otp}, {headers: this.setHeader(userToken)});
+  }
+
+  endSession(session_id, userToken) {
+    return this.http.post(this.session_end_url + session_id, {}, {headers: this.setHeader(userToken)});
   }
 
 
