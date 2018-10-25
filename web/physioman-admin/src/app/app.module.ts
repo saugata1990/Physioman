@@ -13,6 +13,9 @@ import { IncidentsComponent } from './components/incidents/incidents.component';
 import { UserManagementComponent } from './components/user-management/user-management.component';
 import { UserCreationComponent } from './components/user-creation/user-creation.component';
 import { UserListComponent } from './components/user-list/user-list.component';
+import { EquipmentCreationComponent } from './components/equipment-creation/equipment-creation.component';
+import { ListEquipmentComponent } from './components/list-equipment/list-equipment.component';
+import { EditEquipmentComponent } from './components/edit-equipment/edit-equipment.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +25,10 @@ import { UserListComponent } from './components/user-list/user-list.component';
     IncidentsComponent,
     UserManagementComponent,
     UserCreationComponent,
-    UserListComponent
+    UserListComponent,
+    EquipmentCreationComponent,
+    ListEquipmentComponent,
+    EditEquipmentComponent
   ],
   imports: [
     BrowserModule,

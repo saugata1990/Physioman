@@ -95,7 +95,7 @@ services.post('/place-order', verifyToken(patient_secret_key), (req, res) => {
                 incident_title: 'Equipment Order',
                 info: 'New Equipment Order'
             }).save()
-            .then(() => res.status(201).json({messge: 'Order placed'}))
+            .then(() => res.status(201).json({message: 'Order placed'}))
         })  
         .catch(error => res.status(500).json({error}))
     }
@@ -108,7 +108,7 @@ services.post('/initiate-return/:order_id', verifyToken(patient_secret_key), (re
         order.item_to_return = req.body.item_to_return
         order.return_requested = true // will be set to false once processed
         order.save()
-        .then(() => res.status(201).json({messge: 'Return request lodged'}))
+        .then(() => res.status(201).json({message: 'Return request lodged'}))
     })
     .catch(error => res.status(500).json({error}))
 })

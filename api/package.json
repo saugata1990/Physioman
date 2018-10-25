@@ -9,7 +9,7 @@
   "author": "Saugata",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^3.0.0",
+    "bcrypt": "^3.0.1",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "crypto": "^1.0.1",

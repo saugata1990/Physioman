@@ -1,0 +1,15 @@
+<div class="container">
+  <button type="button" class="btn btn-primary" routerLink="/create-equipment">Create equipment</button>
+  <div class="container jumbotron bg-transparent">
+    <h5>List of Equipment for sale/rent ( Click on item to edit )</h5><hr>
+    <ul *ngFor="let product of products">
+      <div (click)="onEquipmentSelected(product._id)">
+        <div>Model: <strong>{{ product.product_model }}</strong> Name: <strong>{{ product.product_name }}</strong>
+          Sale-Stock: <strong>{{ product.stock_for_sale }}</strong>
+          Rent-Stock: <strong>{{ product.stock_for_rent }}</strong>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="addItems(product._id)">Add items to inventory</button>
+    </ul>
+  </div>
+</div>

@@ -90,7 +90,7 @@ orders.post('/process/:order_id', verifyToken(admin_secret_key), (req, res) => {
 // })
 
 
-// remove the need for otp, and make the user access this route to confirm delivery
+// otp to be mentioned by the customer to the delivery guy or to admin via phone
 orders.post('/delivery/:order_id', verifyToken(admin_secret_key), (req, res) => {
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {

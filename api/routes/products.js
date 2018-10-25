@@ -21,7 +21,7 @@ products.get('/:product_model', (req, res) => {
     .then(product => res.status(200).json({product}))
 })
 
-products.get('/', verifyToken(admin_secret_key), (req, res) => { 
+products.get('/', (req, res) => { 
     Product.find(req.query).exec()
     .then(products => {
         if(products.length){
@@ -35,7 +35,7 @@ products.get('/', verifyToken(admin_secret_key), (req, res) => {
 })
 
 
-products.get('/details/:id', verifyToken(patient_secret_key), (req, res) => {   
+products.get('/details/:id', (req, res) => {   
     Product.findOne({_id: req.params.id}).exec()
     .then(product => res.status(200).json({product}))
     .catch(error => res.status(500).json({error}))
@@ -44,9 +44,12 @@ products.get('/details/:id', verifyToken(patient_secret_key), (req, res) => {
 
 
 products.post('/add-new',  upload.single('image'), (req, res) => {  // admin access
+    console.log('request body:-')
+    console.log(req.body)
     let filePath = null
     if(req.file !== undefined){
         filePath = req.file.path
+        console.log('file:-')
         console.log(req.file)
     }
     Product.findOne({product_model: req.body.product_model}).exec()
@@ -93,7 +96,8 @@ products.put('/update', upload.single('image'), (req, res) => {
             product.product_category = req.body.product_category
             product.product_specifications = req.body.product_specifications
             product.product_description = req.body.product_description
-            product.product_image = file
+            product.product_image = {data: fs.readFileSync(filePath).toString('base64'), contentType: 'image/jpg'} 
+            || product.product_image,
             product.printed_price = req.body.printed_price
             product.save()
             .then(() => res.status(201).json({message: 'Equipment updated'}))
