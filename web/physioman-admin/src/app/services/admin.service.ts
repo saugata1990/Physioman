@@ -15,6 +15,7 @@ export class AdminService {
   private consultant_list_url = 'api/consultants';
   private physio_list_url = 'api/physios';
   private add_equipment_url = 'api/products/add-new';
+  private edit_equipment_url = 'api/products/update/';
   private list_equipment_url = 'api/products';
   private equipment_details_url = 'api/products/details/';
 
@@ -98,7 +99,13 @@ export class AdminService {
 
   addEquipment(formdata) {
     const token = JSON.parse(localStorage.getItem('adminToken'));
+    console.log(formdata);
     return this.http.post(this.add_equipment_url, formdata );  // {headers: this.setMultipartHeader(token)}
+  }
+
+  editEquipment(formdata, id) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.put(this.edit_equipment_url + id, formdata);
   }
 
   listEquipment() {

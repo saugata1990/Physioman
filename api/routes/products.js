@@ -8,7 +8,7 @@ const fs = require('fs')
 const { patient_secret_key, admin_secret_key } = require('../config/keys')
 
 
-products.get('/search', verifyToken(patient_secret_key), (req, res) => {
+products.get('/search', (req, res) => {
     Product.search(req.query.q)
     .then(products => res.status(200).json({products, count: products.length}))
     .catch(error => res.status(500).json({error}))
@@ -44,13 +44,9 @@ products.get('/details/:id', (req, res) => {
 
 
 products.post('/add-new',  upload.single('image'), (req, res) => {  // admin access
-    console.log('request body:-')
-    console.log(req.body)
     let filePath = null
     if(req.file !== undefined){
         filePath = req.file.path
-        console.log('file:-')
-        console.log(req.file)
     }
     Product.findOne({product_model: req.body.product_model}).exec()
     .then(product => {
@@ -79,15 +75,15 @@ products.post('/add-new',  upload.single('image'), (req, res) => {  // admin acc
 
 
 
-products.put('/update', upload.single('image'), (req, res) => {
-    let file = null
+products.put('/update/:id', upload.single('image'), (req, res) => {
+    let filePath = null
     if(req.file !== undefined){
-        file = req.file.filename
+        filePath = req.file.path
     }
-    Product.findOne({product_model: req.body.product_model}).exec()
+    Product.findOne({_id: req.params.id}).exec()
     .then(product => {
         if(!product){
-            res.status(404).json({message: 'Product model does not exist'})
+            res.status(404).json({message: 'Product does not exist'})
         }
         else{
             product.product_model = req.body.product_model
@@ -96,8 +92,9 @@ products.put('/update', upload.single('image'), (req, res) => {
             product.product_category = req.body.product_category
             product.product_specifications = req.body.product_specifications
             product.product_description = req.body.product_description
-            product.product_image = {data: fs.readFileSync(filePath).toString('base64'), contentType: 'image/jpg'} 
-            || product.product_image,
+            if(filePath){
+                product.product_image = {data: fs.readFileSync(filePath).toString('base64'), contentType: 'image/jpg'}
+            }             
             product.printed_price = req.body.printed_price
             product.save()
             .then(() => res.status(201).json({message: 'Equipment updated'}))

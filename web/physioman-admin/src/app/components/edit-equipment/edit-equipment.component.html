@@ -1,3 +1,78 @@
-<p>
-  edit-equipment works!
-</p>
+<div *ngIf="dataLoaded" class="container jumbotron bg-transparent">
+  <form #editForm="ngForm" (ngSubmit)="onEditProduct(editForm)">
+    <div class="form-group">
+      <label for="image">
+        <h5>Image</h5>
+      </label>
+      <input type="file" class="form-control" ngModel name="image" #image="ngModel" (change)="onFileChanged($event)">
+      <img class="rounded" [src]="product.imagePath" width="250" height="250">
+    </div>
+    <div class="form-group">
+      <label for="model">
+        <h5>Product Model</h5>
+      </label>
+      <input type="text" class="form-control" [(ngModel)]="product.product_model" name="model" required>
+    </div>
+    <div class="form-group">
+      <label for="name">
+        <h5>Product Name</h5>
+      </label>
+      <input type="text" class="form-control" [(ngModel)]="product.product_name" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="manufacturer">
+        <h5>Product Manufacturer</h5>
+      </label>
+      <input type="text" class="form-control" [(ngModel)]="product.product_manufacturer" name="manufacturer" reqiured>
+    </div>
+    <div class="form-group">
+      <label for="category">
+        <h5>Product Category</h5>
+      </label>
+      <input type="text" class="form-control" [(ngModel)]="product.product_category" name="category" required>
+    </div>
+    <div class="form-group">
+      <label for="specifications">
+        <h5>Product Specifications</h5>
+      </label>
+      <input type="text" class="form-control" [(ngModel)]="product.product_specifications" name="specifications">
+    </div>
+    <div class="form-group">
+      <label for="description">
+        <h5>Product Description</h5>
+      </label>
+      <input type="text" class="form-control" [(ngModel)]="product.product_description" name="description">
+    </div>
+    <div class="form-group">
+      <label for="tags">
+        <h5>Search tags</h5>
+      </label>
+      <input type="text" class="form-control" [(ngModel)]="product.search_tags" name="tags">
+    </div>
+    <div class="form-group">
+      <label for="sprice">
+        <h5>Selling Price</h5>
+      </label>
+      <input type="text" class="form-control" [(ngModel)]="product.selling_price" name="sprice" required>
+    </div>
+    <div class="form-group">
+      <label for="rprice">
+        <h5>Rent Price</h5>
+      </label>
+      <input type="text" class="form-control" [(ngModel)]="product.rent_price" name="rprice" required>
+    </div>
+    <div class="form-group">
+      <label for="sstock">
+        <h5>Stock for sale</h5>
+      </label>
+      <input type="text" class="form-control" [(ngModel)]="product.stock_for_sale" name="sstock" required>
+    </div>
+    <div class="form-group">
+      <label for="rstock">
+        <h5>Stock for rent</h5>
+      </label>
+      <input type="text" class="form-control" [(ngModel)]="product.stock_for_rent" name="rstock" required>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Save</button>
+  </form>
+</div>
