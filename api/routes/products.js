@@ -103,6 +103,19 @@ products.put('/update/:id', upload.single('image'), (req, res) => {
     .catch(error => res.status(500).json({error}))
 })
 
+products.delete('/remove/:id', verifyToken(admin_secret_key), (req, res) => {
+    Product.findOneAndDelete({_id: req.params.id}).exec()
+    .then(product => {
+        if(!product){
+            res.status(404).json({message: 'Item does not exist'})
+        }
+        else{
+            res.status(201).json({message: 'Item removed'})
+        }
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
 
 products.put('/add-to-inventory/:product_model', verifyToken(admin_secret_key), (req, res) => {
     Product.findOne({product_model: req.params.product_model}).exec()

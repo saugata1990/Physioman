@@ -18,6 +18,7 @@ export class AdminService {
   private edit_equipment_url = 'api/products/update/';
   private list_equipment_url = 'api/products';
   private equipment_details_url = 'api/products/details/';
+  private delete_equipment_url = 'api/products/remove/';
 
   constructor(private http: HttpClient) { }
 
@@ -117,5 +118,9 @@ export class AdminService {
     return this.http.get(this.equipment_details_url + id, {headers: this.setHeader(token)});
   }
 
+  removeEquipment(id) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.delete(this.delete_equipment_url + id, {headers: this.setHeader(token)});
+  }
 
 }

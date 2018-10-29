@@ -54,6 +54,12 @@ export class EditEquipmentComponent implements OnInit {
     .subscribe(response => console.log(response), error => console.log(error));
   }
 
+  onRemove(id) {
+    return this.adminService.removeEquipment(id)
+    .subscribe(response => console.log(response), error => console.log(error));
+  }
+
+
   sanitizeUrl(url) {
     return this.sanitizer.bypassSecurityTrustUrl('data:image/jpg;base64,' + url);
   }

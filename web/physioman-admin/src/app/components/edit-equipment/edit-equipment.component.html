@@ -73,6 +73,7 @@
       </label>
       <input type="text" class="form-control" [(ngModel)]="product.stock_for_rent" name="rstock" required>
     </div>
-    <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Save</button>
+    <button type="submit" class="btn btn-primary btn-space" [disabled]="editForm.invalid">Save</button>
+    <button type="button" class="btn btn-danger btn-space" (click)="onRemove(product._id)" >Delete</button>
   </form>
 </div>
