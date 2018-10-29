@@ -13,3 +13,22 @@
     </ul>
   </div>
 </div>
+
+<div class="modal container" id="add_items" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Add items</h5>
+      </div>
+      <div class="modal-body">
+        <label for="new_items_for_sale">Number of new items for sale</label>
+        <input type="text" [(ngModel)]="new_items_for_sale" name="new_items_for_sale">
+        <label for="new_items_for_rent">Number of new items for rent</label>
+        <input type="text" [(ngModel)]="new_items_for_rent" name="new_items_for_rent">
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click)="onAddItems(new_items_for_sale, new_items_for_rent)">Save</button>
+      </div>
+    </div>
+  </div>
+</div>

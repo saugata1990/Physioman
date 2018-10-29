@@ -19,6 +19,7 @@ export class AdminService {
   private list_equipment_url = 'api/products';
   private equipment_details_url = 'api/products/details/';
   private delete_equipment_url = 'api/products/remove/';
+  private update_inventory_url = 'api/products/add-to-inventory/';
 
   constructor(private http: HttpClient) { }
 
@@ -121,6 +122,11 @@ export class AdminService {
   removeEquipment(id) {
     const token = JSON.parse(localStorage.getItem('adminToken'));
     return this.http.delete(this.delete_equipment_url + id, {headers: this.setHeader(token)});
+  }
+
+  updateInventory(id, items_for_sale, items_for_rent) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.put(this.update_inventory_url + id, {items_for_sale, items_for_rent}, {headers: this.setHeader(token)});
   }
 
 }

@@ -117,11 +117,11 @@ products.delete('/remove/:id', verifyToken(admin_secret_key), (req, res) => {
 })
 
 
-products.put('/add-to-inventory/:product_model', verifyToken(admin_secret_key), (req, res) => {
-    Product.findOne({product_model: req.params.product_model}).exec()
+products.put('/add-to-inventory/:product_id', verifyToken(admin_secret_key), (req, res) => {
+    Product.findOne({_id: req.params.product_id}).exec()
     .then(product => {
-        product.stock_for_sale = req.body.stock_for_sale
-        product.stock_for_rent = req.body.stock_for_rent
+        product.stock_for_sale += parseInt(req.body.items_for_sale) || 0
+        product.stock_for_rent += parseInt(req.body.items_for_rent) || 0
         product.save()
         .then(() => res.status(201).json({message: 'Inventory updated'}))
     })
