@@ -20,6 +20,7 @@ export class AdminService {
   private equipment_details_url = 'api/products/details/';
   private delete_equipment_url = 'api/products/remove/';
   private update_inventory_url = 'api/products/add-to-inventory/';
+  private offline_sales_url = 'api/orders/process-offline-order/';
 
   constructor(private http: HttpClient) { }
 
@@ -127,6 +128,11 @@ export class AdminService {
   updateInventory(id, items_for_sale, items_for_rent) {
     const token = JSON.parse(localStorage.getItem('adminToken'));
     return this.http.put(this.update_inventory_url + id, {items_for_sale, items_for_rent}, {headers: this.setHeader(token)});
+  }
+
+  processOfflineOrder(id, units_sold, units_rented, rented_units_returned) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.post(this.offline_sales_url + id, {units_sold, units_rented, rented_units_returned}, {headers: this.setHeader(token)});
   }
 
 }

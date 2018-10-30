@@ -114,17 +114,19 @@ orders.post('/delivery/:order_id', verifyToken(admin_secret_key), (req, res) => 
 
 
 
-
+// to be written later
 orders.post('/process-return/:order_id', (req, res) => {
     Order.findOne({_id: req.params.order_id}).exec()
 })
 
 // this route is to be accessed once every few days or daily, depending on business
-orders.post('/process-offline-order/:product_model', verifyToken(admin_secret_key), (req, res) => {
-    Product.findOne({product_model: req.params.product_model}).exec()
+orders.post('/process-offline-order/:product_id', verifyToken(admin_secret_key), (req, res) => {
+    Product.findOne({_id: req.params.product_id}).exec()
     .then(product => {
         product.stock_for_sale -= req.body.units_sold || 0
         product.stock_for_rent -= (req.body.units_rented || 0) - (req.body.rented_units_returned || 0)
+        product.save()
+        .then(() => res.status(201).json({message: 'Inventory updated'}))
     })
     .catch(error => res.status(500).json({error}))
 })

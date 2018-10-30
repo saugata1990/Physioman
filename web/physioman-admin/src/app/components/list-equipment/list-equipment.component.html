@@ -9,7 +9,8 @@
           Rent-Stock: <strong>{{ product.stock_for_rent }}</strong>
         </div>
       </div>
-      <button type="button" class="btn btn-primary" (click)="addItems(product._id)">Add items to inventory</button>
+      <button type="button" class="btn btn-primary btn-space" (click)="addItems(product._id)">Add items to inventory</button>
+      <button type="button" class="btn btn-primary btn-space" (click)="updateOffline(product._id)">Update online sales</button><hr>
     </ul>
   </div>
 </div>
@@ -27,7 +28,28 @@
         <input type="text" [(ngModel)]="new_items_for_rent" name="new_items_for_rent">
       </div>
       <div class="modal-footer">
-        <button type="button" (click)="onAddItems(new_items_for_sale, new_items_for_rent)">Save</button>
+        <button type="button" (click)="onAddItems()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal container" id="offline_sales" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Update offline sales</h5>
+      </div>
+      <div class="modal-body">
+        <label for="offl_units_sold">Number of units sold offline</label>
+        <input type="text" [(ngModel)]="offl_units_sold" name="offl_units_sold">
+        <label for="offl_units_sold">Number of units rented offline</label>
+        <input type="text" [(ngModel)]="offl_units_rented" name="offl_units_rented">
+        <label for="offl_units_returned">Number of units returned offline</label>
+        <input type="text" [(ngModel)]="offl_units_returned" name="offl_units_returned">
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click)="onOfflineSales()">Save</button>
       </div>
     </div>
   </div>
