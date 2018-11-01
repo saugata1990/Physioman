@@ -38,6 +38,7 @@ services.post('/new-booking-request', verifyToken(patient_secret_key), (req, res
                 processed_by_consultant: false,
                 closed: false
             })
+            patient.bookings.push(booking_request._id)
             return Promise.all([
                 patient.save(),
                 booking_request.save()
@@ -84,17 +85,24 @@ services.post('/place-order', verifyToken(patient_secret_key), (req, res) => {
             order_timestamp: new Date(),
             closed: false
         })
-        order.save()
-        .then(() => {
-            new Incident({
-                action_route: 'api/orders/process/' + order._id,
-                customer: order.ordered_by,
-                priority: 2,
-                status: 'new',
-                timestamp: order.order_timestamp,
-                incident_title: 'Equipment Order',
-                info: 'New Equipment Order'
-            }).save()
+        return Promise.all([
+            order.save(),
+            Patient.findOne({patient_id: req.authData.patient}).exec()
+        ])
+        .then(([orderSaved, patient]) => {
+            patient.orders.push(order)
+            return Promise.all([
+                patient.save(),
+                new Incident({
+                    action_route: 'api/orders/process/' + order._id,
+                    customer: order.ordered_by,
+                    priority: 2,
+                    status: 'new',
+                    timestamp: order.order_timestamp,
+                    incident_title: 'Equipment Order',
+                    info: 'New Equipment Order'
+                }).save()
+            ])
             .then(() => res.status(201).json({message: 'Order placed'}))
         })  
         .catch(error => res.status(500).json({error}))
@@ -103,9 +111,9 @@ services.post('/place-order', verifyToken(patient_secret_key), (req, res) => {
 
 
 services.post('/initiate-return/:order_id', verifyToken(patient_secret_key), (req, res) => {
-    Order.findOne({order_id: req.params.order_id}).exec()
+    Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
-        order.item_to_return = req.body.item_to_return
+        order.items_to_return = req.body.items_to_return
         order.return_requested = true // will be set to false once processed
         order.save()
         .then(() => res.status(201).json({message: 'Return request lodged'}))

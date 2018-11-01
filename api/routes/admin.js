@@ -117,7 +117,7 @@ admin.get('/delete-all', (req, res) => {
     Booking.collection.drop()
     // PhoneAndEmail.collection.drop()
     Order.collection.drop()
-    Product.collection.drop()
+    // Product.collection.drop()
     Session.collection.drop()
     res.status(200).json({message: 'Collections deleted'})
 })

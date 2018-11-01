@@ -54,6 +54,7 @@ export class EditEquipmentComponent implements OnInit {
     .subscribe(response => console.log(response), error => console.log(error));
   }
 
+  // add popup for confirmation
   onRemove(id) {
     return this.adminService.removeEquipment(id)
     .subscribe(response => console.log(response), error => console.log(error));

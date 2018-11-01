@@ -15,38 +15,36 @@
   <div class="form-group">
     <label for="physio_phone">Physio phone number</label><br>
     <input type="text" class="form-control" ngModel name="physio_phone" #physio_phone="ngModel" required>
-  </div> 
+  </div>
   <div class="form-group">
     <label for="physio_email">Physio email</label><br>
     <input type="text" class="form-control" [(ngModel)]="physio_email" name="physio_email" required>
-  </div> 
+  </div>
   <div class="form-group">
     <label for="physio_id">Physio id</label><br>
     <input type="text" class="form-control" [(ngModel)]="physio_id" name="physio_id" value="{{ physio_id }}" required>
-  </div> 
+  </div>
   <div class="form-group">
     <label for="password">Set initial password</label><br>
     <input type="text" class="form-control" ngModel name="password" #password="ngModel" required>
-  </div> 
+  </div>
   <div class="form-group">
     <label for="physio_name">Physio name</label><br>
     <input type="text" class="form-control" ngModel name="physio_name" #physio_name="ngModel" required>
-  </div> 
+  </div>
   <div class="form-group">
     <label for="physio_gender">Physio gender</label><br>
-    <select class="form-control" ngModel name="physio_gender" #physio_gender="ngModel" required>
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-    </select>  
-  </div> 
+    <input type="radio" class="form-control" ngModel name="physio_gender" value="male" #physio_gender="ngModel" required>Male
+    <input type="radio" class="form-control" ngModel name="physio_gender" value="female" #physio_gender="ngModel" required>Female
+  </div>
   <div class="form-group">
     <label for="physio_dob">Physio date of birth</label><br>
     <input type="date" class="form-control" ngModel name="physio_dob" #physio_dob="ngModel">
-  </div> 
+  </div>
   <div class="form-group">
     <label for="date_joined">Date joined</label><br>
     <input type="date" class="form-control" ngModel name="date_joined" #date_joined="ngModel">
-  </div> 
+  </div>
   <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="physioForm.invalid" >Submit</button>
 </form>
 
@@ -58,30 +56,28 @@
   <div class="form-group">
       <label for="consultant_email">Consultant email</label><br>
       <input type="text" class="form-control" [(ngModel)]="consultant_email" name="consultant_email" required>
-    </div> 
+    </div>
     <div class="form-group">
       <label for="consultant_id">Consultant id</label><br>
       <input type="text" class="form-control" [(ngModel)]="consultant_id" name="consultant_id" value="{{ consultant_id }}" required>
-    </div> 
+    </div>
     <div class="form-group">
       <label for="password">Set initial password</label><br>
       <input type="text" class="form-control" ngModel name="password" #password="ngModel" required>
-    </div> 
+    </div>
     <div class="form-group">
       <label for="consultant_name">Consultant name</label><br>
       <input type="text" class="form-control" ngModel name="consultant_name" #consultant_name="ngModel" required>
-    </div> 
+    </div>
     <div class="form-group">
       <label for="consultant_gender">Consultant gender</label><br>
-      <select class="form-control" ngModel name="consultant_gender" #consultant_gender="ngModel" required>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>  
-    </div> 
+      <input type="radio" class="form-control" ngModel name="consultant_gender" value="male" #consultant_gender="ngModel" required>Male
+      <input type="radio" class="form-control" ngModel name="consultant_gender" value="female" #consultant_gender="ngModel" required>Female
+    </div>
     <div class="form-group">
       <label for="date_joined">Date joined</label><br>
       <input type="date" class="form-control" ngModel name="date_joined" #date_joined="ngModel">
-    </div> 
+    </div>
     <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="consultantForm.invalid" >Submit</button>
 </form>
 

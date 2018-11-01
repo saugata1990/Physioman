@@ -44,21 +44,26 @@ orders.post('/process/:order_id', verifyToken(admin_secret_key), (req, res) => {
             Patient.findOne({patient_id: order.ordered_by}).exec()
         ])
         .then(([products, requester]) => {
-            // const otp = generateOTP()
-            // order.delivery_otp = otp
-            // sendSMSmock(requester.patient_phone, 'Your OTP is ' + otp + '. Please mention this OTP when asked')
+            let items_to_deliver = 'Requester: ' + requester.patient_name + ', Contact: ' + requester.patient_phone 
+                                    + ', Address: ' + requester.patient_address + '\n'
+            const otp = generateOTP()
+            order.delivery_otp = otp
+            sendSMSmock(requester.patient_phone, 'Your OTP is ' + otp + '. Please mention this OTP when asked')
             order.processed = true
             order.delivered = false
             products.map(
                 product => {
                     if(product.product_model in order.items_rented){
+                        items_to_deliver += 'Rent: Model ' + product.product_model + ', Name ' + product.product_name + '\n'
                         product.stock_for_rent--
                     }
                     else{
+                        items_to_deliver += 'Purchase: Model ' + product.product_model + ', Name ' + product.product_name + '\n'
                         product.stock_for_sale--
                     }
                 }
             )
+            sendSMSmock('owner phone number', items_to_deliver)
             return Promise.all([
                 products.map(product => product.save()),
                 order.save(),
@@ -76,18 +81,32 @@ orders.post('/process/:order_id', verifyToken(admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json({error}))
 })
 
+orders.get('/ordered-items/:order_id', verifyToken(admin_secret_key), (req, res) => {
+    Order.findOne({_id: req.params.order_id}, 'ordered_items').exec()
+    .then(ordered_items => {
+        res.status(200).json(ordered_items)
+    })
+    .catch(error => res.status(500).json({error}))
+})
 
-// orders.post('/resend-otp/:order_id', verifyToken(admin_secret_key), (req, res) => {
-//     Order.findOne({_id: req.params.order_id}).exec()
-//     .then(order => {
-//         const otp = generateOTP()
-//         order.delivery_otp = otp
-//         sendSMSmock(requester.patient_phone, 'Your OTP is ' + otp + '. Please mention this OTP when asked')
-//         order.save()
-//         .then(() => res.status(200).json({message: 'OTP resent'}))
-//     })
-//     .catch(error => res.status.json({error}))
-// })
+orders.get('/item-name/:id',  (req, res) => {
+    Product.findOne({_id: req.params.id}, 'product_name').exec()
+    .then(name => res.status(200).json(name))
+    .catch(error => res.status(500).json({error}))
+})
+
+
+orders.post('/resend-otp/:order_id', verifyToken(admin_secret_key), (req, res) => {
+    Order.findOne({_id: req.params.order_id}).exec()
+    .then(order => {
+        const otp = generateOTP()
+        order.delivery_otp = otp
+        sendSMSmock(requester.patient_phone, 'Your OTP is ' + otp + '. Please mention this OTP when asked')
+        order.save()
+        .then(() => res.status(200).json({message: 'OTP resent'}))
+    })
+    .catch(error => res.status.json({error}))
+})
 
 
 // otp to be mentioned by the customer to the delivery guy or to admin via phone
@@ -98,15 +117,20 @@ orders.post('/delivery/:order_id', verifyToken(admin_secret_key), (req, res) => 
         if(!order.items_rented.length){
             order.closed = true
         }
-        order.save()
-        .then(() => {
-            if(order.delivery_otp === req.body.otp){
-                res.status(201).json({message: 'Order delivery confirmed'})
-            }
-            else{
-                res.status(403).json({message: 'OTP mismatch'})
-            }
-        })
+        if(order.delivery_otp === req.body.otp){
+            return Promise.all([
+                order.save(),
+                Incident.findOne({action_route: 'api/orders/process/' + order._id}).exec()
+            ])
+            .then(([orderSaved, incident]) => {
+                incident.status = 'processed'
+                incident.save()
+                .then(() => res.status(201).json({message: 'Order delivery confirmed'}))
+            })
+        }
+        else{
+            res.status(403).json({message: 'OTP mismatch'})
+        }
     })
     .catch(error => res.status.json({error}))
 })
@@ -114,9 +138,12 @@ orders.post('/delivery/:order_id', verifyToken(admin_secret_key), (req, res) => 
 
 
 
-// to be written later
 orders.post('/process-return/:order_id', (req, res) => {
     Order.findOne({_id: req.params.order_id}).exec()
+    .then(order => {
+        // TBD
+    })
+    .catch(error => res.status(500).json({error}))
 })
 
 // this route is to be accessed once every few days or daily, depending on business

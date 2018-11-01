@@ -21,6 +21,7 @@ export class UserListComponent implements OnInit {
   }
 
   onView(userType, id) {
-    console.log(this.physios);
+    // option to edit
+    console.log(this.consultants);
   }
 }

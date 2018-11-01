@@ -21,6 +21,8 @@ export class AdminService {
   private delete_equipment_url = 'api/products/remove/';
   private update_inventory_url = 'api/products/add-to-inventory/';
   private offline_sales_url = 'api/orders/process-offline-order/';
+  private ordered_items_url = 'api/orders/ordered-items/';
+  private item_name_url = 'api/orders/item-name/';
 
   constructor(private http: HttpClient) { }
 
@@ -133,6 +135,16 @@ export class AdminService {
   processOfflineOrder(id, units_sold, units_rented, rented_units_returned) {
     const token = JSON.parse(localStorage.getItem('adminToken'));
     return this.http.post(this.offline_sales_url + id, {units_sold, units_rented, rented_units_returned}, {headers: this.setHeader(token)});
+  }
+
+  getOrderedItems(order_id) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.get(this.ordered_items_url + order_id, {headers: this.setHeader(token)});
+  }
+
+  getItemName(id) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.get(this.item_name_url + id, {headers: this.setHeader(token)});
   }
 
 }

@@ -15,6 +15,8 @@ const patientSchema = new Schema({
     patient_phone: String,
     patient_address: String,
     ailment_history: String,
+    bookings: [String],
+    orders: [String],
     assigned_physio: String,
     date_joined: Date,
     first_session_date: Date,

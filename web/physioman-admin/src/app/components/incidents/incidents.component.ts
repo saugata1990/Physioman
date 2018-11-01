@@ -12,12 +12,14 @@ import { Consultant } from '../../models/consultant';
 })
 export class IncidentsComponent implements OnInit {
 
-  private booking = new BookingRequest();
-  private incidents = new Array<Incident>();
-  private incident = new Incident();
+  private booking;
+  private incidents = new Array();
+  private incident;
   private consultants = new Array();
   private physios = new Array();
   private incidentStatus;
+  private incidentsLoaded = false;
+  // private incidentOpened = false;
 
   constructor(private adminService: AdminService, private router: Router) { }
 
@@ -27,6 +29,7 @@ export class IncidentsComponent implements OnInit {
   }
 
   loadIncidents() {
+    // this.incidentOpened = false;
     this.adminService.getIncidents(this.incidentStatus)
     .subscribe(
       response => {
@@ -46,7 +49,13 @@ export class IncidentsComponent implements OnInit {
     this.incidents.map(incident => {
       this.adminService.getCustomerName(incident.customer)
       .subscribe(
-        response2 => incident.customer_name = (response2 as any).patient_name,
+        response2 => {
+          incident.customer_name = (response2 as any).patient_name;
+          if (incident.incident_title === 'Equipment Order') {
+            this.getOrderedItems(incident);
+          }
+          this.incidentsLoaded = true;
+        },
         error => console.log(error)
       );
     });
@@ -64,7 +73,8 @@ export class IncidentsComponent implements OnInit {
         const request_id = incident.action_route.split('/').pop();
         this.adminService.getBookingRequestData(request_id)
         .subscribe(response => {
-          this.booking.populate(response);
+          this.booking = (response as any).request;
+          // this.incidentOpened = true;
           $(document).ready(() => {
             // @ts-ignore
             $('#assignConsultant').modal('show');
@@ -89,7 +99,7 @@ export class IncidentsComponent implements OnInit {
         const request_id = incident.action_route.split('/').pop();
         this.adminService.getBookingRequestData(request_id)
         .subscribe(response => {
-          this.booking.populate(response);
+          this.booking = (response as any).booking;
           $(document).ready(() => {
             // @ts-ignore
             $('#assignPhysio').modal('show');
@@ -103,13 +113,14 @@ export class IncidentsComponent implements OnInit {
   }
 
   handleIntermediateIncident (incident, id) {
-    console.log('intermediate state to be handled');
+    //
   }
 
   onAssignConsultant(incident, frm) {
     this.adminService.assignConsultant(incident.action_route, frm.value.assigned_consultant)
     .subscribe(response => {
       console.log(response);
+      // this.incidentOpened = false;
       $(document).ready(() => {
         // @ts-ignore
         $('#assignConsultant').modal('hide');
@@ -122,12 +133,28 @@ export class IncidentsComponent implements OnInit {
     this.adminService.assignPhysio(incident.action_route, frm.value.assigned_physio)
     .subscribe(response => {
       console.log(response);
+      // this.incidentOpened = false;
       $(document).ready(() => {
         // @ts-ignore
         $('#assignPhysio').modal('hide');
       });
       this.reloadIncidents();
     }, error => console.log(error));
+  }
+
+  getOrderedItems(incident) {
+    const order_id = incident.action_route.split('/').pop();
+    this.adminService.getOrderedItems(order_id)
+    .subscribe(response => {
+      incident.ordered_items_ids = (response as any).ordered_items;
+      incident.ordered_items = new Array();
+      incident.ordered_items_ids.map(item_id => {
+        this.adminService.getItemName(item_id)
+        .subscribe(response2 => {
+          incident.ordered_items.push((response2 as any).product_name);
+        });
+      });
+    });
   }
 
 }

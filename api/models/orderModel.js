@@ -15,11 +15,10 @@ const orderSchema = new Schema({
     payment_mode: String, // either online or cash on delivery
     order_timestamp: Date,
     processed: Boolean,
-    // delivery_otp: String,
+    delivery_otp: String,
     delivered: Boolean,
-    item_to_return: String,
+    items_to_return: [String],
     equipment_return_requested: Boolean, // for rented items
-    // returned: Boolean,
     closed: Boolean,
     cancellation_requested: Boolean,
     reason_for_cancellation: String,

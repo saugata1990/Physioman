@@ -7,8 +7,10 @@ export class Incident {
     status: string;
     timestamp: Date;
     incident_title: string;
+    ordered_items_ids: [string];
+    ordered_items: [string];
 
-    constructor() {}
+    constructor() {  }
 
     populate(param) {
         const incident = param.incident;

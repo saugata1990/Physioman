@@ -15,7 +15,7 @@ const { patient_secret_key, admin_secret_key, consultant_secret_key } = require(
 patients.get('/',verifyToken(admin_secret_key), (req, res) => {   
     Patient.find(req.query).exec()
     .then((patients) => {
-        res.status(200).json({patients: patients})
+        res.status(200).json({patients})
     })
     .catch(error => res.status(500).json({error}))
 })
