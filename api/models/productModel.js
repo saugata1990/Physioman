@@ -7,7 +7,7 @@ mongoose.Promise = global.Promise
 const db = mongoose.createConnection(url)
 
 const productSchema = new Schema({
-    product_model: {type: String, index:true, searchable: true}, //unique
+    product_model: {type: String, index:true, searchable: true}, 
     product_name: {type: String, index:true, searchable: true},
     product_manufacturer: {type: String, index:true, searchable: true}, 
     product_category: {type: String, index:true, searchable: true},

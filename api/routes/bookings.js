@@ -150,9 +150,6 @@ bookings.post('/assign-consultant/:request_id', verifyToken(admin_secret_key), (
         Incident.findOne({action_route: 'api/bookings/assign-consultant/' + req.params.request_id}).exec()
     ])
     .then(([request, consultant, incident]) => {
-        // console.log(request)
-        // console.log(consultant)
-        // console.log(incident)
         request.serviced_at = new Date()
         request.serviced_by = req.authData.admin
         consultant.pending_consultations++

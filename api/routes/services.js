@@ -90,7 +90,7 @@ services.post('/place-order', verifyToken(patient_secret_key), (req, res) => {
             Patient.findOne({patient_id: req.authData.patient}).exec()
         ])
         .then(([orderSaved, patient]) => {
-            patient.orders.push(order)
+            patient.orders.push(order._id)
             return Promise.all([
                 patient.save(),
                 new Incident({
@@ -107,6 +107,11 @@ services.post('/place-order', verifyToken(patient_secret_key), (req, res) => {
         })  
         .catch(error => res.status(500).json({error}))
     }
+})
+
+
+services.post('/cancel-order/:order_id', verifyToken(patient_secret_key), (req, res) => {
+    //
 })
 
 

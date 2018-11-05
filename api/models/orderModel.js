@@ -19,6 +19,7 @@ const orderSchema = new Schema({
     delivered: Boolean,
     items_to_return: [String],
     equipment_return_requested: Boolean, // for rented items
+    rent_payable: Number,
     closed: Boolean,
     cancellation_requested: Boolean,
     reason_for_cancellation: String,

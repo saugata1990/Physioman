@@ -12,6 +12,7 @@ const patientSchema = new Schema({
     patient_gender: String,
     patient_dob: Date, 
     patient_email: String,
+    email_verified: Boolean,
     patient_phone: String,
     patient_address: String,
     ailment_history: String,

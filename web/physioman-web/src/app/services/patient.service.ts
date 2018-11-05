@@ -21,6 +21,8 @@ export class PatientService {
   private order_url = 'api/services/place-order';
   private order_status_url = 'api/orders/open';
   private eqp_details_url = 'api/products/details/';
+  private send_otp_url = 'api/patients/send-verification-code/';
+  private verify_otp_url = 'api/patients/verify-otp/';
 
 
   constructor(private http: HttpClient, private store: Store<any>) { }
@@ -112,7 +114,16 @@ export class PatientService {
   getEquipmentDetails(id) {
     const token = JSON.parse(localStorage.getItem('patientToken'));
     return this.http.get(this.eqp_details_url + id, {headers: this.setHeader(token)});
+  }
 
+  sendOTP(number) {
+    const token = JSON.parse(localStorage.getItem('patientToken'));
+    return this.http.post(this.send_otp_url + number, {});
+  }
+
+  verifyOTP(number, otp) {
+    const token = JSON.parse(localStorage.getItem('patientToken'));
+    return this.http.post(this.verify_otp_url + number, {otp});
   }
 
   getState() {

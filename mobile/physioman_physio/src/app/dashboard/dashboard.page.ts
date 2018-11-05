@@ -20,6 +20,8 @@ export class DashboardPage implements OnInit {
   private token;
   private otherAccount;
   private alternateAcct;
+  private username;
+  private password;
 
   constructor(
     private apiService: ApiService,
@@ -112,6 +114,7 @@ export class DashboardPage implements OnInit {
     .then(response => this.otherAccount = response);
   }
 
+  
 
   logout(switchAcct = false) {
     if (this.loggedInAs === 'consultant') {
@@ -123,8 +126,9 @@ export class DashboardPage implements OnInit {
     if (!switchAcct) {
       this.storage.remove('username');
       this.storage.remove('password');
+    } else if (switchAcct) {
+      //
     }
-    this.router.navigateByUrl('/login');
   }
 
 }

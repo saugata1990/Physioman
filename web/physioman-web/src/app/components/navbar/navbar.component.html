@@ -1,39 +1,38 @@
-<nav class="navbar navbar-expand-lg shadow navbar-light sticky-top">
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark sticky-top">
 
-  <!-- <div class="container-fluid"> -->
-  <a class="navbar-brand text-white" routerLink="/">PHYSIOMAN</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" 
+
+  <a class="navbar-brand" routerLink="/">PHYSIOMAN</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <!-- </div> -->
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item active">
-        <a class="nav-link text-white" routerLink="/">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link" routerLink="/">Home <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" routerLink="/about-us">About</a>
+        <a class="nav-link" routerLink="/about-us">About</a>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link  text-white dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" 
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false">
           Services & Sales
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a *ngIf="!loggedIn" class="dropdown-item text-white" routerLink="/login">Login/Signup</a>
-          <a *ngIf="loggedIn" class="dropdown-item text-white" (click)="onLogout()">Log Out</a>
-          <a *ngIf="loggedIn" class="dropdown-item text-white" routerLink="/my-profile" >My Profile</a>
-          <a *ngIf="loggedIn&&hasBooking" class="dropdown-item text-white" routerLink="/booking-status">My Booking Status</a>
-          <a *ngIf="loggedIn&&hasOrdered" class="dropdown-item text-white" routerLink="/order-status">My Order Status</a>
+          <a *ngIf="!loggedIn" class="dropdown-item" routerLink="/login">Login/Signup</a>
+          <a *ngIf="loggedIn" class="dropdown-item" (click)="onLogout()">Log Out</a>
+          <a *ngIf="loggedIn" class="dropdown-item" routerLink="/my-profile" >My Profile</a>
+          <a *ngIf="loggedIn&&hasBooking" class="dropdown-item" routerLink="/booking-status">My Booking Status</a>
+          <a *ngIf="loggedIn&&hasOrdered" class="dropdown-item" routerLink="/order-status">My Order Status</a>
           <div class="dropdown-divider"></div>
-          <a *ngIf="loggedIn&&!hasBooking" class="dropdown-item text-white" routerLink="/new-booking">Book an appointment</a>
-          <a class="dropdown-item text-white" routerLink="/shop">Medical Equipment</a>
+          <a *ngIf="loggedIn&&!hasBooking" class="dropdown-item" routerLink="/new-booking">Book an appointment</a>
+          <a class="dropdown-item" routerLink="/shop">Medical Equipment</a>
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" routerLink="/contact-us">Contact Us</a>
+        <a class="nav-link" routerLink="/contact-us">Contact Us</a>
       </li>
     </ul>
   </div>

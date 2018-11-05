@@ -6,11 +6,13 @@ const Consultant = require('../models/consultantModel')
 const Booking = require('../models/bookingModel')
 const Request = require('../models/requestModel')
 const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
-const {verifyToken, phoneExists, emailExists} = require('../utils/helper')
+const Verification = require('../models/phoneVerification')
+const {verifyToken, generateOTP, sendSMSmock, phoneExists, emailExists} = require('../utils/helper')
 const bcrypt = require('bcrypt')
 const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
 const { patient_secret_key, admin_secret_key, consultant_secret_key } = require('../config/keys')
+
 
 patients.get('/',verifyToken(admin_secret_key), (req, res) => {   
     Patient.find(req.query).exec()
@@ -62,6 +64,7 @@ patients.post('/signup', (req, res) => {
                     password_hash: hash,
                     patient_name: req.body.patient_name,
                     patient_email: req.body.patient_email || null,
+                    email_verified: false,
                     patient_gender: req.body.patient_gender,
                     patient_dob: date.parse(req.body.patient_dob.toString(), 'YYYY-MM-DD') || null,
                     date_joined: new Date(),
@@ -74,7 +77,7 @@ patients.post('/signup', (req, res) => {
                     registered_email: req.body.patient_email
                 }).save()
             ])
-            .then(() => res.status(201).json({message: 'Patient created in database'}))    
+            .then(() => res.status(201).json({message: 'Patient created in database'})) 
         }
     })
     .catch(error => res.status(500).json({error}))
@@ -101,6 +104,56 @@ patients.post('/login', (req, res) => {
         }
     })
     .catch(error => res.status(500).json({error}))
+})
+
+patients.post('/send-verification-code/:phone_no', (req, res) => {
+   Verification.findOne({phone_no: req.params.phone_no}).exec()
+   .then(verification => {
+       if(verification){
+           verification.otp = generateOTP()
+           verification.save()
+           .then(() => {
+                sendSMSmock(verification.phone_no, verification.otp)
+                res.status(201).json({message: 'OTP resent'})
+           })
+       }
+       else{
+            new Verification({
+                phone_no: req.params.phone_no,
+                otp: generateOTP()
+            }).save()
+            .then((verification) => {
+                console.log(verification)
+                sendSMSmock(verification.phone_no, verification.otp)
+                res.status(201).json({message: 'OTP sent'})
+            })
+       }
+   })
+   .catch(error => res.status(500).json({error}))
+})
+
+
+patients.post('/verify-otp/:phone_no', (req, res) => {
+    Verification.findOneAndDelete({phone_no: req.params.phone_no}).exec()
+    .then(verification => {
+        if(!verification){
+            res.status(403).json({message: 'No OTP has been sent for this number'})
+        }
+        else{
+            if(req.body.otp === verification.otp){
+                res.status(201).json({message: 'Phone number verified'})
+            }
+            else{
+                res.status(403).json({message: 'Invalid OTP entered'})
+            }
+        }
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
+
+patients.post('/verify-email', verifyToken(patient_secret_key), (req, res) => {
+    //
 })
 
 

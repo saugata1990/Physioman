@@ -19,7 +19,7 @@
     <ion-content padding>
       <ion-list>
         <ion-menu-toggle>
-          <ion-item *ngIf="otherAccount">Switch to {{ alternateAcct }} account</ion-item>
+          <ion-item *ngIf="otherAccount" (click)="logout(true)">Switch to {{ alternateAcct }} account</ion-item>
           <ion-item (click)="logout()">Log Out</ion-item>
         </ion-menu-toggle>
       </ion-list>

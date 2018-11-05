@@ -1,5 +1,5 @@
 <h1>Login</h1>
-<form class="container jumbotron bg-transparent text-white" #frm="ngForm" (ngSubmit)="onLogin(frm)">
+<form class="container jumbotron bg-dark text-white text-capitalize" #frm="ngForm" (ngSubmit)="onLogin(frm)">
   <div class="form-group">
     <label for="phone">Registered Phone Number</label>
     <input type="tel" minlength="10" maxlength="10" class="form-control" id="phone" name="phone" ngModel #phone="ngModel" required>
@@ -8,6 +8,6 @@
     <label for="password">Password</label>
     <input type="password" minlength="6" class="form-control" id="password" name="password" ngModel #password="ngModel" required>
   </div>
-  <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="frm.invalid">Login</button> 
-  <button type="button" class="btn btn-success btn-lg btn-space" routerLink="/signup">New User ? Sign Up</button> 
+  <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="frm.invalid">Login</button>
+  <button type="button" class="btn btn-success btn-lg btn-space" routerLink="/signup">Create Account</button>
 </form>

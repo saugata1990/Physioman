@@ -5,55 +5,55 @@
         <li data-target="#slides" data-slide-to="1"></li>
         <!-- <li data-target="#slides" data-slide-to="2"></li> -->
     </ul>
-    <div class="carousel-inner" >
+    <!-- <div class="carousel-inner" >
         <div class="carousel-item active">
             <img src="../../../assets/img/carousel1.jpg">
             <div class="carousel-caption">
-                <button *ngIf="loggedIn&&!hasBooking" type="button" class="btn btn-outline-light btn-lg carousel-btn" routerLink="/new-booking">Book an appointment</button>
-                <button *ngIf="!loggedIn" type="button" class="btn btn-outline-light btn-lg carousel-btn" routerLink="/login">Login/Signup</button>
-                <button *ngIf="loggedIn&&hasBooking" type="button" class="btn btn-outline-light btn-lg carousel-btn" routerLink="/booking-status">View booking status</button>
-                <button type="button" class="btn btn-outline-light btn-lg carousel-btn" data-toggle="modal" data-target="#how2book">Learn more...</button>
+                <button *ngIf="loggedIn&&!hasBooking" type="button" class="btn btn-outline-light btn-lg  carousel-btn" routerLink="/new-booking">Book an appointment</button>
+                <button *ngIf="!loggedIn" type="button" class="btn btn-outline-light btn-lg  carousel-btn" routerLink="/login">Login/Signup</button>
+                <button *ngIf="loggedIn&&hasBooking" type="button" class="btn btn-outline-light btn-lg  carousel-btn" routerLink="/booking-status">View booking status</button>
+                <button type="button" class="btn btn-outline-light btn-lg  carousel-btn" data-toggle="modal" data-target="#how2book">Learn more...</button>
             </div>
         </div>
         <div class="carousel-item">
             <img src="../../../assets/img/carousel2.jpg">
             <div class="carousel-caption">
-                <button *ngIf="!hasOrdered" type="button" class="btn btn-outline-light btn-lg carousel-btn" routerLink="/shop">Buy/Rent Equipment</button>
+                <button *ngIf="!hasOrdered" type="button" class="btn btn-outline-light btn-lg btn-space carousel-btn" routerLink="/shop">Buy/Rent Equipment</button>
                 <button *ngIf="loggedIn&&hasOrdered" type="button" class="btn btn-outline-light btn-lg carousel-btn" routerLink="/order-status">View order status</button>
                 <button type="button" class="btn btn-outline-light btn-lg carousel-btn" data-toggle="modal" data-target="#how2order">Learn more...</button>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 
-<div class="container-fluid jumbotron bg-transparent text-white">
+<div class="container-fluid jumbotron bg-transparent">
     <h2>Why we recommend Booking Online</h2>
     <hr>
     <div #why>
-        <h5>
-            <p>
-                We provide our services both online and offline. However, by signing up online, you get several advantages.
-                First of all, you can login and check out our various services and upon booking/purchasing online, you become 
-                our premium customer, thereby becoming eligible for various offers that we rollout from time to time. Also, you can 
-                browse our site and search for the medical equipment you need, and you can also choose to subscribe to our blog, 
-                which we recommend. Having a mode of communication online would be a huge advantage over just communicating via phone.
-            </p>
-            <p>
-                For a seamless experience, we recommend using our mobile app which is available for both android/ios.<br>
-            </p>
-        </h5>
+
+      <p>
+          We provide our services both online and offline. However, by signing up online, you get several advantages.
+          First of all, you can login and check out our various services and upon booking/purchasing online, you become
+          our premium customer, thereby becoming eligible for various offers that we rollout from time to time. Also, you can
+          browse our site and search for the medical equipment you need, and you can also choose to subscribe to our blog,
+          which we recommend. Having a mode of communication online would be a huge advantage over just communicating via phone.
+      </p>
+      <p>
+          For a seamless experience, we recommend using our mobile app which is available for both android/ios.<br>
+      </p>
+
     </div>
     <h2>Looking to buy/rent Medical Equipment? Look no further</h2>
     <hr>
     <div #equipment>
-        <h5>
-            <p>
-                Apart from providing patients with our top notch physiotherapy service, we also offer various medical equipment
-                pertaining to, but not limited to physiotherapy. You can browse our collection of medical equipment up for sale/rent,
-                or you can search for a specific equipment from our collection.<a routerLink="/shop" style="color:orange">
-                Click here to visit the marketplace.</a>
-            </p>
-        </h5>
+
+      <p>
+          Apart from providing patients with our top notch physiotherapy service, we also offer various medical equipment
+          pertaining to, but not limited to physiotherapy. You can browse our collection of medical equipment up for sale/rent,
+          or you can search for a specific equipment from our collection.<a routerLink="/shop" style="color:blue">
+          Click here to visit the marketplace.</a>
+      </p>
+
     </div>
 </div>
 
@@ -73,22 +73,22 @@
                                 It is assumed that you have already signed up on Physioman via the mobile app or through this website.
                                 Login to your profile using your registered mobile number and the password you have set. To book a physio,
                                 fill out the form describing your current ailment and choose payment mode(cash or online). Note that discounts
-                                and other offers are available only to our customers who pay online. Once the request is lodged, you will get a 
-                                confirmation as well as an OTP on your mobile no. through SMS, and also in your email inbox. Keep that OTP secure 
+                                and other offers are available only to our customers who pay online. Once the request is lodged, you will get a
+                                confirmation as well as an OTP on your mobile no. through SMS, and also in your email inbox. Keep that OTP secure
                                 and do not share with anyone. Only share it with our representative when requested.
                             </p>
                             <p>
-                                Our representative will get in touch with you at the earliest either through phone or by visiting your home. 
-                                The representative will decide your treatment plan and discuss the same with you. We will then assign a 
+                                Our representative will get in touch with you at the earliest either through phone or by visiting your home.
+                                The representative will decide your treatment plan and discuss the same with you. We will then assign a
                                 physiotherapist to you based on your needs and your treatment plan. Your sessions will start shortly thereafter.
                             </p>
                             <p>
                                 Before each session, your physio will send you an OTP for the session which you must share with your physio
-                                once he/she is there for the session, for the session to start. After the session is over, you can log into 
-                                your account and share your feedback on the session. Your feedback will help us know how we are doing as a 
+                                once he/she is there for the session, for the session to start. After the session is over, you can log into
+                                your account and share your feedback on the session. Your feedback will help us know how we are doing as a
                                 service, and what are the potential areas of improvement.
                             </p>
-                        </h5> 
+                        </h5>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Got it</button>
@@ -106,8 +106,8 @@
             </div>
             <div class="modal-body">
                 <h5>
-                    here we will have the instructions for ordering online  
-                </h5> 
+                    here we will have the instructions for ordering online
+                </h5>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Got it</button>
@@ -115,5 +115,5 @@
         </div>
     </div>
 </div>
-    
+
 

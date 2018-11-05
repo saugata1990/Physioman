@@ -1,19 +1,19 @@
 <h1>Signup</h1>
-<form class="container jumbotron bg-transparent text-white text-capitalize" #frm="ngForm" (ngSubmit)="onSignup(frm)">
+<form class="container jumbotron bg-dark text-white text-capitalize" #frm="ngForm" (ngSubmit)="onSignup(frm)">
   <div class="form-group">
     <label for="phone"><h5>Phone Number to register with</h5></label>
-    <input type="tel" required minlength="10" maxlength="10" class="form-control" 
-      ngModel id ="phone" name="phone" pattern="[0-9]*" #phone="ngModel">
+    <input type="tel" required minlength="10" maxlength="10" class="form-control"
+      ngModel id="phone" name="phone" pattern="[0-9]*" #phone="ngModel">
       <div class="alert alert-danger" *ngIf="phone.invalid && phone.touched else verify_phone">
         Phone number must contain 10 digits
       </div>
       <ng-template #verify_phone>
-        <! execute code to check phone availability and show message>
+        <button *ngIf="phone.valid" type="button" class="btn btn-danger" (click)="sendVerificationCode(frm)">Verify phone</button>
       </ng-template>
   </div>
   <div class="form-group">
     <label for="password"><h5>Set your password</h5></label>
-    <input type="password" required minlength="6" class="form-control" 
+    <input type="password" required minlength="6" class="form-control"
       ngModel id ="password" name="password" #password="ngModel">
   </div>
   <div class="form-group">
@@ -22,9 +22,9 @@
   </div>
   <div class="form-group">
     <label for="email"><h5>Enter your Email id</h5></label>
-    <input type="email" class="form-control" ngModel id ="email" name="email" 
+    <input type="email" class="form-control" ngModel id ="email" name="email"
       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" #email="ngModel">
-    <div class="alert alert-danger" *ngIf="email.invalid && email.touched else verify_email">
+    <div class="alert alert-danger" *ngIf="email.invalid && email.touched">
       Invalid email format
     </div>
     <ng-template #verify_email>
@@ -32,15 +32,21 @@
     </ng-template>
   </div>
   <div class="form-group">
-    <label for="gender"><h5>Gender</h5></label><br>
-    <select class="form-control" ngModel id ="gender" name="gender" #gender="ngModel">
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-    </select>
+    <label for="gender"><h5>Gender&emsp;</h5></label>
+    <div class="form-check-inline">
+      <label class="form-check-label" for="radio1">
+        <input type="radio" id="radio1" class="form-check-input" ngModel name="gender" value="male" #gender="ngModel" required>Male
+      </label>
+    </div>
+    <div class="form-check-inline">
+      <label class="form-check-label" for="radio2">
+        <input type="radio"  id="radio2" class="form-check-input" ngModel name="gender" value="female" #gender="ngModel" required>Female
+      </label>
+    </div>
   </div>
   <div class="form-group">
     <label for="dob"><h5>Date of birth</h5></label>
-    <input type="date" class="form-control" ngModel id ="dob" name="dob" #dob="ngModel">
+    <input type="date" class="form-control" ngModel id="dob" name="dob" #dob="ngModel">
   </div>
   <div class="form-group">
     <label for="address"><h5>Address</h5></label>
@@ -53,8 +59,23 @@
   <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="frm.invalid" >Submit</button>
   <div *ngIf="signedUp" class="container alert alert-success">
     Signed Up successfully!
-  </div>  
+  </div>
 </form>
 
+<div class="modal container" id="verification" data-backdrop="static" data-keyboard=false>
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Enter OTP</h5>
+      </div>
+      <div class="modal-body">
+        <input type="text" [(ngModel)]="otp" name="otp">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="onOTPEntered(otp)">Enter</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
