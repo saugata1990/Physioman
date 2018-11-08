@@ -1,16 +1,20 @@
-<h1><strong>Medical Equipment</strong></h1>
-<hr>
-<div class="container-fluid jumbotron bg-transparent text-white">
-  <button class="fas fa-shopping-cart btn btn-lg btn-danger btn-space-bottom" 
-          style="float:right;" (click)="viewCart()">Cart</button>
+
+<div class="container-fluid fixed">
+  <h1><strong>Medical Equipment</strong></h1>
+  <button class="fas fa-shopping-cart btn btn-lg btn-danger btn-space-bottom"
+          (click)="viewCart()">Cart</button>
   <!-- Search bar here -->
   <form #searchform="ngForm">
     <div class="form-group has-search container">
-      <input type="text" class="form-control" ngModel name="search" #search="ngModel" placeholder="search..." 
+      <input type="text" class="form-control" ngModel name="search" #search="ngModel" placeholder="search..."
             (change)="onSearch(searchform)">
     </div>
   </form>
-  
+</div>
+
+
+<div class="container-fluid jumbotron bg-transparent">
+
   <ul *ngFor="let item of loaded_list">
     <div class="container jumbotron bg-transparent">
       <div class="item-description">
@@ -24,7 +28,7 @@
         <h5>Rent Price: {{ item.rent_price }}</h5><br>
         <button class="fas fa-cart-plus btn btn-warning btn-lg btn-space" type="button" (click)="addToCart(item, 0)">Purchase</button>
         <button class="fas fa-cart-plus btn btn-success btn-lg btn-space" type="button" (click)="addToCart(item, 1)">Rent</button><br>
-        <button class="fas fa-shopping-cart btn btn-danger btn-lg btn-space-top" type="button" (click)="viewCart()">Go to Cart</button>
+        <!-- <button class="fas fa-shopping-cart btn btn-danger btn-lg btn-space-top" type="button" (click)="viewCart()">Go to Cart</button> -->
       </div>
       <div class="item-photo">
         <img class="rounded" [src]="item.imagePath" width="250" height="250">

@@ -75,9 +75,6 @@ bookings.get('/status', verifyToken(patient_secret_key), (req, res) => {
 
 
 bookings.get('/requests', verifyToken(admin_secret_key), (req, res) => {   
-    // if(req.query){
-    //     req.query.ready_for_booking = JSON.parse(req.query.ready_for_booking)
-    // }
     Request.find(req.query).exec()
     .then((requests) => {
         res.status(200).json({requests})
@@ -138,7 +135,7 @@ bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json(error))
 })
 
-bookings.put('/extend', verifyToken(consultant_secret_key), (req, res) => {
+bookings.put('/extend', verifyToken(physio_secret_key), (req, res) => {
     //
 })
 

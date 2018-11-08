@@ -15,13 +15,14 @@ orders.get('/', (req, res) => {
 
 orders.get('/open', verifyToken(patient_secret_key), (req, res) => {
     if(req.authData){
-        Order.findOne({ordered_by: req.authData.patient, closed: false}).exec()
-        .then(order => {
-            if(!order){
+        Order.find({ordered_by: req.authData.patient, closed: false}).exec()
+        .then(orders => {
+            if(!orders.length){
                 res.status(404).json({message: 'No active orders for the user'})
             }
             else{
-                res.status(200).json({order})
+                console.log(orders)
+                res.status(200).json({orders})
             }
         })
         .catch(error => res.status(500).json({error}))

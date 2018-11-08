@@ -12,7 +12,6 @@ const jwt = require('jsonwebtoken')
 const date = require('date-and-time')
 const { patient_secret_key, admin_secret_key } = require('../config/keys')
 
-// this file will contain routes for booking, payments, sms, mails
 
 services.use('/payments', payments)
 

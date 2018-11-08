@@ -1,5 +1,5 @@
 <div class="modal container" id="cart" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title">Checkout</h3>
@@ -27,7 +27,7 @@
         </ul>
         <hr>
         <h5>Total price: {{ total_price }}</h5><br>
-        
+
         <form class="form" #orderForm="ngForm" (ngSubmit)="onOrderPlaced()">
           <div class="form-group">
             <label for="paymentMode"><h5>Payment mode</h5></label>

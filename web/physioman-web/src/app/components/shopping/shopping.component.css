@@ -13,3 +13,7 @@
 .item-photo {
     flex: 1;
 }
+
+.fixed {
+  position: fixed;
+}
