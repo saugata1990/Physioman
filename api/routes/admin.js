@@ -12,6 +12,7 @@ const Incident = require('../models/incidentModel')
 const Session = require('../models/sessionModel')
 const Order = require('../models/orderModel')
 const Product = require('../models/productModel')
+const Dispatch = require('../models/dispatchModel')
 const Admin = require('../models/adminModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -118,7 +119,9 @@ admin.get('/delete-all', (req, res) => {
     // PhoneAndEmail.collection.drop()
     Order.collection.drop()
     // Product.collection.drop()
+    Dispatch.collection.drop()
     Session.collection.drop()
+
     res.status(200).json({message: 'Collections deleted'})
 })
 

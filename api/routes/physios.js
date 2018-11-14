@@ -132,10 +132,11 @@ physios.delete('/:id', (req, res) => {
     // TODO
 })
 
+
 physios.put('/terminate/:id', (req, res) => {
     return Promise.all([
-        Physio.findOne({physio_id: req.params.id}).exec(),
-        Consultant.findOne({consultant_id: req.params.id}).exec()
+        Physio.findOne({_id: req.params.id}).exec(),
+        Consultant.findOne({_id: req.params.id}).exec()
     ])
     .then(([physio, consultant]) => {
         physio.terminated = true
@@ -164,7 +165,7 @@ physios.post('/login', (req, res) => {
                     })
                 }
                 else{
-                    res.status(403).json({message: 'Invalid password'})
+                    res.status(403).json({message: 'Incorrect password'})
                 }
             })
         }

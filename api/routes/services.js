@@ -109,18 +109,41 @@ services.post('/place-order', verifyToken(patient_secret_key), (req, res) => {
 })
 
 
-services.post('/cancel-order/:order_id', verifyToken(patient_secret_key), (req, res) => {
-    //
+services.post('/order-cancel-request/:order_id', verifyToken(patient_secret_key), (req, res) => {
+    Order.findOne({_id: req.params.order_id}).exec()
+    .then(order => {
+        order.cancellation_requested = true
+        order.reason_for_cancellation = req.body.reason_for_cancellation
+        return Promise.all([
+            order.save(),
+            new Incident({
+                action_route: 'api/orders/cancel-order/' + order._id,
+                customer: order.ordered_by,
+                priority: 2,
+                status: 'new',
+                timestamp: new Date(),
+                incident_title: 'Order Cancellation',
+                info: 'Customer wrote: ' + req.body.reason_for_cancellation
+            }).save()
+        ])
+        .then(() => res.status(201).json({message: 'Order cancellation request placed'}))
+    })
+    .catch(error => res.status(500).json({error}))
 })
 
 
 services.post('/initiate-return/:order_id', verifyToken(patient_secret_key), (req, res) => {
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
-        order.items_to_return = req.body.items_to_return
-        order.return_requested = true // will be set to false once processed
-        order.save()
-        .then(() => res.status(201).json({message: 'Return request lodged'}))
+        new Incident({
+            action_route: 'api/orders/process-return/' + order._id + '?products=' + req.query.products, 
+            customer: order.ordered_by,
+            priority: 1,
+            status: 'new',
+            timestamp: new Date(),
+            incident_title: 'Rented Equipment Return'
+        }).save()
+        .then(() => res.status(201).json({message: 'Return request placed'}))
     })
     .catch(error => res.status(500).json({error}))
 })

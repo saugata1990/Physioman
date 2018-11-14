@@ -4,6 +4,7 @@ const Order = require('../models/orderModel')
 const Patient = require('../models/patientModel')
 const Product = require('../models/productModel')
 const Incident = require('../models/incidentModel')
+const Dispatch = require('../models/dispatchModel')
 const date = require('date-and-time')
 const {verifyToken, generateOTP, sendSMSmock} = require('../utils/helper')
 const { patient_secret_key, admin_secret_key } = require('../config/keys')
@@ -21,7 +22,6 @@ orders.get('/open', verifyToken(patient_secret_key), (req, res) => {
                 res.status(404).json({message: 'No active orders for the user'})
             }
             else{
-                console.log(orders)
                 res.status(200).json({orders})
             }
         })
@@ -38,6 +38,9 @@ orders.get('/:order_id', verifyToken(patient_secret_key), (req, res) => {
 
 // to be processed by admin
 orders.post('/process/:order_id', verifyToken(admin_secret_key), (req, res) => {
+    const products_to_ship = new Array()
+    let amount = 0
+    let product = null
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
         return Promise.all([
@@ -52,26 +55,43 @@ orders.post('/process/:order_id', verifyToken(admin_secret_key), (req, res) => {
             sendSMSmock(requester.patient_phone, 'Your OTP is ' + otp + '. Please mention this OTP when asked')
             order.processed = true
             order.delivered = false
-            products.map(
-                product => {
-                    if(product.product_model in order.items_rented){
+            order.ordered_items.map(
+                item => {
+                    if(order.items_rented.includes(item)){
+                        products_to_ship.push({product: item, sale_type: 'Rent'})
+                        product = products.find(p => p._id == item)
+                        if(order.payment_mode === 'cash'){
+                            amount += product.rent_price
+                        }
                         items_to_deliver += 'Rent: Model ' + product.product_model + ', Name ' + product.product_name + '\n'
                         product.stock_for_rent--
                     }
                     else{
+                        products_to_ship.push({product: item, sale_type: 'Purchase'})
+                        product = products.find(p => p._id == item)
+                        if(order.payment_mode === 'cash'){
+                            amount += product.selling_price
+                        }
                         items_to_deliver += 'Purchase: Model ' + product.product_model + ', Name ' + product.product_name + '\n'
                         product.stock_for_sale--
                     }
                 }
             )
-            sendSMSmock('owner phone number', items_to_deliver)
+            items_to_deliver += 'Amount to collect: ' + amount
+            sendSMSmock('logistics phone number', items_to_deliver)
             return Promise.all([
                 products.map(product => product.save()),
                 order.save(),
-                Incident.findOne({action_route: 'api/orders/process/' + order._id}).exec()
+                Incident.findOne({action_route: 'api/orders/process/' + order._id}).exec(),
+                new Dispatch({
+                    order: order._id,
+                    dispatch_type: 'Delivery',
+                    products_to_deliver: products_to_ship,
+                    amount_to_collect: amount,
+                    done: false
+                }).save()
             ])
-            .then(([products_saved, order_saved, incident]) => {
-                console.log(incident)
+            .then(([products_saved, order_saved, incident, dispatch_saved]) => {
                 incident.status = 'intermediate'
                 incident.info = 'Awaiting customer confirmation'
                 incident.save()
@@ -97,6 +117,7 @@ orders.get('/item-name/:id',  (req, res) => {
 })
 
 
+// this route is to be accessed by the delivery guy
 orders.post('/resend-otp/:order_id', verifyToken(admin_secret_key), (req, res) => {
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
@@ -110,42 +131,78 @@ orders.post('/resend-otp/:order_id', verifyToken(admin_secret_key), (req, res) =
 })
 
 
-// otp to be mentioned by the customer to the delivery guy or to admin via phone
-orders.post('/delivery/:order_id', verifyToken(admin_secret_key), (req, res) => {
+// orders.post('/delivery/:order_id', verifyToken(admin_secret_key), (req, res) => {
+//     Order.findOne({_id: req.params.order_id}).exec()
+//     .then(order => {
+//         order.delivered = true
+//         if(!order.items_rented.length){
+//             order.closed = true
+//         }
+//         if(order.delivery_otp === req.body.otp){
+//             return Promise.all([
+//                 order.save(),
+//                 Incident.findOne({action_route: 'api/orders/process/' + order._id}).exec()
+//             ])
+//             .then(([orderSaved, incident]) => {
+//                 incident.status = 'processed'
+//                 incident.save()
+//                 .then(() => res.status(201).json({message: 'Order delivery confirmed'}))
+//             })
+//         }
+//         else{
+//             res.status(403).json({message: 'OTP mismatch'})
+//         }
+//     })
+//     .catch(error => res.status.json({error}))
+// })
+
+
+
+orders.post('/process-return/:order_id', verifyToken(admin_secret_key), (req, res) => {
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
-        order.delivered = true
-        if(!order.items_rented.length){
-            order.closed = true
-        }
-        if(order.delivery_otp === req.body.otp){
-            return Promise.all([
-                order.save(),
-                Incident.findOne({action_route: 'api/orders/process/' + order._id}).exec()
-            ])
-            .then(([orderSaved, incident]) => {
-                incident.status = 'processed'
-                incident.save()
-                .then(() => res.status(201).json({message: 'Order delivery confirmed'}))
+        const today = new Date()
+        const patient_details = ''
+        const products_to_collect = 'Products to collect: '
+        const months = Math.floor(date.subtract(today - order.order_timestamp).toDays() / 30)
+        return Promise.all([
+            Product.find({_id: {'$in': req.query.products}}).exec(),
+            Patient.findOne({patient_id: order.ordered_by}).exec()
+        ])
+        .then(([products, patient]) => {
+            patient_details = 'Patient name ' + patient.patient_name + ', Contact: ' + patient.patient_phone
+                                + ', Address: ' + patient.patient_address
+            products.map(product => products_to_collect + ', ' + product.product_name)
+            new Dispatch({
+                order: order._id,
+                dispatch_type: 'Return',
+                products_to_collect: products.map(product => product._id),
+                amount_to_collect: products.reduce((acc, product) => acc + product.rent_price * months, 0),
+                done: false
+            }).save()
+            .then(() => {
+                sendSMSmock('logistics phone no', patient_details+products_to_collect)
+                res.status(201).json({message: 'Return Request Processed'})
             })
-        }
-        else{
-            res.status(403).json({message: 'OTP mismatch'})
-        }
-    })
-    .catch(error => res.status.json({error}))
-})
-
-
-
-
-orders.post('/process-return/:order_id', (req, res) => {
-    Order.findOne({_id: req.params.order_id}).exec()
-    .then(order => {
-        // TBD
+        })
     })
     .catch(error => res.status(500).json({error}))
 })
+
+
+// orders.post('/process-return/:order_id', verifyToken(admin_secret_key), (req, res) => {
+//     Order.findOne({_id: req.params.order_id}).exec()
+//     .then(order => {
+//         const today = new Date()
+//         const months = Math.floor(date.subtract(today - order.order_timestamp).toDays() / 30)
+//         const amount = await order.items_to_return.reduce(async(acc, item_id) => {
+//             Product.findOne({_id: item_id}).exec()
+//             .then(product => acc + product.rent_price * months)
+//         }, 0)
+
+//     })
+//     .catch(error => res.status(500).json({error}))
+// })
 
 // this route is to be accessed once every few days or daily, depending on business
 orders.post('/process-offline-order/:product_id', verifyToken(admin_secret_key), (req, res) => {
