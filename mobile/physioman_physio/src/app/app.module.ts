@@ -12,12 +12,14 @@ import { ApiService } from './services/api.service';
 import { ProcessAppointmentPage } from './process-appointment/process-appointment.page';
 import { ProcessAppointmentPageModule } from './process-appointment/process-appointment.module';
 import { ProcessBookingPageModule } from './process-booking/process-booking.module';
+import { MenuPageModule } from './menu/menu.module';
+import { ProcessBookingPage } from './process-booking/process-booking.page';
 
 @NgModule({
   declarations: [AppComponent],
-  entryComponents: [ProcessAppointmentPage],
+  entryComponents: [ProcessAppointmentPage, ProcessBookingPage],
   imports: [BrowserModule, IonicModule.forRoot(), IonicStorageModule.forRoot(), AppRoutingModule, HttpClientModule,
-            ProcessAppointmentPageModule, ProcessBookingPageModule],
+            ProcessAppointmentPageModule, ProcessBookingPageModule, MenuPageModule],
   providers: [
     StatusBar,
     SplashScreen,

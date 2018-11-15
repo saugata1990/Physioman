@@ -8,9 +8,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-split-pane>
+<!-- <ion-split-pane> -->
   
-  <ion-menu content="main">
+  <!-- <ion-menu content="main">
     <ion-header>
       <ion-toolbar>
         <ion-title>Menu</ion-title>
@@ -24,7 +24,7 @@
         </ion-menu-toggle>
       </ion-list>
     </ion-content>
-  </ion-menu>
+  </ion-menu> -->
 
   <ion-content main padding *ngIf="loggedInAs==='consultant'">
     <ion-list *ngFor="let request of requests">
@@ -50,4 +50,4 @@
     </ion-list>
   </ion-content>
 
-</ion-split-pane>
+<!-- </ion-split-pane> -->

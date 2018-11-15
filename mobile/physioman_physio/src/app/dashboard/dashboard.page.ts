@@ -18,8 +18,9 @@ export class DashboardPage implements OnInit {
   private requests = new Array();
   private bookings = new Array();
   private token;
+  // private otherAccount;
+  // private alternateAcct;
   private otherAccount;
-  private alternateAcct;
   private username;
   private password;
 
@@ -32,17 +33,11 @@ export class DashboardPage implements OnInit {
 
   ngOnInit() {
     this.storage.get('loggedInAs')
-    .then(val => {
-      this.loggedInAs = val;
-      if (this.loggedInAs === 'physio') {
-        this.alternateAcct =  'consultant';
-      } else {
-        this.alternateAcct =  'physio';
-      }
+    .then(loggedInAs => {
+      this.loggedInAs = loggedInAs;
       this.storage.get(this.loggedInAs)
       .then(token => {
         this.token = token;
-        this.hasOtherAccount();
         if (this.loggedInAs === 'consultant') {
           this.getAppointments();
         } else {
@@ -109,26 +104,20 @@ export class DashboardPage implements OnInit {
     await modal.onDidDismiss().then(() => this.reloadAppointments());
   }
 
-  hasOtherAccount() {
-    this.apiService.checkForOtherAccount(this.loggedInAs, this.token)
-    .then(response => this.otherAccount = response);
-  }
 
-  
-
-  logout(switchAcct = false) {
-    if (this.loggedInAs === 'consultant') {
-      this.storage.remove('consultant');
-    } else {
-      this.storage.remove('physio');
-    }
-    this.storage.remove('loggedInAs');
-    if (!switchAcct) {
-      this.storage.remove('username');
-      this.storage.remove('password');
-    } else if (switchAcct) {
-      //
-    }
-  }
+  // logout(switchAcct = false) {
+  //   if (this.loggedInAs === 'consultant') {
+  //     this.storage.remove('consultant');
+  //   } else {
+  //     this.storage.remove('physio');
+  //   }
+  //   this.storage.remove('loggedInAs');
+  //   if (!switchAcct) {
+  //     this.storage.remove('username');
+  //     this.storage.remove('password');
+  //   } else if (switchAcct) {
+  //     // TBD
+  //   }
+  // }
 
 }

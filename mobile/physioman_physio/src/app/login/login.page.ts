@@ -22,7 +22,7 @@ export class LoginPage implements OnInit {
     this.storage.get('loggedInAs')
     .then(val => {
       if (val) {
-        this.router.navigateByUrl('/dashboard');
+        this.router.navigateByUrl('/menu');
       }
     });
   }
@@ -34,9 +34,11 @@ export class LoginPage implements OnInit {
     .subscribe(response => {
       this.storage.set(this.userType, response);
       this.storage.set('loggedInAs', this.userType);
-      this.router.navigateByUrl('/dashboard');
+      this.router.navigateByUrl('/menu');
     },
     error => this.invalid_creds = true);
   }
+
+
 
 }
