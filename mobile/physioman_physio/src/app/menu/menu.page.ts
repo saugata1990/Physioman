@@ -19,9 +19,15 @@ export class MenuPage implements OnInit {
   constructor(private apiService: ApiService, private storage: Storage, private router: Router) { }
 
   ngOnInit() {
+    this.loadAppState(true);
+  }
+
+
+  loadAppState(init = false) {
     this.storage.get('loggedInAs')
     .then(val => {
       this.loggedInAs = val;
+      console.log('currently logged in as ', this.loggedInAs);
       this.hasOtherAccount(this.loggedInAs);
       if (this.loggedInAs === 'physio') {
         this.alternateAcct =  'consultant';
@@ -29,6 +35,9 @@ export class MenuPage implements OnInit {
         this.alternateAcct =  'physio';
       }
       this.getUserNameAndPassword();
+      if (!init) {
+        this.router.navigateByUrl(this.router.url);
+      }
     });
   }
 
@@ -52,25 +61,25 @@ export class MenuPage implements OnInit {
   }
 
   logout(switchAcct = false) {
-    this.router.navigateByUrl('/login');
-    if (this.loggedInAs === 'consultant') {
-      this.storage.remove('consultant');
-    } else {
-      this.storage.remove('physio');
-    }
-    this.storage.remove('loggedInAs');
     if (!switchAcct) {
+      this.router.navigateByUrl('/login');
+      this.storage.remove(this.loggedInAs);
+      this.storage.remove('loggedInAs');
       this.storage.remove('username');
       this.storage.remove('password');
     } else if (switchAcct) {
       console.log('switching to ', this.alternateAcct);
       this.apiService.login(this.username, this.password, this.alternateAcct)
       .subscribe(response => {
-        this.storage.set(this.alternateAcct, response);
-        this.storage.set('loggedInAs', this.alternateAcct);
-        this.router.navigateByUrl('/menu');
+        return Promise.all([
+          this.storage.set(this.alternateAcct, response),
+          this.storage.set('loggedInAs', this.alternateAcct)
+        ])
+        .then(() => this.loadAppState());
       });
     }
   }
+
+
 
 }

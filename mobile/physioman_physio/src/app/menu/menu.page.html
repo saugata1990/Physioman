@@ -7,10 +7,10 @@
     </ion-header>
     <ion-content padding>
       <ion-list>
-        <!-- <ion-menu-toggle> -->
+        <ion-menu-toggle auto-hide="false">
           <ion-item *ngIf="otherAccount" (click)="logout(true)">Switch to {{ alternateAcct }} account</ion-item>
           <ion-item (click)="logout()">Log Out</ion-item>
-        <!-- </ion-menu-toggle> -->
+        </ion-menu-toggle>
       </ion-list>
     </ion-content>
   </ion-menu>

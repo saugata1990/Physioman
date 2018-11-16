@@ -32,6 +32,15 @@ export class DashboardPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.loadAppState();
+  }
+
+  ionViewWillEnter() {
+    console.log('dashboard view is entered');
+    // this.loadAppState();
+  }
+
+  loadAppState() {
     this.storage.get('loggedInAs')
     .then(loggedInAs => {
       this.loggedInAs = loggedInAs;
@@ -74,7 +83,6 @@ export class DashboardPage implements OnInit {
     this.apiService.getAssignedBookings(this.token)
     .subscribe(response => {
       this.bookings = (response as any).bookings;
-      console.log(this.bookings);
       this.bookings.map(booking => {
         this.apiService.getPatientAddress(booking.booked_for_patient, this.token)
         .subscribe(details => {
@@ -105,19 +113,5 @@ export class DashboardPage implements OnInit {
   }
 
 
-  // logout(switchAcct = false) {
-  //   if (this.loggedInAs === 'consultant') {
-  //     this.storage.remove('consultant');
-  //   } else {
-  //     this.storage.remove('physio');
-  //   }
-  //   this.storage.remove('loggedInAs');
-  //   if (!switchAcct) {
-  //     this.storage.remove('username');
-  //     this.storage.remove('password');
-  //   } else if (switchAcct) {
-  //     // TBD
-  //   }
-  // }
 
 }
