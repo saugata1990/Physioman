@@ -132,11 +132,11 @@ services.post('/order-cancel-request/:order_id', verifyToken(patient_secret_key)
 })
 
 
-services.post('/initiate-return/:order_id', verifyToken(patient_secret_key), (req, res) => {
+services.post('/initiate-return/:order_id',  (req, res) => {  //verifyToken(patient_secret_key),
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
         new Incident({
-            action_route: 'api/orders/process-return/' + order._id + '?products=' + req.query.products, 
+            action_route: 'api/orders/process-return/' + order._id + '?products=' + req.body.products, 
             customer: order.ordered_by,
             priority: 1,
             status: 'new',
@@ -147,6 +147,7 @@ services.post('/initiate-return/:order_id', verifyToken(patient_secret_key), (re
     })
     .catch(error => res.status(500).json({error}))
 })
+
 
 
 

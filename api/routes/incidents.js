@@ -4,7 +4,7 @@ const Incident = require('../models/incidentModel')
 const { verifyToken } = require('../utils/helper')
 const { admin_secret_key } = require('../config/keys')
 
-incidents.get('/', verifyToken(admin_secret_key), (req, res) => {
+incidents.get('/',  (req, res) => {   //verifyToken(admin_secret_key),
     Incident.find(req.query).sort({_id: -1}).exec()  // change sort key to timestamp
     .then(incidents => res.status(200).json({incidents}))
     .catch(error => res.status(500).json({error}))

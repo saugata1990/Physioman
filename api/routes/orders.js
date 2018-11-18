@@ -158,21 +158,21 @@ orders.post('/resend-otp/:order_id', verifyToken(admin_secret_key), (req, res) =
 
 
 
-orders.post('/process-return/:order_id', verifyToken(admin_secret_key), (req, res) => {
+orders.post('/process-return/:order_id',  (req, res) => {  // verifyToken(admin_secret_key),
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
-        const today = new Date()
-        const patient_details = ''
-        const products_to_collect = 'Products to collect: '
-        const months = Math.floor(date.subtract(today - order.order_timestamp).toDays() / 30)
+        const today = new Date('December 19, 2018')
+        let patient_details = ''
+        let products_to_collect = 'Products to collect: '
+        const months = Math.floor(date.subtract(today, order.order_timestamp).toDays() / 30)
         return Promise.all([
-            Product.find({_id: {'$in': req.query.products}}).exec(),
+            Product.find({_id: {'$in': JSON.parse(req.query.products)}}).exec(),
             Patient.findOne({patient_id: order.ordered_by}).exec()
         ])
         .then(([products, patient]) => {
             patient_details = 'Patient name ' + patient.patient_name + ', Contact: ' + patient.patient_phone
                                 + ', Address: ' + patient.patient_address
-            products.map(product => products_to_collect + ', ' + product.product_name)
+            products.map(product => products_to_collect +=  product.product_name + ', ')
             new Dispatch({
                 order: order._id,
                 dispatch_type: 'Return',

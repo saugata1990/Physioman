@@ -2,6 +2,7 @@ const express = require('express')
 const logistics = express.Router()
 const Dispatch = require('../models/dispatchModel')
 const Order = require('../models/orderModel')
+const Incident = require('../models/incidentModel')
 const DeliveryMan = require('../models/deliveryManModel')
 const bcrypt = require('bcrypt')
 const { deliveryMan_secret_key } = require('../config/keys')
@@ -60,7 +61,7 @@ logistics.get('/deliveries', (req, res) => {
 })
 
 
-logistics.post('/deliveries/:dispatch_id', (req, res) => {
+logistics.post('/delivery/:dispatch_id', (req, res) => {
     let otp_mismatch = false
     Dispatch.findOne({_id: req.params.dispatch_id}).exec()
     .then(dispatch => {
