@@ -2,12 +2,19 @@
     .carousel-btn {
         width:50%;
     } 
+        .carousel-sm-btn {
+        width:30%;
+    } 
 }
 
 
 
 .jumbotron {
     padding-top: 1%;
+}
+
+.jumbotron h2 {
+    margin-top: 50px;
 }
 
 #why, #equipment {
@@ -20,12 +27,35 @@
   display: block;
 }
 
-.carousel-item>img{
-    height:95vh;
+.carousel-item>.carousel-item-wrapper{
+    height:75vh;
     width: 100%;
-    /* background-size:cover !important;
-    background-position:center !important; */
+
+     background-size:cover !important;
+    background-position:center !important; 
+    background-repeat: no-repeat;
+}
+
+.carousel-item>.carousel-item-wrapper .heading-text {
+margin: 0px auto 30px;
+font-weight: bold;
+font-size: 24px;
+max-width: 450px;
+color: #fff;
 }
 
 
+.carousel-item>.carousel-item-wrapper .heading-subtitle {
+margin: 60px auto 30px;
+font-weight: bold;
+font-size: 18px;
+max-width: 450px;
+color: #fff;
+}
 
+.carousel-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

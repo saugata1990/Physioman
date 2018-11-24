@@ -5,3 +5,14 @@
 #physioservice {
     word-wrap: break-word;
 }
+
+.jumbotron h2 {
+    margin-top: 50px;
+}
+
+.about-page-img {
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+	height: 75vh;
+}

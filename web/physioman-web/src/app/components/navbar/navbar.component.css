@@ -12,3 +12,17 @@
 /* .dropdown-menu {
     background-color: blue !important;
 } */
+.navbar {
+	background: rgba(0,0,0,1);
+	color: #fff;
+}
+
+.navbar a,
+.navbar a:hover{
+	color: #fff;
+}
+
+.navbar .dropdown-menu a,
+.navbar .dropdown-menu a:hover{
+	color: #333;
+}
