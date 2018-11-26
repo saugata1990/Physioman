@@ -61,11 +61,11 @@ services.post('/new-booking-request', verifyToken(patient_secret_key), (req, res
 
 
 
-services.post('/cancel-booking-request', verifyToken(patient_secret_key),(req, res) => {
+services.post('/cancel-booking-request/:request_id', verifyToken(patient_secret_key),(req, res) => {
     //
 })
 
-services.post('/cancel-booking', verifyToken(patient_secret_key), (req, res) => {
+services.post('/cancel-booking/:booking_id', verifyToken(patient_secret_key), (req, res) => {
     //
 })
 
