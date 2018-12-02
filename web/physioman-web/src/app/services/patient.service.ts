@@ -8,21 +8,23 @@ import { Store } from '@ngrx/store';
 })
 export class PatientService {
 
-  private signup_url = 'api/patients/signup';
-  private login_url = 'api/patients/login';
-  private my_profile_url = 'api/patients/viewProfile';
-  private name_and_email_url = 'api/patients/name-and-email';
-  private booking_request_url = 'api/services/new-booking-request';
-  private payumoney_hash_url = 'api/services/payments/payumoney-hash';
-  private payumoney_response_url = 'api/services/payments/payumoney-response';
-  private search_eqp_url = 'api/products/search?q=';
-  private list_eqp_url = 'api/products';
-  private booking_status_url = 'api/bookings/status';
-  private order_url = 'api/services/place-order';
-  private order_status_url = 'api/orders/open';
-  private eqp_details_url = 'api/products/details/';
-  private send_otp_url = 'api/patients/send-verification-code/';
-  private verify_otp_url = 'api/patients/verify-otp/';
+  private baseUrl = 'https://physioman-api.herokuapp.com/';
+
+  private signup_url = this.baseUrl + 'api/patients/signup';
+  private login_url = this.baseUrl + 'api/patients/login';
+  private my_profile_url = this.baseUrl + 'api/patients/viewProfile';
+  private name_and_email_url = this.baseUrl + 'api/patients/name-and-email';
+  private booking_request_url = this.baseUrl + 'api/services/new-booking-request';
+  private payumoney_hash_url = this.baseUrl + 'api/services/payments/payumoney-hash';
+  private payumoney_response_url = this.baseUrl + 'api/services/payments/payumoney-response';
+  private search_eqp_url = this.baseUrl + 'api/products/search?q=';
+  private list_eqp_url = this.baseUrl + 'api/products';
+  private booking_status_url = this.baseUrl + 'api/bookings/status';
+  private order_url = this.baseUrl + 'api/services/place-order';
+  private order_status_url = this.baseUrl + 'api/orders/open';
+  private eqp_details_url = this.baseUrl + 'api/products/details/';
+  private send_otp_url = this.baseUrl + 'api/patients/send-verification-code/';
+  private verify_otp_url = this.baseUrl + 'api/patients/verify-otp/';
 
 
   constructor(private http: HttpClient, private store: Store<any>) { }

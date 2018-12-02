@@ -74,6 +74,17 @@ export class ShoppingComponent implements OnInit, AfterViewChecked {
     }
   }
 
+  getCartCount() {
+    let count = 0;
+    if (this.rented_items.length) {
+      count += this.rented_items.length;
+    }
+    if (this.purchased_items.length) {
+      count += this.purchased_items.length;
+    }
+    return count;
+  }
+
   viewCart() {
     if (this.rented_items.length || this.purchased_items.length) {
       this.checkout = true;
