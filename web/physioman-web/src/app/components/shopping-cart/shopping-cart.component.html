@@ -1,48 +1,56 @@
-<div class="modal container" id="cart" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-md">
+<div class="modal" id="cart" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title">Checkout</h3>
+        <h4 class="modal-title">Cart</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
-        <div><h4>Items in cart</h4></div>
+        <div><h4>My cart({{rented_items.length + purchased_items.length}})</h4>
+        </div>
         <hr>
-        <ul *ngFor="let item of purchased_items">
-          <li>
-            <div>
-              <h5>Item: {{ item.product_name }}</h5><br>
-              <h5>Type: Purchase</h5><br>
-              <h5>Price: {{ item.selling_price }}</h5>
+        <div *ngFor="let item of purchased_items" class="item-container">
+          <div class="item-image">
+            <img class="rounded" [src]="item.imagePath">
+          </div>
+            <div class="item-description">
+              <h4><strong>{{ item.product_name }}</strong></h4>
+              <h5><strong>Type:</strong> Purchase</h5>
+              <h5><strong>Price:</strong> <span class="price">{{ item.selling_price }}</span></h5>
             </div>
-          </li>
-        </ul>
-        <ul *ngFor="let item of rented_items">
-          <li>
-            <div>
-              <h5>Item: {{ item.product_name }}</h5><br>
-              <h5>Type: Rent</h5><br>
-              <h5>Price: {{ item.rent_price }}</h5>
-            </div>
-          </li>
-        </ul>
-        <hr>
-        <h5>Total price: {{ total_price }}</h5><br>
-
-        <form class="form" #orderForm="ngForm" (ngSubmit)="onOrderPlaced()">
-          <div class="form-group">
-            <label for="paymentMode"><h5>Payment mode</h5></label>
-            <select class="form-control" [(ngModel)]="paymentMode" name="paymentMode" (change)="openModal()" required>
-              <option value="card" data-toggle="modal" data-target="#payment">Card</option>
-              <option value="cash">Cash</option>
-            </select>
-            <div *ngIf="paymentMode==='card' ">
-              <app-payment [amount]="total_price" (successMessage)="onPaymentCompletion($event)"></app-payment>
+            <div class="item-buttons">
+              <button class="fas fa-trash btn btn-info btn-lg" type="button" (click)="removeFromCart($index, 'purchase')">Remove</button>
             </div>
           </div>
-          <button type="submit" class="btn btn-danger btn-lg" #submit [disabled]="orderForm.invalid">Place order</button>
-          <h5 *ngIf="orderSuccess" class="alert alert-success">Order placed successfully!!!</h5><br>
-        </form>
+          <div *ngFor="let item of rented_items" class="item-container">
+          <div class="item-image">
+            <img class="rounded" [src]="item.imagePath">
+          </div>
+            <div class="item-description">
+              <h4><strong>{{ item.product_name }}</strong></h4>
+              <h5><strong>Type:</strong> Purchase</h5>
+              <h5><strong>Price:</strong> <span class="price">{{ item.selling_price }}</span></h5>
+            </div>
+            <div class="item-buttons">
+              <button class="fas fa-trash btn btn-info btn-lg" type="button" (click)="removeFromCart($index, 'purchase')">Remove</button>
+            </div>
+          </div>
+          <h5 class="total-price">Total price: <span class="total-price-text">{{ total_price }}</span></h5>
+          <form class="form" #orderForm="ngForm" (ngSubmit)="onOrderPlaced()">
+            <div class="form-group">
+              <label for="paymentMode"><h5>Payment mode</h5></label>
+              <select class="form-control" [(ngModel)]="paymentMode" name="paymentMode" (change)="openModal()" required>
+                <option value="card" data-toggle="modal" data-target="#payment">Card</option>
+                <option value="cash">Cash</option>
+              </select>
+              <div *ngIf="paymentMode==='card' ">
+                <app-payment [amount]="total_price" (successMessage)="onPaymentCompletion($event)"></app-payment>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-danger btn-lg order-button" #submit [disabled]="orderForm.invalid">Place order</button>
+            <h5 *ngIf="orderSuccess" class="alert alert-success">Order placed successfully!!!</h5><br>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>

@@ -1,0 +1,40 @@
+h2 {
+	margin-top: 15px;
+}
+
+.profile-wrapper{
+	margin-top: 50px;
+}
+
+.profile-image{
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	position: relative;
+}
+
+.profile-data div {
+	margin-bottom: 15px;
+}
+.image-overlay {
+	left: 0; 
+	right: 0; 
+	top: 0; 
+	bottom: 0; 
+	cursor: pointer; 
+	font-size: 40px; 
+	align-items: center; 
+	justify-content: center; 
+	background: #000000a6; 
+	color: #ddd;
+	position: absolute;
+	display: none;
+	flex-direction: column;
+}
+
+.profile-image:hover .image-overlay {
+	display: flex;
+}
+.change-image-text{
+	font-size: 16px;
+}

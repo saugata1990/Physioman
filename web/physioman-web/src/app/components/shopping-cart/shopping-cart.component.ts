@@ -39,6 +39,14 @@ export class ShoppingCartComponent implements OnInit {
     });
   }
 
+  removeFromCart(index, type) {
+    if(type === 'purchase') {
+      this.purchased_items.splice(index, 1);
+    } else {
+      this.rented_items.splice(index, 1);
+    }
+  }
+
   onOrderPlaced() {
     this.patientService.placeOrder(this.purchased_items, this.rented_items, this.paymentMode)
     .subscribe(

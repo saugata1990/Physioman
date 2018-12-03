@@ -1,21 +1,21 @@
-<div class="container-fluid jumbotron bg-transparent center">
-  <ul *ngFor="let order of orders">
-    <h4>Order status: <span *ngIf="!order.processed else processed">Placed</span></h4><br>
-    <h4 *ngIf="order.payment_mode==='cash'">Payable amount: {{ order.payable_amount }}</h4><br>
+<div class="container">
+  <h2>My Orders</h2>
+  <div *ngFor="let order of orders" class="order-container">
+    <div class="order-header">
+    <strong>Order status: <span *ngIf="!order.processed else processed">Placed</span></strong>
+    <strong *ngIf="order.payment_mode==='cash'" class="order-amount">Payable amount: {{ order.payable_amount }}</strong>
+  </div>
     <ng-template #processed>Processed</ng-template>
-    <h3>Ordered items:-</h3><br>
-    <hr>
-    <ul *ngFor="let item of order.items_in_detail">
-      <div class="container jumbotron bg-transparent">
-        <div class="order-item-desc">
-          <h4>{{ item.product_name }}</h4><br>
-          <h4>Model: {{ item.product_model }}</h4><br>
-          <h4>Order type: {{ item.order_mode }}</h4><br>
+    <span class="items-header">Items</span>
+    <div *ngFor="let item of order.items_in_detail" class="item-wrapper">
+      <div class="item-photo">
+        <img class="rounded" [src]="item.imagePath" width="150" height="150">
         </div>
-        <div class="order-item-photo">
-          <img class="rounded" [src]="item.imagePath" width="150" height="150">
+        <div class="item-description">
+          <h4>{{ item.product_name }}</h4>
+          <h5><strong>Model:</strong> {{ item.product_model }}</h5>
+          <h5><strong>Order type:</strong> {{ item.order_mode }}</h5>
         </div>
-      </div>
-    </ul>
-  </ul>
+    </div>
+  </div>
 </div>

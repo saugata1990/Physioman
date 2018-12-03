@@ -1,42 +1,42 @@
-
-<div class="container-fluid fixed">
-  <h1><strong>Medical Equipment</strong></h1>
-  <button class="fas fa-shopping-cart btn btn-lg btn-danger btn-space-bottom"
-          (click)="viewCart()">Cart</button>
+<div class="container-fluid page-header">
+  <h2>Medical Equipment</h2>
   <!-- Search bar here -->
   <form #searchform="ngForm">
-    <div class="form-group has-search container">
-      <input type="text" class="form-control" ngModel name="search" #search="ngModel" placeholder="search..."
-            (change)="onSearch(searchform)">
+    <div class="container search-container">
+      <div class="input-group">
+        <input type="text" class="form-control" ngModel name="search" #search="ngModel" placeholder="Search..." (change)="onSearch(searchform)">
+        <div class="input-group-append">
+          <button class="btn btn-info" type="button" (click)="onSearch(searchform)">Search</button>
+        </div>
+      </div>
+      <button class="fas fa-shopping-cart btn btn-lg cart-icon" (click)="viewCart()">
+        Cart
+        <span class="badge badge-light" *ngIf="rented_items.length || purchased_items.length">{{getCartCount()}}</span>
+      </button>
     </div>
   </form>
 </div>
-
-
-<div class="container-fluid jumbotron bg-transparent">
-
-  <ul *ngFor="let item of loaded_list">
-    <div class="container jumbotron bg-transparent">
-      <div class="item-description">
-        <h4><strong>{{ item.product_name }}</strong></h4><br>
-        <h5>Model: {{ item.product_model }}</h5><br>
-        <h5>Manufacturer: {{ item.product_manufacturer }}</h5><br>
-        <h5>Category: {{ item.product_category }}</h5><br>
-        <h5>Specifications: {{ item.product_specifications }}</h5><br>
-        <h5>Description: {{ item.product_description }}</h5><br>
-        <h5>Selling Price: {{ item.selling_price }}</h5><br>
-        <h5>Rent Price: {{ item.rent_price }}</h5><br>
-        <button class="fas fa-cart-plus btn btn-warning btn-lg btn-space" type="button" (click)="addToCart(item, 0)">Purchase</button>
-        <button class="fas fa-cart-plus btn btn-success btn-lg btn-space" type="button" (click)="addToCart(item, 1)">Rent</button><br>
-        <!-- <button class="fas fa-shopping-cart btn btn-danger btn-lg btn-space-top" type="button" (click)="viewCart()">Go to Cart</button> -->
+<div class="container items-container">
+  <div *ngFor="let item of loaded_list" class="item-wrapper">
+    <div class="item-photo">
+      <img class="rounded" [src]="item.imagePath">
       </div>
-      <div class="item-photo">
-        <img class="rounded" [src]="item.imagePath" width="250" height="250">
+      <div class="item-description">
+        <h4><strong>{{ item.product_name }}</strong></h4>
+        <h5><strong>Model:</strong> {{ item.product_model }}</h5>
+        <h5><strong>Manufacturer:</strong> {{ item.product_manufacturer }}</h5>
+        <h5><strong>Category:</strong> {{ item.product_category }}</h5>
+        <h5><strong>Specifications:</strong> {{ item.product_specifications }}</h5>
+        <h5><strong>Description:</strong> {{ item.product_description }}</h5>
+        <h5><strong>Selling Price:</strong> {{ item.selling_price }}</h5>
+        <h5><strong>Rent Price:</strong> {{ item.rent_price }}</h5>
+      </div>
+      <div class="item-buttons">
+                <button class="fas fa-cart-plus btn btn-warning btn-lg btn-space" type="button" (click)="addToCart(item, 0)">Purchase</button>
+        <button class="fas fa-cart-plus btn btn-success btn-lg btn-space" type="button" (click)="addToCart(item, 1)">Rent</button><br>
       </div>
     </div>
-  </ul>
-</div>
-
-<div *ngIf="checkout">
-  <app-shopping-cart [purchased_items]="purchased_items" [rented_items]="rented_items"></app-shopping-cart>
-</div>
+  </div>
+  <div *ngIf="checkout">
+    <app-shopping-cart [purchased_items]="purchased_items" [rented_items]="rented_items"></app-shopping-cart>
+  </div>

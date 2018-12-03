@@ -1,19 +1,66 @@
-.jumbotron {
-    padding-top: 1%;
-}
-
-.container {
-    display: flex;
-}
-
-.item-description {
-    flex: 3;
-}
-
-.item-photo {
-    flex: 1;
-}
-
-.fixed {
+.page-header {
   position: fixed;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+h2 {
+	margin-top: 15px;
+}
+
+.search-container {
+	margin-bottom: 25px;
+	display: flex;
+	align-items: center;
+	margin-top: 25px;
+}
+
+.cart-icon {
+	background: #000;
+	color: #fff;
+	margin-left: 20px;
+}
+
+.cart-icon:before{
+	margin-right: 10px;
+	font-size: 17px;
+}
+
+.items-container {
+	margin-top: 140px;
+}
+
+.item-wrapper {
+	display: flex;
+	padding: 15px 0px 20px;
+	border-bottom: 1px solid #bbb;
+}
+
+.item-wrapper .item-photo {
+	width: 200px;
+}
+
+.item-wrapper .item-photo img {
+	width: 100%;
+}
+
+.item-wrapper .item-description {
+	flex: 1;
+	color: #777;
+	padding: 0px 20px;
+}
+
+.item-wrapper .item-description h5{
+	font-size: 16px;
+}
+
+.item-wrapper .item-description h5 strong {
+	color: #555;
+}
+.item-buttons button {
+	color: #fff;
+}
+
+.item-buttons button:before{
+	margin-right: 10px;
+	font-size: 17px;
 }
