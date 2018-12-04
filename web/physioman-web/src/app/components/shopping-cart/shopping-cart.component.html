@@ -28,8 +28,8 @@
           </div>
             <div class="item-description">
               <h4><strong>{{ item.product_name }}</strong></h4>
-              <h5><strong>Type:</strong> Purchase</h5>
-              <h5><strong>Price:</strong> <span class="price">{{ item.selling_price }}</span></h5>
+              <h5><strong>Type:</strong> Rent</h5>
+              <h5><strong>Price:</strong> <span class="price">{{ item.rent_price }}</span></h5>
             </div>
             <div class="item-buttons">
               <button class="fas fa-trash btn btn-info btn-lg" type="button" (click)="removeFromCart($index, 'purchase')">Remove</button>
