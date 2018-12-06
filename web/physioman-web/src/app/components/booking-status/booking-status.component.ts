@@ -10,7 +10,8 @@ import { BookingStatus } from '../../models/booking_status';
 })
 export class BookingStatusComponent implements OnInit {
 
-  private booking_data = new BookingStatus();
+  private booking_data;
+  private loaded = false;
 
   constructor(private patientService: PatientService, private router: Router) { }
 
@@ -18,7 +19,8 @@ export class BookingStatusComponent implements OnInit {
     this.patientService.getBookingStatus()
     .subscribe(
       response => {
-        this.booking_data.populate(response);
+        this.booking_data = response;
+        this.loaded = true;
       },
       error => console.log(error)
     );

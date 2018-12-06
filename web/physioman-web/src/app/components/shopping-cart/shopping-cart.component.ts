@@ -12,7 +12,7 @@ export class ShoppingCartComponent implements OnInit {
 
   @Input() private purchased_items: [any];
   @Input() private rented_items: [any];
-  private total_price = 0;
+  @Input() total_price: number;
   private paymentMode;
   private orderSuccess = false;
   private onlinePaymentSuccess = false;
@@ -24,11 +24,6 @@ export class ShoppingCartComponent implements OnInit {
   constructor(private patientService: PatientService, private router: Router) { }
 
   ngOnInit() {
-    console.log('items to purchase ', this.purchased_items);
-    console.log('items to rent ', this.rented_items);
-    this.purchased_items.map(item => this.total_price += item.selling_price);
-    this.rented_items.map(item => this.total_price += item.rent_price);
-    console.log('Amount payable: ', this.total_price);
   }
 
 
@@ -39,10 +34,14 @@ export class ShoppingCartComponent implements OnInit {
     });
   }
 
-  removeFromCart(index, type) {
-    if(type === 'purchase') {
+  removeFromCart(item, type) {
+    if (type === 'purchase') {
+      const index = this.purchased_items.indexOf(item);
+      this.total_price -= this.purchased_items[index].selling_price;
       this.purchased_items.splice(index, 1);
     } else {
+      const index = this.rented_items.indexOf(item);
+      this.total_price -= this.rented_items[index].rent_price;
       this.rented_items.splice(index, 1);
     }
   }

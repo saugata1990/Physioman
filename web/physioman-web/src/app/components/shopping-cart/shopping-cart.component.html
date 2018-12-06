@@ -19,7 +19,7 @@
               <h5><strong>Price:</strong> <span class="price">{{ item.selling_price }}</span></h5>
             </div>
             <div class="item-buttons">
-              <button class="fas fa-trash btn btn-info btn-lg" type="button" (click)="removeFromCart($index, 'purchase')">Remove</button>
+              <button class="fas fa-trash btn btn-info btn-lg" type="button" (click)="removeFromCart(item, 'purchase')">Remove</button>
             </div>
           </div>
           <div *ngFor="let item of rented_items" class="item-container">
@@ -32,7 +32,7 @@
               <h5><strong>Price:</strong> <span class="price">{{ item.rent_price }}</span></h5>
             </div>
             <div class="item-buttons">
-              <button class="fas fa-trash btn btn-info btn-lg" type="button" (click)="removeFromCart($index, 'purchase')">Remove</button>
+              <button class="fas fa-trash btn btn-info btn-lg" type="button" (click)="removeFromCart(item, 'rent')">Remove</button>
             </div>
           </div>
           <h5 class="total-price">Total price: <span class="total-price-text">{{ total_price }}</span></h5>

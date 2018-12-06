@@ -15,6 +15,7 @@ export class ShoppingComponent implements OnInit, AfterViewChecked {
   // private ordered_items: [any];
   private rented_items = new Array();
   private purchased_items = new Array();
+  total_price = 0;
   private checkout = false;
   private loggedIn = false;
   private hasBooking = false;
@@ -88,6 +89,10 @@ export class ShoppingComponent implements OnInit, AfterViewChecked {
   viewCart() {
     if (this.rented_items.length || this.purchased_items.length) {
       this.checkout = true;
+      this.total_price = 0;
+      this.purchased_items.map(item => this.total_price += item.selling_price);
+      this.rented_items.map(item => this.total_price += item.rent_price);
+      console.log('total price: ', this.total_price);
       $(document).ready(() => {
         // @ts-ignore
         $('#cart').modal();
