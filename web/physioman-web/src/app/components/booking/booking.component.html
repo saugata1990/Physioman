@@ -19,7 +19,7 @@
       </label>
     </div>
   </div>
-  <div class="form-group">
+  <div class="form-group" *ngIf="!genderPreference.errors">
     <label for="paymentMode"><h5>Payment mode&emsp;</h5></label>
     <div class="form-check-inline">
       <label class="form-check-label" for="radio3">

@@ -6,23 +6,24 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class AdminService {
 
-  private login_url = 'api/admin/login';
-  private physio_create_url = 'api/physios/new-account';
-  private consultant_create_url = 'api/consultants/new-consultant';
-  private incidents_url = 'api/incidents?status=';
-  private requests_url = 'api/bookings/requests/';
-  private patient_name_url = 'api/patients/name?patient_id=';
-  private consultant_list_url = 'api/consultants';
-  private physio_list_url = 'api/physios';
-  private add_equipment_url = 'api/products/add-new';
-  private edit_equipment_url = 'api/products/update/';
-  private list_equipment_url = 'api/products';
-  private equipment_details_url = 'api/products/details/';
-  private delete_equipment_url = 'api/products/remove/';
-  private update_inventory_url = 'api/products/add-to-inventory/';
-  private offline_sales_url = 'api/orders/process-offline-order/';
-  private ordered_items_url = 'api/orders/ordered-items/';
-  private item_name_url = 'api/orders/item-name/';
+  private baseUrl = 'https://physioman-api.herokuapp.com/';
+  private login_url = this.baseUrl + 'api/admin/login';
+  private physio_create_url = this.baseUrl + 'api/physios/new-account';
+  private consultant_create_url = this.baseUrl + 'api/consultants/new-consultant';
+  private incidents_url = this.baseUrl + 'api/incidents?status=';
+  private requests_url = this.baseUrl + 'api/bookings/requests/';
+  private patient_name_url = this.baseUrl + 'api/patients/name?patient_id=';
+  private consultant_list_url = this.baseUrl + 'api/consultants';
+  private physio_list_url = this.baseUrl + 'api/physios';
+  private add_equipment_url = this.baseUrl + 'api/products/add-new';
+  private edit_equipment_url = this.baseUrl + 'api/products/update/';
+  private list_equipment_url = this.baseUrl + 'api/products';
+  private equipment_details_url = this.baseUrl + 'api/products/details/';
+  private delete_equipment_url = this.baseUrl + 'api/products/remove/';
+  private update_inventory_url = this.baseUrl + 'api/products/add-to-inventory/';
+  private offline_sales_url = this.baseUrl + 'api/orders/process-offline-order/';
+  private ordered_items_url = this.baseUrl + 'api/orders/ordered-items/';
+  private item_name_url = this.baseUrl + 'api/orders/item-name/';
 
   constructor(private http: HttpClient) { }
 
@@ -84,7 +85,7 @@ export class AdminService {
 
   assignConsultant(url, consultant_id) {
     const token = JSON.parse(localStorage.getItem('adminToken'));
-    return this.http.post(url, {consultant_id}, {headers: this.setHeader(token)});
+    return this.http.post(this.baseUrl + url, {consultant_id}, {headers: this.setHeader(token)});
   }
 
   getPhysios() {
@@ -94,12 +95,12 @@ export class AdminService {
 
   assignPhysio(url, physio_id) {
     const token = JSON.parse(localStorage.getItem('adminToken'));
-    return this.http.post(url, {physio_id}, {headers: this.setHeader(token)});
+    return this.http.post(this.baseUrl + url, {physio_id}, {headers: this.setHeader(token)});
   }
 
   processOrder(url) {
     const token = JSON.parse(localStorage.getItem('adminToken'));
-    return this.http.post(url, {}, {headers: this.setHeader(token)});
+    return this.http.post(this.baseUrl + url, {}, {headers: this.setHeader(token)});
   }
 
   addEquipment(formdata) {

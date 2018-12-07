@@ -1,7 +1,0 @@
-{
-  "*": {
-    "target": "https://physioman-api.herokuapp.com/",
-    "secure": false,
-    "changeOrigin": true
-  }
-}

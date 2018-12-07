@@ -10,10 +10,10 @@ import { HASBOOKING } from '../../store/actions/actions';
 })
 export class BookingComponent implements OnInit {
 
-  private paymentMode;
-  private bookingPrice = 100;
-  private onlinePaymentPending = false;
-  private onlinePaymentSuccess = false;
+  paymentMode;
+  bookingPrice = 100;
+  onlinePaymentPending = false;
+  onlinePaymentSuccess = false;
   @ViewChild('submit') submit: ElementRef;
 
   constructor(private patientService: PatientService, private router: Router) { }

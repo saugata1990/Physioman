@@ -1,9 +1,16 @@
 <div class="container-fluid jumbotron bg-transparent center">
   <div *ngIf="loaded">
       <h4>Booking status: {{ booking_data.status }}</h4>
-      <h5 *ngIf="booking_data.status!=='Confirmed'">Request date: {{ booking_data.request.request_timestamp | date: 'dd/MM/yyyy' }}</h5><br>
-      <h5 *ngIf="booking_data.status!=='Confirmed'">Consultation payment mode: {{ booking_data.request.consultation_payment_mode }}</h5><br>
-      <h5 *ngIf="booking_data.status==='Processed'">Serviced on: {{ booking_data.request.serviced_at | date: 'dd/MM/yyyy' }}</h5><br>
+      <div *ngIf="booking_data.request">
+        <h5 *ngIf="booking_data.status!=='Confirmed'">Request date: {{ booking_data.request.request_timestamp | date: 'dd/MM/yyyy' }}</h5>
+        <h5 *ngIf="booking_data.status!=='Confirmed' && !booking_data.request.processed_by_consultant">Consultation payment mode: {{ booking_data.request.consultation_payment_mode }}</h5>
+        <h5 *ngIf="booking_data.status!=='Confirmed' && booking_data.request.processed_by_consultant">Payable booking amount: {{ booking_data.request.booking_amount_payable - booking_data.request.booking_amount_received }}</h5>
+        <h5 *ngIf="booking_data.status==='Processed'">Serviced on: {{ booking_data.request.serviced_at | date: 'dd/MM/yyyy' }}</h5>
+        <h5 *ngIf="booking_data.status==='Processed' && !booking_data.request.processed_by_consultant">Consultation OTP: {{ booking_data.request.consultant_otp}}</h5>
+      </div>
+      <div *ngIf="booking_data.booking">
+        <h5>Sessions completed: {{ booking_data.booking.sessions_completed }} / {{ booking_data.booking.allotted_sessions }}</h5>
+      </div>
   </div>
 </div>
 

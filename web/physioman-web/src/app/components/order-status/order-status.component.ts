@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./order-status.component.css']
 })
 export class OrderStatusComponent implements OnInit {
-  private orders = new Array();
+  orders = new Array();
   constructor(private patientService: PatientService, private router: Router, private sanitizer: DomSanitizer) { }
 
   ngOnInit() {

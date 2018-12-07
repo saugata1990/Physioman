@@ -6,17 +6,18 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class ApiService {
 
-  private consulant_login_url = 'http://localhost:3000/api/consultants/login';
-  private physio_login_url = 'http://localhost:3000/api/physios/login';
-  private pending_consultations_url = 'http://localhost:3000/api/bookings/pending-consultations';
-  private patient_address_url = 'http://localhost:3000/api/patients/details?patient_id=';
-  private assign_sessions_url = 'http://localhost:3000/api/bookings/assign-sessions/';
-  private consultant_details_url = 'http://localhost:3000/api/consultants/details';
-  private physio_details_url = 'http://localhost:3000/api/physios/details';
-  private assigned_bookings_url = 'http://localhost:3000/api/bookings/assigned-bookings';
-  private session_otp_url = 'http://localhost:3000/api/sessions/sendOTP/';
-  private session_start_url = 'http://localhost:3000/api/sessions/start-session/';
-  private session_end_url = 'http://localhost:3000/api/sessions/end-session/';
+  private baseUrl = 'https://physioman-api.herokuapp.com/';
+  private consulant_login_url = this.baseUrl + 'api/consultants/login';
+  private physio_login_url = this.baseUrl + 'api/physios/login';
+  private pending_consultations_url = this.baseUrl + 'api/bookings/pending-consultations';
+  private patient_address_url = this.baseUrl + 'api/patients/details?patient_id=';
+  private assign_sessions_url = this.baseUrl + 'api/bookings/assign-sessions/';
+  private consultant_details_url = this.baseUrl + 'api/consultants/details';
+  private physio_details_url = this.baseUrl + 'api/physios/details';
+  private assigned_bookings_url = this.baseUrl + 'api/bookings/assigned-bookings';
+  private session_otp_url = this.baseUrl + 'api/sessions/sendOTP/';
+  private session_start_url = this.baseUrl + 'api/sessions/start-session/';
+  private session_end_url = this.baseUrl + 'api/sessions/end-session/';
 
   constructor(private http: HttpClient) { }
 
