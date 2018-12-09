@@ -5,7 +5,8 @@ color="<color-code>" bolt-logo="<image path>"></script> -->
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title">Online Payment</h3>
+        <h4 class="modal-title">Online Payment</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
         <form class="container" #paymentForm="ngForm" (ngSubmit)="onPayment(paymentForm)">
@@ -21,7 +22,9 @@ color="<color-code>" bolt-logo="<image path>"></script> -->
             <label for="email">Email</label>
             <input type="email" class="form-control" [(ngModel)]="patient.email" name="email" value={{patient.email}} required>
           </div>
-          <button type="submit" class="btn btn-danger btn-space" [disabled]="paymentForm.invalid">Proceed to payment</button>
+          <div class="text-right">
+          <button type="submit" class="btn btn-info" [disabled]="paymentForm.invalid">Proceed to payment</button>
+        </div>
         </form>
       </div>
     </div>
