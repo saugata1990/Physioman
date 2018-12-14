@@ -1,9 +1,10 @@
 const mongoose = require('mongoose')
+const { mongo_url } = require('../config/keys')
 const url = 'mongodb://localhost:27017/physioman'
 // const Physio = require('./physioModel')
 const Schema = mongoose.Schema
 mongoose.Promise = global.Promise
-const db = mongoose.createConnection(url)
+const db = mongoose.createConnection(mongo_url)
 
 const patientSchema = new Schema({
     patient_id: String, // unique, same as the phone number used to register

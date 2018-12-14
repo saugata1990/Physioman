@@ -1,9 +1,10 @@
 const mongoose = require('mongoose')
+const { mongo_url } = require('../config/keys')
 const url = 'mongodb://localhost:27017/reviews'
 
 const Schema = mongoose.Schema
 mongoose.Promise = global.Promise
-const db = mongoose.createConnection(url)
+const db = mongoose.createConnection(mongo_url)
 
 const reviewSchema = new Schema({
     review_of_product: String, // product_id

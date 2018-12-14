@@ -1,5 +1,7 @@
 // could be moved to env or some other option better than this
 
+const mongo_url = 'mongodb://testuser:test123@ds229909.mlab.com:29909/physioman'
+
 // keys for sms service (to be replaced by production keys)
 const twilio_sid = 'AC480864b7c349c72e265ebd93ae63bc7d' 
 const twilio_token = 'daa74bf828fe597b69cf2ff71e95cd27'
@@ -21,6 +23,7 @@ const merchant_salt = 'TXXa97puDk'
 const auth_header = '4rPfEL6w/pPf3nCfEhCc8ogzf7SeOGVngIiGrWaav2g='
 
 module.exports = {
+    mongo_url,
     twilio_sid, 
     twilio_token, 
     twilio_phone_number, 

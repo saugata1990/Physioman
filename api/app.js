@@ -37,4 +37,4 @@ app.use('/api/orders', orders)
 app.use('/api/incidents', incidents)
 app.use('/api/logistics', logistics)
 
-app.listen(3000, ()=>console.log('server is listening'))
+app.listen(process.env.PORT || 3000, ()=>console.log('server is listening'))
