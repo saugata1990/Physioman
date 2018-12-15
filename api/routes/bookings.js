@@ -7,10 +7,9 @@ const Patient = require('../models/patientModel')
 const Consultant = require('../models/consultantModel')
 const Incident = require('../models/incidentModel')
 const {verifyToken, phoneExists, emailExists, generateOTP, sendSMSmock} = require('../utils/helper')
-const { patient_secret_key, admin_secret_key, consultant_secret_key, physio_secret_key } = require('../config/keys')
 
 
-bookings.get('/', verifyToken(admin_secret_key), (req, res) => {
+bookings.get('/', verifyToken(process.env.admin_secret_key), (req, res) => {
     if(req.query){
         if(req.query.closed){
             req.query.closed = JSON.parse(req.query.closed)
@@ -27,7 +26,7 @@ bookings.get('/', verifyToken(admin_secret_key), (req, res) => {
 })
 
 
-bookings.get('/open', verifyToken(patient_secret_key), (req, res) => {
+bookings.get('/open', verifyToken(process.env.patient_secret_key), (req, res) => {
     if(req.authData){
         return Promise.all([
             Booking.findOne({booked_for_patient: req.authData.patient, closed: false}).exec(),
@@ -46,7 +45,7 @@ bookings.get('/open', verifyToken(patient_secret_key), (req, res) => {
 })
 
 
-bookings.get('/status', verifyToken(patient_secret_key), (req, res) => {
+bookings.get('/status', verifyToken(process.env.patient_secret_key), (req, res) => {
     if(req.authData){
         return Promise.all([
             Booking.findOne({booked_for_patient: req.authData.patient, closed: false}).exec(),
@@ -74,7 +73,7 @@ bookings.get('/status', verifyToken(patient_secret_key), (req, res) => {
 
 
 
-bookings.get('/requests', verifyToken(admin_secret_key), (req, res) => {   
+bookings.get('/requests', verifyToken(process.env.admin_secret_key), (req, res) => {   
     Request.find(req.query).exec()
     .then((requests) => {
         res.status(200).json({requests})
@@ -82,7 +81,7 @@ bookings.get('/requests', verifyToken(admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json({error}))
 })
 
-bookings.get('/requests/:request_id', verifyToken(admin_secret_key), (req, res) => {  
+bookings.get('/requests/:request_id', verifyToken(process.env.admin_secret_key), (req, res) => {  
     Request.findOne({_id: req.params.request_id}).exec()
     .then((request) => {
         res.status(200).json({request})
@@ -91,7 +90,7 @@ bookings.get('/requests/:request_id', verifyToken(admin_secret_key), (req, res) 
 })
 
 
-bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
+bookings.post('/new/:request_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     return Promise.all([
         Request.findOne({_id: req.params.request_id, ready_for_booking: true, closed: false}).exec(),
         Physio.findOne({physio_id: req.body.physio_id}).exec(),
@@ -135,12 +134,12 @@ bookings.post('/new/:request_id', verifyToken(admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json(error))
 })
 
-bookings.put('/extend', verifyToken(physio_secret_key), (req, res) => {
+bookings.put('/extend', verifyToken(process.env.physio_secret_key), (req, res) => {
     //
 })
 
 
-bookings.post('/assign-consultant/:request_id', verifyToken(admin_secret_key), (req, res) => {   
+bookings.post('/assign-consultant/:request_id', verifyToken(process.env.admin_secret_key), (req, res) => {   
     return Promise.all([
         Request.findOne({_id: req.params.request_id}).exec(),
         Consultant.findOne({consultant_id: req.body.consultant_id}).exec(),
@@ -186,7 +185,7 @@ bookings.post('/assign-consultant/:request_id', verifyToken(admin_secret_key), (
 
 
 // route to be accessed by consultant (otp needed) 
-bookings.put('/assign-sessions/:request_id', verifyToken(consultant_secret_key), (req, res) => {  
+bookings.put('/assign-sessions/:request_id', verifyToken(process.env.consultant_secret_key), (req, res) => {  
     return Promise.all([
         Request.findOne({_id: req.params.request_id, 
                         consultant_otp: req.body.consultant_otp}).exec(),
@@ -228,13 +227,13 @@ bookings.put('/assign-sessions/:request_id', verifyToken(consultant_secret_key),
 })
 
 
-bookings.get('/pending-consultations', verifyToken(consultant_secret_key), (req, res) => {
+bookings.get('/pending-consultations', verifyToken(process.env.consultant_secret_key), (req, res) => {
     Request.find({mapped_consultant: req.authData.consultant, processed_by_consultant: false}).exec()
     .then(requests => res.status(200).json({requests}))
     .catch(error => res.status(500).json({error}))
 })
 
-bookings.get('/assigned-bookings', verifyToken(physio_secret_key), (req,res) => {
+bookings.get('/assigned-bookings', verifyToken(process.env.physio_secret_key), (req,res) => {
     Booking.find({assigned_physio: req.authData.physio, closed: false}).exec()
     .then(bookings => res.status(200).json({bookings}))
     .catch(error => res.status(500).json({error}));

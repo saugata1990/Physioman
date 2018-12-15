@@ -6,11 +6,10 @@ const Booking = require('../models/bookingModel')
 const Session = require('../models/sessionModel')
 const Physio = require('../models/physioModel')
 const date = require('date-and-time')
-const { patient_secret_key, admin_secret_key, physio_secret_key } = require('../config/keys')
 
 
 // to be used by physio before each session 
-sessions.post('/sendOTP/:booking_id', verifyToken(physio_secret_key), (req, res) => {
+sessions.post('/sendOTP/:booking_id', verifyToken(process.env.physio_secret_key), (req, res) => {
     let otp = generateOTP()
     return Promise.all([
         Booking.findOne({_id: req.params.booking_id}).exec(),
@@ -43,7 +42,7 @@ sessions.post('/sendOTP/:booking_id', verifyToken(physio_secret_key), (req, res)
 })
 
 
-sessions.post('/start-session/:booking_id', verifyToken(physio_secret_key), (req, res) => {
+sessions.post('/start-session/:booking_id', verifyToken(process.env.physio_secret_key), (req, res) => {
     return Promise.all([
         Booking.findOne({_id: req.params.booking_id}).exec(),
         Session.findOne({booking_id: req.params.booking_id}).exec()
@@ -70,7 +69,7 @@ sessions.post('/start-session/:booking_id', verifyToken(physio_secret_key), (req
 
 
 // to be used by physio to end session(might require changes)
-sessions.post('/end-session/:session_id', verifyToken(physio_secret_key), (req, res) => {
+sessions.post('/end-session/:session_id', verifyToken(process.env.physio_secret_key), (req, res) => {
     Session.findOne({_id: req.params.session_id}).exec()
     .then((session) => {
         Booking.findOne({_id: session.booking_id}).exec()

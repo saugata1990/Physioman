@@ -1,11 +1,10 @@
 const mongoose = require('mongoose')
-const { mongo_url } = require('../config/keys')
 const url = 'mongodb://localhost:27017/physioman'
 const Patient = require('./patientModel')
 const Review = require('./reviewModel') 
 const Schema = mongoose.Schema
 mongoose.Promise = global.Promise
-const db = mongoose.createConnection(mongo_url)
+const db = mongoose.createConnection(process.env.mongo_url)
 
 const physioSchema = new Schema({
     physio_id: String, // unique

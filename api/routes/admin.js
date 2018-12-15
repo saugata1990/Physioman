@@ -17,7 +17,6 @@ const Admin = require('../models/adminModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const {sendSMS, sendSMSmock, generateOTP, verifyToken, phoneExists, emailExists} = require('../utils/helper')
-const { admin_secret_key } = require('../config/keys')
 
 
 // create routes for user creation and login
@@ -89,7 +88,7 @@ admin.post('/login', (req, res) => {
 })
 
 
-admin.post('/booking-payment-due/:patient_id', verifyToken(admin_secret_key), (req, res) => {
+admin.post('/booking-payment-due/:patient_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     return Promise.all([
         Patient.findOne({patient_id: req.params.patient_id}).exec(),
         Incident.findOne({action_route: '/booking-payment-due/' + req.params.patient_id}).exec()

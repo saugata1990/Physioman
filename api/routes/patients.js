@@ -11,10 +11,9 @@ const {verifyToken, generateOTP, sendSMSmock, phoneExists, emailExists} = requir
 const bcrypt = require('bcrypt')
 const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
-const { patient_secret_key, admin_secret_key, consultant_secret_key } = require('../config/keys')
 
 
-patients.get('/',verifyToken(admin_secret_key), (req, res) => {   
+patients.get('/',verifyToken(process.env.admin_secret_key), (req, res) => {   
     Patient.find(req.query).exec()
     .then((patients) => {
         res.status(200).json({patients})
@@ -22,7 +21,7 @@ patients.get('/',verifyToken(admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json({error}))
 })
 
-patients.get('/name', verifyToken(admin_secret_key), (req, res) => {   
+patients.get('/name', verifyToken(process.env.admin_secret_key), (req, res) => {   
     Patient.findOne({patient_id: req.query.patient_id}, 'patient_name').exec()
     .then((name) => {
         res.status(200).json(name)
@@ -152,7 +151,7 @@ patients.post('/verify-otp/:phone_no', (req, res) => {
 })
 
 
-patients.post('/verify-email', verifyToken(patient_secret_key), (req, res) => {
+patients.post('/verify-email', verifyToken(process.env.patient_secret_key), (req, res) => {
     //
 })
 
@@ -174,7 +173,7 @@ patients.post('/reset-password', (req, res) => {
 
 
 
-patients.get('/viewProfile', verifyToken(patient_secret_key), (req, res) => {
+patients.get('/viewProfile', verifyToken(process.env.patient_secret_key), (req, res) => {
     if(req.authData){
         Patient.findOne({patient_id: req.authData.patient}).exec()
         .then((patient) => {
@@ -186,7 +185,7 @@ patients.get('/viewProfile', verifyToken(patient_secret_key), (req, res) => {
 
 
 
-patients.get('/viewBookingStatus', verifyToken(patient_secret_key), (req, res) => {
+patients.get('/viewBookingStatus', verifyToken(process.env.patient_secret_key), (req, res) => {
     if(req.authData){
         return Promise.all([
             Booking.findOne({booked_for_patient: req.authData.patient}).exec(),
@@ -208,7 +207,7 @@ patients.get('/viewBookingStatus', verifyToken(patient_secret_key), (req, res) =
 })
 
 
-patients.get('/:patient_id', verifyToken(admin_secret_key), (req, res) => {
+patients.get('/:patient_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     Patient.findOne({patient_id: req.params.patient_id}).exec()
     .then((patient) => {
         if(!patient){

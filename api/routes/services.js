@@ -10,13 +10,12 @@ const Incident = require('../models/incidentModel')
 const payments = require('./payments')
 const jwt = require('jsonwebtoken')
 const date = require('date-and-time')
-const { patient_secret_key, admin_secret_key } = require('../config/keys')
 
 
 services.use('/payments', payments)
 
 // to be accessed by patient
-services.post('/new-booking-request', verifyToken(patient_secret_key), (req, res) => {
+services.post('/new-booking-request', verifyToken(process.env.patient_secret_key), (req, res) => {
     return Promise.all([
         Request.findOne({requested_by_patient: req.authData.patient, closed: false}).exec(),
         Patient.findOne({patient_id: req.authData.patient}).exec()
@@ -61,15 +60,15 @@ services.post('/new-booking-request', verifyToken(patient_secret_key), (req, res
 
 
 
-services.post('/cancel-booking-request/:request_id', verifyToken(patient_secret_key),(req, res) => {
+services.post('/cancel-booking-request/:request_id', verifyToken(process.env.patient_secret_key),(req, res) => {
     //
 })
 
-services.post('/cancel-booking/:booking_id', verifyToken(patient_secret_key), (req, res) => {
+services.post('/cancel-booking/:booking_id', verifyToken(process.env.patient_secret_key), (req, res) => {
     //
 })
 
-services.post('/place-order', verifyToken(patient_secret_key), (req, res) => {
+services.post('/place-order', verifyToken(process.env.patient_secret_key), (req, res) => {
     if(req.authData){
         const amount_payable = req.body.items_purchased.reduce((acc, item) => acc + item.selling_price, 0)
                                 + req.body.items_rented.reduce((acc, item) => acc + item.rent_price, 0)
@@ -109,7 +108,7 @@ services.post('/place-order', verifyToken(patient_secret_key), (req, res) => {
 })
 
 
-services.post('/order-cancel-request/:order_id', verifyToken(patient_secret_key), (req, res) => {
+services.post('/order-cancel-request/:order_id', verifyToken(process.env.patient_secret_key), (req, res) => {
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
         order.cancellation_requested = true

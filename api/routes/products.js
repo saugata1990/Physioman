@@ -5,7 +5,6 @@ const Review = require('../models/reviewModel')
 const { upload, verifyToken } = require('../utils/helper')
 const jwt = require('jsonwebtoken')
 const fs = require('fs')
-const { patient_secret_key, admin_secret_key } = require('../config/keys')
 
 
 products.get('/search', (req, res) => {
@@ -103,7 +102,7 @@ products.put('/update/:id', upload.single('image'), (req, res) => {
     .catch(error => res.status(500).json({error}))
 })
 
-products.delete('/remove/:id', verifyToken(admin_secret_key), (req, res) => {
+products.delete('/remove/:id', verifyToken(process.env.admin_secret_key), (req, res) => {
     Product.findOneAndDelete({_id: req.params.id}).exec()
     .then(product => {
         if(!product){
@@ -117,7 +116,7 @@ products.delete('/remove/:id', verifyToken(admin_secret_key), (req, res) => {
 })
 
 
-products.put('/add-to-inventory/:product_id', verifyToken(admin_secret_key), (req, res) => {
+products.put('/add-to-inventory/:product_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     Product.findOne({_id: req.params.product_id}).exec()
     .then(product => {
         product.stock_for_sale += parseInt(req.body.items_for_sale) || 0
@@ -130,7 +129,7 @@ products.put('/add-to-inventory/:product_id', verifyToken(admin_secret_key), (re
 
 
 // only patients can post
-products.post('/review', verifyToken(patient_secret_key), (req, res) => {
+products.post('/review', verifyToken(process.env.patient_secret_key), (req, res) => {
     const review = new Review({
         review_of: req.body.review_of,
         review_by: req.body.review_by,

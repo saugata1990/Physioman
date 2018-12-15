@@ -7,7 +7,6 @@ const consultants = express.Router()
 const bcrypt = require('bcrypt')
 const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
-const { consultant_secret_key, admin_secret_key, physio_secret_key } = require('../config/keys')
 
 
 consultants.post('/login', (req, res) => {
@@ -33,7 +32,7 @@ consultants.post('/login', (req, res) => {
 })
 
 
-consultants.get('/', verifyToken(admin_secret_key), (req, res) => {
+consultants.get('/', verifyToken(process.env.admin_secret_key), (req, res) => {
     Consultant.find({terminated: false}).sort('pending_consultations').exec()
     .then((consultants) => {
         res.status(200).json({consultants})
@@ -41,7 +40,7 @@ consultants.get('/', verifyToken(admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json({error}))
 })
 
-consultants.post('/new-consultant', verifyToken(admin_secret_key), (req, res) => {
+consultants.post('/new-consultant', verifyToken(process.env.admin_secret_key), (req, res) => {
     return Promise.all([
         phoneExists(req.body.consultant_phone),
         emailExists(req.body.consultant_email),
@@ -109,7 +108,7 @@ consultants.post('/login', (req, res) => {
     .catch(error => res.status(500).json(error))
 })
 
-consultants.get('/details', verifyToken(consultant_secret_key), (req, res) => {
+consultants.get('/details', verifyToken(process.env.consultant_secret_key), (req, res) => {
     Consultant.findOne({consultant_id: req.authData.consultant}).exec()
     .then(consultant => res.status(200).json({consultant}))
     .catch(error => res.status(500).json({error}))

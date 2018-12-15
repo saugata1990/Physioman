@@ -1,6 +1,5 @@
 const express = require('express')
 const payments = express.Router()
-const { patient_secret_key, merchant_key, merchant_salt } = require('../config/keys')
 const uniqid = require('uniqid')
 const jsSHA = require('jssha')
 
@@ -10,8 +9,8 @@ payments.post('/payumoney-hash', (req, res) => {
     const productInfo = req.body.productinfo
     const firstname = req.body.firstname
     const email = req.body.email
-    const hashString = merchant_key + '|' + txnid + '|' + amount + '|' + productInfo + '|' + firstname + '|' + email + '|' 
-            + '||||||||||' + merchant_salt 
+    const hashString = process.env.merchant_key + '|' + txnid + '|' + amount + '|' + productInfo + '|' + firstname + '|' + email + '|' 
+            + '||||||||||' + process.env.merchant_salt 
     let sha = new jsSHA('SHA-512', 'TEXT')
     sha.update(hashString)
     const hash = sha.getHash('HEX')
@@ -22,8 +21,8 @@ payments.post('/payumoney-hash', (req, res) => {
 payments.post('/payumoney-response', (req, res) => {
     let pd = req.body.response
     pd = JSON.parse(pd)
-    const hashString = merchant_salt + '|' + pd.status + '||||||||||' + '|' + pd.email + '|' + pd.firstname + '|' + pd.productinfo + '|'
-            + pd.amount + '|' + pd.txnid + '|' + merchant_key
+    const hashString = process.env.merchant_salt + '|' + pd.status + '||||||||||' + '|' + pd.email + '|' + pd.firstname + '|' + pd.productinfo + '|'
+            + pd.amount + '|' + pd.txnid + '|' + process.env.merchant_key
     let sha = new jsSHA('SHA-512', 'TEXT')
     sha.update(hashString)
     const hash = sha.getHash('HEX')

@@ -2,7 +2,6 @@ const express = require('express')
 const incidents = express.Router()
 const Incident = require('../models/incidentModel')
 const { verifyToken } = require('../utils/helper')
-const { admin_secret_key } = require('../config/keys')
 
 incidents.get('/',  (req, res) => {   //verifyToken(admin_secret_key),
     Incident.find(req.query).sort({_id: -1}).exec()  // change sort key to timestamp

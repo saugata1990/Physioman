@@ -7,14 +7,13 @@ const Incident = require('../models/incidentModel')
 const Dispatch = require('../models/dispatchModel')
 const date = require('date-and-time')
 const {verifyToken, generateOTP, sendSMSmock} = require('../utils/helper')
-const { patient_secret_key, admin_secret_key } = require('../config/keys')
 
 
 orders.get('/', (req, res) => {
     Order.find().exec().then(orders => res.status(200).json({orders})).catch(error => res.status(500).json({error}))
 })
 
-orders.get('/open', verifyToken(patient_secret_key), (req, res) => {
+orders.get('/open', verifyToken(process.env.patient_secret_key), (req, res) => {
     if(req.authData){
         Order.find({ordered_by: req.authData.patient, closed: false}).exec()
         .then(orders => {
@@ -30,14 +29,14 @@ orders.get('/open', verifyToken(patient_secret_key), (req, res) => {
 })
 
 // to be accessed by patient
-orders.get('/:order_id', verifyToken(patient_secret_key), (req, res) => {
+orders.get('/:order_id', verifyToken(process.env.patient_secret_key), (req, res) => {
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => res.status(200).json({order}))
     .catch(error => res.status(500).json({error}))
 })
 
 // to be processed by admin
-orders.post('/process/:order_id', verifyToken(admin_secret_key), (req, res) => {
+orders.post('/process/:order_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     const products_to_ship = new Array()
     let amount = 0
     let product = null
@@ -102,7 +101,7 @@ orders.post('/process/:order_id', verifyToken(admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json({error}))
 })
 
-orders.get('/ordered-items/:order_id', verifyToken(admin_secret_key), (req, res) => {
+orders.get('/ordered-items/:order_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     Order.findOne({_id: req.params.order_id}, 'ordered_items').exec()
     .then(ordered_items => {
         res.status(200).json(ordered_items)
@@ -118,7 +117,7 @@ orders.get('/item-name/:id',  (req, res) => {
 
 
 // this route is to be accessed by the delivery guy
-orders.post('/resend-otp/:order_id', verifyToken(admin_secret_key), (req, res) => {
+orders.post('/resend-otp/:order_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
         const otp = generateOTP()
@@ -166,7 +165,7 @@ orders.post('/process-return/:order_id',  (req, res) => {  // verifyToken(admin_
 
 
 // this route is to be accessed once every few days or daily, depending on business
-orders.post('/process-offline-order/:product_id', verifyToken(admin_secret_key), (req, res) => {
+orders.post('/process-offline-order/:product_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     Product.findOne({_id: req.params.product_id}).exec()
     .then(product => {
         product.stock_for_sale -= req.body.units_sold || 0

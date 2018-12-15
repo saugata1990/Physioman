@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+require('dotenv').config()
 const products = require('./routes/products')
 const physios = require('./routes/physios')
 const patients = require('./routes/patients')
@@ -14,6 +15,7 @@ const logistics = require('./routes/deliveryMan')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const path = require('path')
+
 
 app.use(cors())
 app.use((req, res, next) => {

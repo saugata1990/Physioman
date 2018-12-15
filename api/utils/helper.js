@@ -1,6 +1,5 @@
 const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
-const {twilio_sid, twilio_token, twilio_phone_number} = require('../config/keys')
-const smsClient = require('twilio')(twilio_sid, twilio_token)
+const smsClient = require('twilio')(process.env.twilio_sid, process.env.twilio_token)
 const jwt = require('jsonwebtoken')
 const multer = require('multer')
 const path = require('path')
@@ -73,7 +72,7 @@ const emailExists = (email) => {
 const sendSMS = (phone_number, message) => {
     smsClient.messages.create({
         to: phone_number,
-        from: twilio_phone_number,
+        from: process.env.twilio_phone_number,
         body: message
     })
     .then((message)=>console.log('message sent'))

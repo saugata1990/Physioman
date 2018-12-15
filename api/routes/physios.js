@@ -4,13 +4,12 @@ const Physio = require('../models/physioModel')
 const Consultant = require('../models/consultantModel')
 const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
 const {phoneExists, emailExists, verifyToken} = require('../utils/helper')
-const { patient_secret_key, admin_secret_key, physio_secret_key, consultant_secret_key } = require('../config/keys')
 const bcrypt = require('bcrypt')
 const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
 
 // only admin can view
-physios.get('/', verifyToken(admin_secret_key), (req, res) => {
+physios.get('/', verifyToken(process.env.admin_secret_key), (req, res) => {
     Physio.find({terminated: false}).sort('number_of_patients').exec()
     .then((physios) => {
         res.status(200).json({physios: physios})
@@ -19,7 +18,7 @@ physios.get('/', verifyToken(admin_secret_key), (req, res) => {
 })
 
 // this route is to be accessed by admin
-physios.post('/new-account', verifyToken(admin_secret_key), (req, res) => {
+physios.post('/new-account', verifyToken(process.env.admin_secret_key), (req, res) => {
     return Promise.all([
         phoneExists(req.body.physio_phone), 
         emailExists(req.body.physio_email),
@@ -88,7 +87,7 @@ physios.post('/new-account', verifyToken(admin_secret_key), (req, res) => {
 })
 
 
-physios.put('/edit/:id', verifyToken(admin_secret_key), (req, res) => {
+physios.put('/edit/:id', verifyToken(process.env.admin_secret_key), (req, res) => {
     return Promise.all([
         Physio.findOne({physio_id: req.params.id}).exec(),
         Consultant.findOne({consultant_id: req.params.id}).exec()
@@ -175,7 +174,7 @@ physios.post('/login', (req, res) => {
 
 
 // only logged in user can view
-physios.get('/details', verifyToken(physio_secret_key), (req, res) => {
+physios.get('/details', verifyToken(process.env.physio_secret_key), (req, res) => {
     Physio.findOne({physio_id: req.authData.physio}).exec()
     .then((physio) => {
         if(!physio){
@@ -188,7 +187,7 @@ physios.get('/details', verifyToken(physio_secret_key), (req, res) => {
     .catch(error => res.status(500).json(error))
 })
 
-physios.put('/:physio_id/reset-password', verifyToken(physio_secret_key), (req, res) => {
+physios.put('/:physio_id/reset-password', verifyToken(process.env.physio_secret_key), (req, res) => {
 
 })
 

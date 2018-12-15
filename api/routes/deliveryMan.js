@@ -5,7 +5,6 @@ const Order = require('../models/orderModel')
 const Incident = require('../models/incidentModel')
 const DeliveryMan = require('../models/deliveryManModel')
 const bcrypt = require('bcrypt')
-const { deliveryMan_secret_key } = require('../config/keys')
 const { verifyToken } = require('../utils/helper')
 
 
