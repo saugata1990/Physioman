@@ -22,7 +22,8 @@ const patientSchema = new Schema({
     date_joined: Date,
     first_session_date: Date,
     last_session_date: Date,
-    total_number_of_sessions: Number
+    total_number_of_sessions: Number,
+    wallet_amount: Number
 })
 
 

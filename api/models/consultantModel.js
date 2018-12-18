@@ -18,7 +18,8 @@ const consultantSchema = new Schema({
     number_of_consultations: Number,
     pending_consultations: Number,
     patients_to_visit: [String],
-    terminated: Boolean
+    terminated: Boolean,
+    wallet_amount: 0
 })
 
 const Consultant = db.model('Consultant', consultantSchema)

@@ -8,6 +8,28 @@ const bcrypt = require('bcrypt')
 const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
 
+
+// test geocoding
+// physios.get('/test-geocoding', (req, res) => {
+//     const NodeGeocoder = require('node-geocoder')
+//     const options = {
+//         provider: 'google',
+//         apiKey: 'AIzaSyDq1dFUZxqVbZTNqOWkQOocGbo6UCjstbY',
+//         formatter: null
+//     }
+//     const geocoder = NodeGeocoder(options)
+//     geocoder.geocode('28/3, Onkarmal Jetia Road, Howrah-711103')
+//     .then(data => {
+//         console.log(data)
+//         res.status(200).json({data})
+//     })
+//     .catch(error => {
+//         console.log(error)
+//         res.status(500).json({error})
+//     })
+// })
+
+
 // only admin can view
 physios.get('/', verifyToken(process.env.admin_secret_key), (req, res) => {
     Physio.find({terminated: false}).sort('number_of_patients').exec()
@@ -51,7 +73,8 @@ physios.post('/new-account', verifyToken(process.env.admin_secret_key), (req, re
                     physio_dob: date.parse(req.body.physio_dob.toString(), 'YYYY-MM-DD') || null,
                     date_joined: date.parse(req.body.date_joined.toString(), 'YYYY-MM-DD') || new Date(),
                     isConsultant: req.body.isConsultant || false,
-                    terminated: false  
+                    terminated: false,
+                    wallet_amount: 0  
                 }).save(),
                 new PhoneAndEmail({
                     registered_phone_number: req.body.physio_phone,
@@ -71,7 +94,8 @@ physios.post('/new-account', verifyToken(process.env.admin_secret_key), (req, re
                         date_joined: date.parse(req.body.date_joined.toString(), 'YYYY-MM-DD') || new Date(),
                         number_of_consultations: 0,
                         pending_consultations: 0,
-                        terminated: false
+                        terminated: false,
+                        wallet_amount: 0
                     }).save(err => {
                         res.status(200).json({message: 'Physio created and added as consultant'})
                     })
@@ -115,7 +139,8 @@ physios.put('/edit/:id', verifyToken(process.env.admin_secret_key), (req, res) =
                 date_joined: new Date(),
                 number_of_consultations: 0,
                 pending_consultations: 0,
-                terminated: false
+                terminated: false,
+                wallet_amount: physio.wallet_amount
             })
         }
         return Promise.all([

@@ -1,5 +1,6 @@
 const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
 const smsClient = require('twilio')(process.env.twilio_sid, process.env.twilio_token)
+const NodeGeocoder = require('node-geocoder')
 const jwt = require('jsonwebtoken')
 const multer = require('multer')
 const path = require('path')
@@ -86,4 +87,15 @@ const sendSMSmock = (x , y) => {
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 
 
-module.exports = {upload, verifyToken, phoneExists, emailExists, sendSMS, sendSMSmock, generateOTP}
+const geocode = (address) => {
+    const options = {
+        provider: 'google',
+        apiKey: process.env.geocoder_api_key,
+        formatter: null
+    }
+    const geocoder = NodeGeocoder(options)
+    return geocoder.geocode(address)        
+} 
+
+
+module.exports = {upload, verifyToken, phoneExists, geocode, emailExists, sendSMS, sendSMSmock, generateOTP}

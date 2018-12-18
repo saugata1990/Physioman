@@ -239,6 +239,40 @@ bookings.get('/assigned-bookings', verifyToken(process.env.physio_secret_key), (
     .catch(error => res.status(500).json({error}));
 })
 
+bookings.post('/request-booking-transfer', verifyToken(process.env.physio_secret_key), (req, res) => {
+    //
+})
+
+bookings.post('/transfer-session', verifyToken(process.env.physio_secret_key), (req, res) => {
+    //
+})
+
+bookings.post('/transfer-booking/:booking_id', verifyToken(process.env.admin_secret_key), (req, res) => {
+    return Promise.all([
+        Booking.findOne({_id: req.params.booking_id}).exec(),
+        Physio.findOne({_id: req.body.physio_id}).exec()
+    ])
+    .then(([booking, physio_to_assign]) => {
+        return Promise.all([
+            Patient.findOne({_id: booking.booked_for_patient}).exec(),
+            Physio.findOne({_id: booking.assigned_physio}).exec()
+        ])
+        .then(([patient, current_physio]) => {
+            current_physio.number_of_patients--
+            current_physio.current_patients = current_physio.current_patients.filter(pat => pat._id !== patient._id)
+            physio_to_assign.number_of_patients++
+            physio_to_assign.current_patients.push(patient._id)
+            booking.assigned_physio = physio_to_assign._id
+            return Promise.all([
+                current_physio.save(),
+                physio_to_assign.save(),
+                booking.save()
+            ])
+            .then(() => res.status(200).json({message: 'Booking updated'}))
+        })
+    })
+    .catch(error => res.status(500).json({error}))
+})
 
 
 

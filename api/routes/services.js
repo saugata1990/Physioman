@@ -1,7 +1,7 @@
 const express = require('express')
 const services = express.Router()
 const crypto = require('crypto')
-const {verifyToken, sendSMS} = require('../utils/helper')
+const {verifyToken, sendSMS, geocode} = require('../utils/helper')
 const Patient = require('../models/patientModel')
 const Booking = require('../models/bookingModel')
 const Request = require('../models/requestModel')
@@ -61,11 +61,47 @@ services.post('/new-booking-request', verifyToken(process.env.patient_secret_key
 
 
 services.post('/cancel-booking-request/:request_id', verifyToken(process.env.patient_secret_key),(req, res) => {
-    //
+    Request.findOne({_id: req.params.request_id}).exec()
+    .then(request => {
+        request.cancellation_requested = true
+        request.reason_for_cancellation = req.body.reason_for_cancellation
+        return Promise.all([
+            new Incident({
+                action_route: 'TBD',
+                customer: req.authData.patient,
+                priority: 1,
+                status: 'new',
+                timestamp: new Date(),
+                incident_title: 'Booking Request Cancellation',
+                info: 'Customer wrote ' + req.body.reason_for_cancellation
+            }).save(),
+            request.save()
+        ])
+        .then(() => res.status(201).json({message: 'Booking Request cancellation request placed'}))
+    })
+    .catch(error => res.status(500).json({error}))
 })
 
 services.post('/cancel-booking/:booking_id', verifyToken(process.env.patient_secret_key), (req, res) => {
-    //
+    Booking.findOne({_id: req.params.booking_id}).exec()
+    .then(booking => {
+        booking.cancellation_requested = true
+        booking.reason_for_cancellation = req.body.reason_for_cancellation
+        return Promise.all([
+            new Incident({
+                action_route: 'TBD',
+                customer: req.authData.patient,
+                priority: 1,
+                status: 'new',
+                timestamp: new Date(),
+                incident_title: 'Booking Cancellation',
+                info: 'Customer wrote ' + req.body.reason_for_cancellation
+            }).save(),
+            booking.save()
+        ])
+        .then(() => res.status(201).json({message: 'Booking cancellation request placed'}))
+    })
+    .catch(error => res.status(500).json({error}))
 })
 
 services.post('/place-order', verifyToken(process.env.patient_secret_key), (req, res) => {
@@ -144,6 +180,18 @@ services.post('/initiate-return/:order_id',  (req, res) => {  //verifyToken(pati
         }).save()
         .then(() => res.status(201).json({message: 'Return request placed'}))
     })
+    .catch(error => res.status(500).json({error}))
+})
+
+services.post('/sell-back/:order_id', (req, res) => {
+    //
+})
+
+// test geocoding
+services.get('/test-geocoding', (req, res) => {
+    
+    geocode('28/3, Onkarmal Jetia Road, Howrah-711103')
+    .then(data => res.json(200).send({data}))
     .catch(error => res.status(500).json({error}))
 })
 
