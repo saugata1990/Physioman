@@ -8,7 +8,8 @@ import { Store } from '@ngrx/store';
 })
 export class PatientService {
 
-  private baseUrl = 'https://physioman-api.herokuapp.com/';
+  // private baseUrl = 'https://physioman-api.herokuapp.com/';
+  private baseUrl = 'http://localhost:3000/';
 
   private signup_url = this.baseUrl + 'api/patients/signup';
   private login_url = this.baseUrl + 'api/patients/login';

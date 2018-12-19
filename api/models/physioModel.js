@@ -22,10 +22,10 @@ const physioSchema = new Schema({
     gps_enabled: Boolean,
     current_location: String, 
     sessions_completed: Number,
-    demerit_points: Number,
+    merit_points: Number,
     terminated: Boolean,
     rating: Number,
-    wallet_amount: Number
+    debit_amount: Number
 })
 
 const Physio = db.model('Physio', physioSchema)

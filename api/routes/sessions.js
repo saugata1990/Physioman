@@ -82,7 +82,8 @@ sessions.post('/end-session/:session_id', verifyToken(process.env.physio_secret_
             session.session_ended = true
             Physio.findOne({physio_id: booking.assigned_physio}).exec()
             .then(physio => {
-                physio.ratings = (physio.ratings * physio.sessions_completed + 4) / physio.sessions_completed
+                physio.merit_points++
+                physio.rating = (physio.rating * physio.sessions_completed + 4) / ++physio.sessions_completed
                 return Promise.all([
                     session.save(),
                     booking.save(),

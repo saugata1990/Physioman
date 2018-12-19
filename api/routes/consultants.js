@@ -72,7 +72,7 @@ consultants.post('/new-consultant', verifyToken(process.env.admin_secret_key), (
                     number_of_consultations: 0,
                     pending_consultations: 0,
                     terminated: false,
-                    wallet_amount: 0
+                    debit_amount: 0
                 }).save(),
                 new PhoneAndEmail({
                     registered_phone_number: req.body.consultant_phone,

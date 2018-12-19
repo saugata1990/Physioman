@@ -187,12 +187,20 @@ services.post('/sell-back/:order_id', (req, res) => {
     //
 })
 
+
+
 // test geocoding
 services.get('/test-geocoding', (req, res) => {
     
     geocode('28/3, Onkarmal Jetia Road, Howrah-711103')
-    .then(data => res.json(200).send({data}))
-    .catch(error => res.status(500).json({error}))
+    .then(data => {
+        console.log(data)
+        res.status(200).json({data})
+    })
+    .catch(error => {
+        console.log(error)
+        res.status(500).json({error})
+    })
 })
 
 

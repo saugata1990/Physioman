@@ -19,7 +19,7 @@ const upload = multer({
 
 
 // JWT middleware
-const verifyToken = (key) => {
+const verifyToken_old = (key) => {
     return (req, res, next) => {
         const bearerHeader = req.headers['authorization']
         if(bearerHeader !== undefined){
@@ -34,6 +34,32 @@ const verifyToken = (key) => {
                 }
                 next()
             })    
+        }
+        else{
+            res.status(403).json({message: 'Not allowed'})
+        }
+    }
+}
+
+const verifyToken = (...keys) => {
+    return (req, res, next) => {
+        let authorized = false
+        const bearerHeader = req.headers['authorization']
+        if(bearerHeader !== undefined){
+            const bearer = bearerHeader.split(' ')
+            const token = bearer[1]
+            keys.map(key => {
+                jwt.verify(token, key, (err, authData) => {
+                    if(authData){
+                        req.authData = authData
+                        authorized = true
+                        next()
+                    }
+                })
+            })
+            if(!authorized){
+                res.status(403).json({message: 'Not allowed'})
+            }
         }
         else{
             res.status(403).json({message: 'Not allowed'})

@@ -7,7 +7,7 @@ const Booking = require('../models/bookingModel')
 const Request = require('../models/requestModel')
 const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
 const Verification = require('../models/phoneVerification')
-const {verifyToken, generateOTP, sendSMSmock, phoneExists, emailExists} = require('../utils/helper')
+const {verifyToken, verifyToken2, generateOTP, sendSMSmock, phoneExists, emailExists} = require('../utils/helper')
 const bcrypt = require('bcrypt')
 const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
@@ -93,7 +93,7 @@ patients.post('/login', (req, res) => {
         else{
             bcrypt.compare(req.body.password, patient.password_hash, (err, isValid) => {
                 if(isValid){
-                    jwt.sign({patient: patient.patient_id}, patient_secret_key, (err, token) => {
+                    jwt.sign({patient: patient.patient_id}, process.env.patient_secret_key, (err, token) => {
                         res.status(200).json(token)
                     })
                 }

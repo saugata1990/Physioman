@@ -9,7 +9,7 @@ const date = require('date-and-time')
 const {verifyToken, generateOTP, sendSMSmock} = require('../utils/helper')
 
 
-orders.get('/', (req, res) => {
+orders.get('/', verifyToken(process.env.admin_secret_key), (req, res) => {
     Order.find().exec().then(orders => res.status(200).json({orders})).catch(error => res.status(500).json({error}))
 })
 
@@ -132,7 +132,7 @@ orders.post('/resend-otp/:order_id', verifyToken(process.env.admin_secret_key), 
 
 
 
-orders.post('/process-return/:order_id',  (req, res) => {  // verifyToken(admin_secret_key),
+orders.post('/process-return/:order_id', verifyToken(process.env.admin_secret_key), (req, res) => {  
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
         const today = new Date()

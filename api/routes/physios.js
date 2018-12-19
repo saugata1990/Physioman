@@ -69,12 +69,13 @@ physios.post('/new-account', verifyToken(process.env.admin_secret_key), (req, re
                     physio_gender: req.body.physio_gender,
                     number_of_patients: 0,
                     rating: 0,
+                    merit_points: 0,
                     sessions_completed: 0,
                     physio_dob: date.parse(req.body.physio_dob.toString(), 'YYYY-MM-DD') || null,
                     date_joined: date.parse(req.body.date_joined.toString(), 'YYYY-MM-DD') || new Date(),
                     isConsultant: req.body.isConsultant || false,
                     terminated: false,
-                    wallet_amount: 0  
+                    debit_amount: 0  
                 }).save(),
                 new PhoneAndEmail({
                     registered_phone_number: req.body.physio_phone,
@@ -95,7 +96,7 @@ physios.post('/new-account', verifyToken(process.env.admin_secret_key), (req, re
                         number_of_consultations: 0,
                         pending_consultations: 0,
                         terminated: false,
-                        wallet_amount: 0
+                        debit_amount: 0
                     }).save(err => {
                         res.status(200).json({message: 'Physio created and added as consultant'})
                     })
@@ -140,7 +141,7 @@ physios.put('/edit/:id', verifyToken(process.env.admin_secret_key), (req, res) =
                 number_of_consultations: 0,
                 pending_consultations: 0,
                 terminated: false,
-                wallet_amount: physio.wallet_amount
+                debit_amount: physio.debit_amount
             })
         }
         return Promise.all([

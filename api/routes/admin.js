@@ -1,5 +1,3 @@
-// lots of functions will be shifted to other routes from here
-
 const express = require('express')
 const admin = express.Router()
 const Request = require('../models/requestModel')
@@ -28,7 +26,7 @@ admin.get('/', (req, res) => {
 })
 
 // route to be accessed by admin
-admin.post('/new-admin', (req, res) => {
+admin.post('/new-admin', verifyToken(process.env.admin_secret_key), (req, res) => {
     return Promise.all([
         phoneExists(req.body.admin_phone), 
         emailExists(req.body.admin_email),
@@ -74,7 +72,7 @@ admin.post('/login', (req, res) => {
         else{
             bcrypt.compare(req.body.password, admin.password_hash, (err, isValid) => {
                 if(isValid){
-                    jwt.sign({admin: admin.admin_id}, admin_secret_key, (err, token) => {
+                    jwt.sign({admin: admin.admin_id}, process.env.admin_secret_key, (err, token) => {
                         res.status(200).json(token)
                     })
                 }
@@ -106,26 +104,5 @@ admin.post('/booking-payment-due/:patient_id', verifyToken(process.env.admin_sec
     })
     .catch(error => res.status(500).json({error}))
 })
-
-// this route is to be removed in production
-admin.get('/delete-all', (req, res) => {
-    // Physio.collection.drop()
-    // Consultant.collection.drop()
-    Incident.collection.drop()
-    // Patient.collection.drop()
-    Request.collection.drop()  
-    Booking.collection.drop()
-    // PhoneAndEmail.collection.drop()
-    Order.collection.drop()
-    // Product.collection.drop()
-    Dispatch.collection.drop()
-    Session.collection.drop()
-
-    res.status(200).json({message: 'Collections deleted'})
-})
-
-
-
-
 
 module.exports = admin

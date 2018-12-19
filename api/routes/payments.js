@@ -1,7 +1,10 @@
 const express = require('express')
 const payments = express.Router()
-const uniqid = require('uniqid')
 const jsSHA = require('jssha')
+const Transaction = require('../models/transactionModel')
+const Physio = require('../models/physioModel')
+const Consultant = require('../models/consultantModel')
+const {verifyToken} = require('../utils/helper')
 
 payments.post('/payumoney-hash', (req, res) => {
     const txnid = req.body.txnid
@@ -14,7 +17,7 @@ payments.post('/payumoney-hash', (req, res) => {
     let sha = new jsSHA('SHA-512', 'TEXT')
     sha.update(hashString)
     const hash = sha.getHash('HEX')
-    res.json({hash})
+    res.status(200).json({hash})
 })
 
 
@@ -27,7 +30,14 @@ payments.post('/payumoney-response', (req, res) => {
     sha.update(hashString)
     const hash = sha.getHash('HEX')
     if(hash == pd.hash) {
-        res.status(200).json({message: 'payment successful'})
+        new Transaction({
+            transaction_type: 'card',
+            transaction_amount: pd.amount,
+            payee: pd.firstname,
+            recipient: 'Physioman',
+            timestamp: new Date()
+        }).save()
+        .then(() => res.status(200).json({message: 'payment successful'}))
     }
     else{
         res.status(400).json({message: 'error occurred'})
@@ -44,6 +54,11 @@ payments.get('/failure', (req, res) => {
     res.status(400).json({message: 'failure'})
 })
 
+
+payments.post('/confirm-cash-received/:patient_id', 
+                verifyToken(process.env.physio_secret_key, process.env.consultant_secret_key), (req, res) => {
+    // TBD
+})
 
 
 

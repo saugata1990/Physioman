@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken')
 const fs = require('fs')
 
 
-products.get('/search', (req, res) => {
+products.get('/search', verifyToken(process.env.patient_secret_key), (req, res) => {
     Product.search(req.query.q)
     .then(products => res.status(200).json({products, count: products.length}))
     .catch(error => res.status(500).json({error}))
@@ -15,12 +15,12 @@ products.get('/search', (req, res) => {
 
 
 // to be used by admin
-products.get('/:product_model', (req, res) => {
+products.get('/:product_model', verifyToken(process.env.admin_secret_key), (req, res) => {
     Product.findOne({product_model: req.params.product_model}).exec()
     .then(product => res.status(200).json({product}))
 })
 
-products.get('/', (req, res) => { 
+products.get('/', verifyToken(process.env.admin_secret_key, process.env.patient_secret_key), (req, res) => { 
     Product.find(req.query).exec()
     .then(products => {
         if(products.length){
@@ -34,7 +34,7 @@ products.get('/', (req, res) => {
 })
 
 
-products.get('/details/:id', (req, res) => {   
+products.get('/details/:id', verifyToken(process.env.admin_secret_key, process.env.patient_secret_key), (req, res) => {   
     Product.findOne({_id: req.params.id}).exec()
     .then(product => res.status(200).json({product}))
     .catch(error => res.status(500).json({error}))
@@ -42,7 +42,7 @@ products.get('/details/:id', (req, res) => {
 
 
 
-products.post('/add-new',  upload.single('image'), (req, res) => {  // admin access
+products.post('/add-new', verifyToken(process.env.admin_secret_key), upload.single('image'), (req, res) => {  
     let filePath = null
     if(req.file !== undefined){
         filePath = req.file.path
@@ -74,7 +74,7 @@ products.post('/add-new',  upload.single('image'), (req, res) => {  // admin acc
 
 
 
-products.put('/update/:id', upload.single('image'), (req, res) => {
+products.put('/update/:id', verifyToken(process.env.admin_secret_key), upload.single('image'), (req, res) => {
     let filePath = null
     if(req.file !== undefined){
         filePath = req.file.path
