@@ -47,11 +47,11 @@ orders.post('/process/:order_id', verifyToken(process.env.admin_secret_key), (re
             Patient.findOne({patient_id: order.ordered_by}).exec()
         ])
         .then(([products, requester]) => {
-            let items_to_deliver = 'Requester: ' + requester.patient_name + ', Contact: ' + requester.patient_phone 
-                                    + ', Address: ' + requester.patient_address + '\n'
+            let items_to_deliver = `Requester: ${requester.patient_name}, Contact: ${requester.patient_phone} 
+                                    , Address: ${requester.patient_address}\n`
             const otp = generateOTP()
             order.delivery_otp = otp
-            sendSMSmock(requester.patient_phone, 'Your OTP is ' + otp + '. Please mention this OTP when asked')
+            sendSMSmock(requester.patient_phone, `Your OTP is ${otp}. Please mention this OTP when asked`)
             order.processed = true
             order.delivered = false
             order.ordered_items.map(
@@ -62,7 +62,7 @@ orders.post('/process/:order_id', verifyToken(process.env.admin_secret_key), (re
                         if(order.payment_mode === 'cash'){
                             amount += product.rent_price
                         }
-                        items_to_deliver += 'Rent: Model ' + product.product_model + ', Name ' + product.product_name + '\n'
+                        items_to_deliver += `Rent: Model ${product.product_model} , Name ${product.product_name}\n`
                         product.stock_for_rent--
                     }
                     else{
@@ -71,17 +71,17 @@ orders.post('/process/:order_id', verifyToken(process.env.admin_secret_key), (re
                         if(order.payment_mode === 'cash'){
                             amount += product.selling_price
                         }
-                        items_to_deliver += 'Purchase: Model ' + product.product_model + ', Name ' + product.product_name + '\n'
+                        items_to_deliver += `Purchase: Model ${product.product_model}, Name ${product.product_name}\n`
                         product.stock_for_sale--
                     }
                 }
             )
-            items_to_deliver += 'Amount to collect: ' + amount
+            items_to_deliver += `Amount to collect: ${amount}`
             sendSMSmock('logistics phone number', items_to_deliver)
             return Promise.all([
                 products.map(product => product.save()),
                 order.save(),
-                Incident.findOne({action_route: 'api/orders/process/' + order._id}).exec(),
+                Incident.findOne({action_route: `api/orders/process/${order._id}`}).exec(),
                 new Dispatch({
                     order: order._id,
                     dispatch_type: 'Delivery',
@@ -122,7 +122,7 @@ orders.post('/resend-otp/:order_id', verifyToken(process.env.admin_secret_key), 
     .then(order => {
         const otp = generateOTP()
         order.delivery_otp = otp
-        sendSMSmock(requester.patient_phone, 'Your OTP is ' + otp + '. Please mention this OTP when asked')
+        sendSMSmock(requester.patient_phone, `Your OTP is ${otp}. Please mention this OTP when asked`)
         order.save()
         .then(() => res.status(200).json({message: 'OTP resent'}))
     })
@@ -144,9 +144,9 @@ orders.post('/process-return/:order_id', verifyToken(process.env.admin_secret_ke
             Patient.findOne({patient_id: order.ordered_by}).exec()
         ])
         .then(([products, patient]) => {
-            patient_details = 'Patient name ' + patient.patient_name + ', Contact: ' + patient.patient_phone
-                                + ', Address: ' + patient.patient_address
-            products.map(product => products_to_collect +=  product.product_name + ', ')
+            patient_details = `Patient name  ${patient.patient_name}, Contact: ${patient.patient_phone}
+                                , Address: ${patient.patient_address}`
+            products.map(product => products_to_collect +=  `${product.product_name}, `)
             new Dispatch({
                 order: order._id,
                 dispatch_type: 'Return',

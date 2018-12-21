@@ -143,7 +143,7 @@ bookings.post('/assign-consultant/:request_id', verifyToken(process.env.admin_se
     return Promise.all([
         Request.findOne({_id: req.params.request_id}).exec(),
         Consultant.findOne({consultant_id: req.body.consultant_id}).exec(),
-        Incident.findOne({action_route: 'api/bookings/assign-consultant/' + req.params.request_id}).exec()
+        Incident.findOne({action_route: `api/bookings/assign-consultant/${req.params.request_id}`}).exec()
     ])
     .then(([request, consultant, incident]) => {
         request.serviced_at = new Date()
@@ -208,7 +208,7 @@ bookings.put('/assign-sessions/:request_id', verifyToken(process.env.consultant_
                 consultant.patients_to_visit = 
                     consultant.patients_to_visit.filter(patient_id => patient_id !== request.requested_by_patient)
                 consultant.last_consultation_date = new Date()
-                incident.action_route = 'api/bookings/new/' + request._id
+                incident.action_route = `api/bookings/new/${request._id}`
                 incident.status = 'new'
                 incident.timestamp = consultant.last_consultation_date
                 incident.incident_title = 'Request Ready for Booking'

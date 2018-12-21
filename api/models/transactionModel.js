@@ -7,7 +7,7 @@ const transactionSchema = new Schema({
     transaction_type: String,
     transaction_amount: Number,
     payee: String,
-    receipient: String, 
+    recipient: String, 
     timestamp: Date 
 })
 

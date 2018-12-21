@@ -185,7 +185,7 @@ physios.post('/login', (req, res) => {
         else{
             bcrypt.compare(req.body.password, physio.password_hash, (err, isValid) => {
                 if(isValid){
-                    jwt.sign({physio: physio.physio_id}, physio_secret_key, (err, token) => {
+                    jwt.sign({physio: physio.physio_id}, process.env.physio_secret_key, (err, token) => {
                         res.status(200).json(token)
                     })
                 }
@@ -199,8 +199,7 @@ physios.post('/login', (req, res) => {
 })
 
 
-// only logged in user can view
-physios.get('/details', verifyToken(process.env.physio_secret_key), (req, res) => {
+physios.get('/details', verifyToken(process.env.admin_secret_key, process.env.physio_secret_key), (req, res) => {
     Physio.findOne({physio_id: req.authData.physio}).exec()
     .then((physio) => {
         if(!physio){

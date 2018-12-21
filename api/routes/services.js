@@ -43,7 +43,7 @@ services.post('/new-booking-request', verifyToken(process.env.patient_secret_key
             ])
             .then(() => {
                 new Incident({
-                    action_route: 'api/bookings/assign-consultant/' + booking_request._id,
+                    action_route: `api/bookings/assign-consultant/${booking_request._id}`,
                     customer: booking_request.requested_by_patient,
                     priority: 2,
                     status: 'new',
@@ -128,7 +128,7 @@ services.post('/place-order', verifyToken(process.env.patient_secret_key), (req,
             return Promise.all([
                 patient.save(),
                 new Incident({
-                    action_route: 'api/orders/process/' + order._id,
+                    action_route: `api/orders/process/${order._id}`,
                     customer: order.ordered_by,
                     priority: 2,
                     status: 'new',
@@ -152,13 +152,13 @@ services.post('/order-cancel-request/:order_id', verifyToken(process.env.patient
         return Promise.all([
             order.save(),
             new Incident({
-                action_route: 'api/orders/cancel-order/' + order._id,
+                action_route: `api/orders/cancel-order/${order._id}`,
                 customer: order.ordered_by,
                 priority: 2,
                 status: 'new',
                 timestamp: new Date(),
                 incident_title: 'Order Cancellation',
-                info: 'Customer wrote: ' + req.body.reason_for_cancellation
+                info: `Customer wrote: ${req.body.reason_for_cancellation}`
             }).save()
         ])
         .then(() => res.status(201).json({message: 'Order cancellation request placed'}))
@@ -167,11 +167,11 @@ services.post('/order-cancel-request/:order_id', verifyToken(process.env.patient
 })
 
 
-services.post('/initiate-return/:order_id',  (req, res) => {  //verifyToken(patient_secret_key),
+services.post('/initiate-return/:order_id', verifyToken(process.env.patient_secret_key), (req, res) => {  
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
         new Incident({
-            action_route: 'api/orders/process-return/' + order._id + '?products=' + req.body.products, 
+            action_route: `api/orders/process-return/${order._id}?products=${req.body.products}`, 
             customer: order.ordered_by,
             priority: 1,
             status: 'new',
@@ -183,8 +183,21 @@ services.post('/initiate-return/:order_id',  (req, res) => {  //verifyToken(pati
     .catch(error => res.status(500).json({error}))
 })
 
+
 services.post('/sell-back/:order_id', (req, res) => {
-    //
+    Order.findOne({_id: req.params.order_id}).exec()
+    .then(order => {
+        new Incident({
+            action_route: `api/orders/process-sellback/${order._id}?products=${req.body.products}`, 
+            customer: order.ordered_by,
+            priority: 1,
+            status: 'new',
+            timestamp: new Date(),
+            incident_title: 'Sell Back Request'
+        }).save()
+        .then(() => res.status(201).json({message: 'Sell Back request placed'}))
+    })
+    .catch(error => res.status(500).json({error}))
 })
 
 

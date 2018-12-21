@@ -6,7 +6,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class ApiService {
 
-  private baseUrl = 'https://physioman-api.herokuapp.com/';
+  // private baseUrl = 'https://physioman-api.herokuapp.com/';
+   private baseUrl = 'http://localhost:3000/';
   private consulant_login_url = this.baseUrl + 'api/consultants/login';
   private physio_login_url = this.baseUrl + 'api/physios/login';
   private pending_consultations_url = this.baseUrl + 'api/bookings/pending-consultations';
