@@ -18,7 +18,7 @@ services.use('/payments', payments)
 services.post('/new-booking-request', verifyToken(process.env.patient_secret_key), (req, res) => {
     return Promise.all([
         Request.findOne({requested_by_patient: req.authData.patient, closed: false}).exec(),
-        Patient.findOne({patient_id: req.authData.patient}).exec()
+        Patient.findOne({_id: req.authData.patient}).exec()
     ])
     .then(([request, patient]) => {
         if(request){
@@ -67,7 +67,7 @@ services.post('/cancel-booking-request/:request_id', verifyToken(process.env.pat
         request.reason_for_cancellation = req.body.reason_for_cancellation
         return Promise.all([
             new Incident({
-                action_route: 'TBD',
+                action_route: 'TBD', // to be written soon
                 customer: req.authData.patient,
                 priority: 1,
                 status: 'new',
@@ -121,7 +121,7 @@ services.post('/place-order', verifyToken(process.env.patient_secret_key), (req,
         })
         return Promise.all([
             order.save(),
-            Patient.findOne({patient_id: req.authData.patient}).exec()
+            Patient.findOne({_id: req.authData.patient}).exec()
         ])
         .then(([orderSaved, patient]) => {
             patient.orders.push(order._id)
@@ -184,7 +184,7 @@ services.post('/initiate-return/:order_id', verifyToken(process.env.patient_secr
 })
 
 
-services.post('/sell-back/:order_id', (req, res) => {
+services.post('/sell-back/:order_id', verifyToken(process.env.patient_secret_key), (req, res) => {
     Order.findOne({_id: req.params.order_id}).exec()
     .then(order => {
         new Incident({

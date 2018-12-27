@@ -44,6 +44,12 @@ export class ShoppingCartComponent implements OnInit {
       this.total_price -= this.rented_items[index].rent_price;
       this.rented_items.splice(index, 1);
     }
+    if (this.total_price === 0) {
+      $(document).ready(() => {
+        // @ts-ignore
+        $('#cart').click().modal('hide');
+      });
+    }
   }
 
   onOrderPlaced() {

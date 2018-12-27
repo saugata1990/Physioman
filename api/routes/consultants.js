@@ -18,7 +18,7 @@ consultants.post('/login', (req, res) => {
         else{
             bcrypt.compare(req.body.password, consultant.password_hash, (err, isValid) => {
                 if(isValid){
-                    jwt.sign({consultant: consultant.consultant_id}, consultant_secret_key, (err, token) => {
+                    jwt.sign({consultant: consultant._id}, process.env.consultant_secret_key, (err, token) => {
                         res.status(200).json(token)
                     })
                 }
@@ -86,31 +86,8 @@ consultants.post('/new-consultant', verifyToken(process.env.admin_secret_key), (
 })
 
 
-consultants.post('/login', (req, res) => {
-    return Promise.all([
-        Consultant.findOne({consultant_id: req.body.consultant_id}).exec(),
-        bcrypt.compare(req.body.password, consultant.password_hash)  
-    ])
-    .then(([consultant, isValid]) => {
-        if(!consultant){
-            res.status(404).json({message: 'consultant does not exist'})
-        }
-        else{
-            if(isValid){
-                jwt.sign({consultant: consultant.consultant_id}, consultant_secret_key, (err, token) => {
-                    res.status(200).json(token)
-                })
-            }
-            else{
-                res.status(404).json({message: 'Invalid password'})
-            }
-        }
-    })
-    .catch(error => res.status(500).json(error))
-})
-
 consultants.get('/details', verifyToken(process.env.consultant_secret_key), (req, res) => {
-    Consultant.findOne({consultant_id: req.authData.consultant}).exec()
+    Consultant.findOne({_id: req.authData.consultant}).exec()
     .then(consultant => res.status(200).json({consultant}))
     .catch(error => res.status(500).json({error}))
 })

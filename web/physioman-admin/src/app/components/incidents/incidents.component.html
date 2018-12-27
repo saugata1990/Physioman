@@ -9,7 +9,7 @@
     <ul *ngFor="let incident of incidents">
       <div (click)="onOpenIncident(incident, incident.incident_id)">
         <div><h5>{{ incident.incident_title }}</h5></div>
-        <div>Customer: <strong>{{ incident.customer_name }}</strong>, Contact No: <strong>{{ incident.customer }}</strong></div>
+        <div>Customer: <strong>{{ incident.customer_name }}</strong>, Contact No: <strong>{{ incident.customer_contact }}</strong></div>
         <div *ngIf="incident.incident_title==='Equipment Order'">
           Ordered Items
           <ul *ngFor="let item of incident.ordered_items">

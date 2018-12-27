@@ -47,10 +47,11 @@ export class IncidentsComponent implements OnInit {
   onLoadIncidents(response) {
     this.incidents = (response as any).incidents;
     this.incidents.map(incident => {
-      this.adminService.getCustomerName(incident.customer)
+      this.adminService.getCustomerNameAndContact(incident.customer)
       .subscribe(
         response2 => {
           incident.customer_name = (response2 as any).patient_name;
+          incident.customer_contact = (response2 as any).patient_phone;
           if (incident.incident_title === 'Equipment Order') {
             this.getOrderedItems(incident);
           }

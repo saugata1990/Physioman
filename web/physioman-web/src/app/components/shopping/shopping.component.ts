@@ -61,6 +61,9 @@ export class ShoppingComponent implements OnInit, AfterViewChecked {
   }
 
   addToCart(item, mode) {
+    if (this.checkout) {
+      this.checkout = false;
+    }
     if (!this.loggedIn) {
       alert('Please log in to add items to cart');
     }

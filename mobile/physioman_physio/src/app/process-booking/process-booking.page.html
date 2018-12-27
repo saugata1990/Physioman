@@ -12,6 +12,11 @@
     <ion-button *ngIf="session_status === 'not started' " (click)="onSendOTP()">Send OTP</ion-button>
     <ion-button *ngIf="session_status === 'otp sent' " (click)="onSendOTP()">Resend OTP</ion-button>
   </ion-item>
+  <ion-item>
+    <ion-label>Cash Received from Patient</ion-label>
+    <ion-checkbox [(ngModel)]="cash_received"></ion-checkbox>
+  </ion-item>
+  <ion-item *ngIf="cash_received">ok</ion-item>
   <form #sessionForm="ngForm" *ngIf="session_status === 'otp sent' " (ngSubmit)="onStartSession()">
     <ion-item padding>
       <ion-label>Enter session OTP:</ion-label>

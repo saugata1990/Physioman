@@ -39,7 +39,7 @@ logistics.post('/login', (req, res) => {
         else{
             bcrypt.compare(req.body.password, deliveryMan.password_hash, (err, isValid) => {
                 if(isValid){
-                    jwt.sign({deliveryMan: user_id}, deliveryMan_secret_key, (err, token) => {
+                    jwt.sign({deliveryMan: _id}, deliveryMan_secret_key, (err, token) => {
                         res.status(200).json(token)
                     })
                 }

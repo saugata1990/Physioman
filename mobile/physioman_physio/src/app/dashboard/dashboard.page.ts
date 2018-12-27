@@ -24,6 +24,7 @@ export class DashboardPage implements OnInit {
   private username;
   private password;
 
+
   constructor(
     private apiService: ApiService,
     private storage: Storage,
@@ -65,11 +66,11 @@ export class DashboardPage implements OnInit {
     .subscribe(consultations => {
       this.requests = (consultations as any).requests;
       this.requests.map(request => {
-        this.apiService.getPatientAddress(request.requested_by_patient, this.token)
+        this.apiService.getPatientInfo(request.requested_by_patient, this.token)
         .subscribe(details => {
-          request.name = (details as any).patient_name;
-          request.phone = (details as any).patient_phone;
-          request.address = (details as any).patient_address;
+          request.name = (details as any).patient.patient_name;
+          request.phone = (details as any).patient.patient_phone;
+          request.address = (details as any).patient.patient_address;
         });
       });
     });
@@ -82,13 +83,14 @@ export class DashboardPage implements OnInit {
   getBookings() {
     this.apiService.getAssignedBookings(this.token)
     .subscribe(response => {
+      console.log(response);
       this.bookings = (response as any).bookings;
       this.bookings.map(booking => {
-        this.apiService.getPatientAddress(booking.booked_for_patient, this.token)
+        this.apiService.getPatientInfo(booking.booked_for_patient, this.token)
         .subscribe(details => {
-          booking.name = (details as any).patient_name;
-          booking.phone = (details as any).patient_phone;
-          booking.address = (details as any).patient_address;
+          booking.name = (details as any).patient.patient_name;
+          booking.phone = (details as any).patient.patient_phone;
+          booking.address = (details as any).patient.patient_address;
         });
       });
     });
@@ -111,7 +113,6 @@ export class DashboardPage implements OnInit {
     await modal.present();
     await modal.onDidDismiss().then(() => this.reloadAppointments());
   }
-
 
 
 }

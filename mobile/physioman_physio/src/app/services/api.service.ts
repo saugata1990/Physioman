@@ -11,7 +11,7 @@ export class ApiService {
   private consulant_login_url = this.baseUrl + 'api/consultants/login';
   private physio_login_url = this.baseUrl + 'api/physios/login';
   private pending_consultations_url = this.baseUrl + 'api/bookings/pending-consultations';
-  private patient_address_url = this.baseUrl + 'api/patients/details?patient_id=';
+  private patient_info_url = this.baseUrl + 'api/patients/info?patient_id=';
   private assign_sessions_url = this.baseUrl + 'api/bookings/assign-sessions/';
   private consultant_details_url = this.baseUrl + 'api/consultants/details';
   private physio_details_url = this.baseUrl + 'api/physios/details';
@@ -19,6 +19,8 @@ export class ApiService {
   private session_otp_url = this.baseUrl + 'api/sessions/sendOTP/';
   private session_start_url = this.baseUrl + 'api/sessions/start-session/';
   private session_end_url = this.baseUrl + 'api/sessions/end-session/';
+  private money_received_url = this.baseUrl + 'api/services/payments/confirm-cash-received/';
+  private payable_amount_url = this.baseUrl + 'api/services/payments/payable-amount/';
 
   constructor(private http: HttpClient) { }
 
@@ -46,8 +48,8 @@ export class ApiService {
     return this.http.get(this.assigned_bookings_url, {headers: this.setHeader(userToken)});
   }
 
-  getPatientAddress(id, userToken) {
-    return this.http.get(this.patient_address_url + id, {headers: this.setHeader(userToken)});
+  getPatientInfo(id, userToken) {
+    return this.http.get(this.patient_info_url + id, {headers: this.setHeader(userToken)});
   }
 
   assignSessions(request_id, consultant_otp, sessions_fixed, booking_amount_payable, booking_amount_received, userToken) {
@@ -65,6 +67,14 @@ export class ApiService {
 
   endSession(session_id, userToken) {
     return this.http.post(this.session_end_url + session_id, {}, {headers: this.setHeader(userToken)});
+  }
+
+  getPayableAmount(patient_id, userToken) {
+    return this.http.get(this.payable_amount_url + patient_id, {headers: this.setHeader(userToken)});
+  }
+
+  confirm_cash_received(patient_id, amount_received, userToken) {
+    return this.http.post(this.money_received_url + patient_id, {amount_received}, {headers: this.setHeader(userToken)});
   }
 
 

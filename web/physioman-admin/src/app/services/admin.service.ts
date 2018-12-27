@@ -14,7 +14,7 @@ export class AdminService {
   private consultant_create_url = this.baseUrl + 'api/consultants/new-consultant';
   private incidents_url = this.baseUrl + 'api/incidents?status=';
   private requests_url = this.baseUrl + 'api/bookings/requests/';
-  private patient_name_url = this.baseUrl + 'api/patients/name?patient_id=';
+  private patient_name_url = this.baseUrl + 'api/patients/name-and-contact?patient_id=';
   private consultant_list_url = this.baseUrl + 'api/consultants';
   private physio_list_url = this.baseUrl + 'api/physios';
   private add_equipment_url = this.baseUrl + 'api/products/add-new';
@@ -75,7 +75,7 @@ export class AdminService {
     return this.http.get(this.requests_url + request_id, {headers: this.setHeader(token)});
   }
 
-  getCustomerName(id) {
+  getCustomerNameAndContact(id) {
     const token = JSON.parse(localStorage.getItem('adminToken'));
     return this.http.get(this.patient_name_url + id, {headers: this.setHeader(token)});
   }

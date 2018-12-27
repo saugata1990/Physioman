@@ -9,27 +9,6 @@ const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
 
 
-// test geocoding
-// physios.get('/test-geocoding', (req, res) => {
-//     const NodeGeocoder = require('node-geocoder')
-//     const options = {
-//         provider: 'google',
-//         apiKey: 'AIzaSyDq1dFUZxqVbZTNqOWkQOocGbo6UCjstbY',
-//         formatter: null
-//     }
-//     const geocoder = NodeGeocoder(options)
-//     geocoder.geocode('28/3, Onkarmal Jetia Road, Howrah-711103')
-//     .then(data => {
-//         console.log(data)
-//         res.status(200).json({data})
-//     })
-//     .catch(error => {
-//         console.log(error)
-//         res.status(500).json({error})
-//     })
-// })
-
-
 // only admin can view
 physios.get('/', verifyToken(process.env.admin_secret_key), (req, res) => {
     Physio.find({terminated: false}).sort('number_of_patients').exec()
@@ -185,7 +164,7 @@ physios.post('/login', (req, res) => {
         else{
             bcrypt.compare(req.body.password, physio.password_hash, (err, isValid) => {
                 if(isValid){
-                    jwt.sign({physio: physio.physio_id}, process.env.physio_secret_key, (err, token) => {
+                    jwt.sign({physio: physio._id}, process.env.physio_secret_key, (err, token) => {
                         res.status(200).json(token)
                     })
                 }
@@ -200,7 +179,7 @@ physios.post('/login', (req, res) => {
 
 
 physios.get('/details', verifyToken(process.env.admin_secret_key, process.env.physio_secret_key), (req, res) => {
-    Physio.findOne({physio_id: req.authData.physio}).exec()
+    Physio.findOne({_id: req.authData.physio}).exec()
     .then((physio) => {
         if(!physio){
             res.status(404).json({message: 'Invalid physio id'})

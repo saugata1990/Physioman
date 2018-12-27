@@ -72,7 +72,7 @@ admin.post('/login', (req, res) => {
         else{
             bcrypt.compare(req.body.password, admin.password_hash, (err, isValid) => {
                 if(isValid){
-                    jwt.sign({admin: admin.admin_id}, process.env.admin_secret_key, (err, token) => {
+                    jwt.sign({admin: admin._id}, process.env.admin_secret_key, (err, token) => {
                         res.status(200).json(token)
                     })
                 }
@@ -88,7 +88,7 @@ admin.post('/login', (req, res) => {
 
 admin.post('/booking-payment-due/:patient_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     return Promise.all([
-        Patient.findOne({patient_id: req.params.patient_id}).exec(),
+        Patient.findOne({_id: req.params.patient_id}).exec(),
         Incident.findOne({action_route: '/booking-payment-due/' + req.params.patient_id}).exec()
     ])
     .then(([patient, incident]) => {

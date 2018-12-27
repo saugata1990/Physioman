@@ -76,11 +76,11 @@ sessions.post('/end-session/:session_id', verifyToken(process.env.physio_secret_
         .then(booking => {
             booking.session_status = 'not started'
             booking.sessions_completed++
-            booking.closed = booking.sessions_completed === booking.allotted_sessions ? true : false
+            booking.closed = booking.amount_payable === 0 && booking.sessions_completed === booking.allotted_sessions ? true : false
             booking.session_otp_sent = false
             session.session_started = false
             session.session_ended = true
-            Physio.findOne({physio_id: booking.assigned_physio}).exec()
+            Physio.findOne({_id: booking.assigned_physio}).exec()
             .then(physio => {
                 physio.merit_points++
                 physio.rating = (physio.rating * physio.sessions_completed + 4) / ++physio.sessions_completed

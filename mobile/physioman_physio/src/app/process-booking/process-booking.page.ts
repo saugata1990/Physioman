@@ -15,6 +15,9 @@ export class ProcessBookingPage implements OnInit {
   private token;
   private session_otp;
   private session_id;
+  amount_payable: number;
+  amount_received: number;
+  cash_received = false;
 
   constructor(private apiService: ApiService,
               private modalController: ModalController,
@@ -57,6 +60,14 @@ export class ProcessBookingPage implements OnInit {
       this.close();
     }, error => console.log(error));
   }
+
+  receivePayment(patient_id) {
+    this.apiService.getPayableAmount(patient_id, this.token)
+    .subscribe(amt => {
+      this.amount_payable = (amt as any).amount;
+    });
+  }
+
 
   close() {
     this.modalController.dismiss();

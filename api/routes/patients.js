@@ -21,18 +21,19 @@ patients.get('/',verifyToken(process.env.admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json({error}))
 })
 
-patients.get('/name', verifyToken(process.env.admin_secret_key), (req, res) => {   
-    Patient.findOne({patient_id: req.query.patient_id}, 'patient_name').exec()
+// might remove this route
+patients.get('/name-and-contact', verifyToken(process.env.admin_secret_key), (req, res) => {   
+    Patient.findOne({_id: req.query.patient_id}, ['patient_name', 'patient_phone']).exec()
     .then((name) => {
         res.status(200).json(name)
     })
     .catch(error => res.status(500).json({error}))
 })
 
-patients.get('/details', (req, res) => {
-    Patient.findOne({patient_id: req.query.patient_id}).exec()
-    .then((details) => {
-        res.status(200).json(details)
+patients.get('/info', verifyToken(process.env.physio_secret_key, process.env.consultant_secret_key), (req, res) => {
+    Patient.findOne({_id: req.query.patient_id}).exec()
+    .then((patient) => {
+        res.status(200).json({patient})
     })
     .catch(error => res.status(500).json({error}))
 })
@@ -93,7 +94,7 @@ patients.post('/login', (req, res) => {
         else{
             bcrypt.compare(req.body.password, patient.password_hash, (err, isValid) => {
                 if(isValid){
-                    jwt.sign({patient: patient.patient_id}, process.env.patient_secret_key, (err, token) => {
+                    jwt.sign({patient: patient._id}, process.env.patient_secret_key, (err, token) => {
                         res.status(200).json(token)
                     })
                 }
@@ -176,7 +177,7 @@ patients.post('/reset-password', (req, res) => {
 
 patients.get('/viewProfile', verifyToken(process.env.patient_secret_key), (req, res) => {
     if(req.authData){
-        Patient.findOne({patient_id: req.authData.patient}).exec()
+        Patient.findOne({_id: req.authData.patient}).exec()
         .then((patient) => {
             res.status(200).json({patient})
         })

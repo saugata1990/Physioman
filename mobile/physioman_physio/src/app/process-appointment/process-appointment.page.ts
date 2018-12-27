@@ -19,6 +19,7 @@ export class ProcessAppointmentPage implements OnInit {
   private amountReceived;
   private otp;
 
+
   constructor(private apiService: ApiService, private modalController: ModalController, private navParams: NavParams) { }
 
   ngOnInit() {
@@ -37,5 +38,7 @@ export class ProcessAppointmentPage implements OnInit {
   close() {
     this.modalController.dismiss();
   }
+
+
 
 }

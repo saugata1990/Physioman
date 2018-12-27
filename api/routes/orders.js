@@ -44,7 +44,7 @@ orders.post('/process/:order_id', verifyToken(process.env.admin_secret_key), (re
     .then(order => {
         return Promise.all([
             Product.find({_id: {'$in':order.ordered_items}}).exec(),
-            Patient.findOne({patient_id: order.ordered_by}).exec()
+            Patient.findOne({_id: order.ordered_by}).exec()
         ])
         .then(([products, requester]) => {
             let items_to_deliver = `Requester: ${requester.patient_name}, Contact: ${requester.patient_phone} 
@@ -141,19 +141,24 @@ orders.post('/process-return/:order_id', verifyToken(process.env.admin_secret_ke
         const months = Math.floor(date.subtract(today, order.order_timestamp).toDays() / 30)
         return Promise.all([
             Product.find({_id: {'$in': JSON.parse(req.query.products)}}).exec(),
-            Patient.findOne({patient_id: order.ordered_by}).exec()
+            Patient.findOne({patient_id: order.ordered_by}).exec(),
+            Incident.findOne({action_route: `api/orders/process-return/${order._id}?products=${req.query.products}`}).exec()
         ])
-        .then(([products, patient]) => {
+        .then(([products, patient, incident]) => {
             patient_details = `Patient name  ${patient.patient_name}, Contact: ${patient.patient_phone}
                                 , Address: ${patient.patient_address}`
             products.map(product => products_to_collect +=  `${product.product_name}, `)
-            new Dispatch({
-                order: order._id,
-                dispatch_type: 'Return',
-                products_to_collect: products.map(product => product._id),
-                amount_to_collect: products.reduce((acc, product) => acc + product.rent_price * months, 0),
-                done: false
-            }).save()
+            incident.status = 'processed'
+            return Promise.all([
+                new Dispatch({
+                    order: order._id,
+                    dispatch_type: 'Return',
+                    products_to_collect: products.map(product => product._id),
+                    amount_to_collect: products.reduce((acc, product) => acc + product.rent_price * months, 0),
+                    done: false
+                }).save(),
+                incident.save()
+            ])
             .then(() => {
                 sendSMSmock('logistics phone no', patient_details+products_to_collect)
                 res.status(201).json({message: 'Return Request Processed'})
