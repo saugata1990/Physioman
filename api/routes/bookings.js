@@ -6,11 +6,11 @@ const Physio = require('../models/physioModel')
 const Patient = require('../models/patientModel')
 const Consultant = require('../models/consultantModel')
 const Incident = require('../models/incidentModel')
-const Transaction = require('../models/transactionModel')
+const Payment = require('../models/paymentModel')
 const {verifyToken, phoneExists, emailExists, generateOTP, sendSMSmock} = require('../utils/helper')
 
 
-bookings.get('/', verifyToken(process.env.admin_secret_key), (req, res) => {
+bookings.get('/all', verifyToken(process.env.admin_secret_key), (req, res) => {
     if(req.query){
         if(req.query.closed){
             req.query.closed = JSON.parse(req.query.closed)
@@ -26,226 +26,178 @@ bookings.get('/', verifyToken(process.env.admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json({error}))
 })
 
+bookings.get('/all/:booking_id', verifyToken(process.env.admin_secret_key), (req, res) => {
+    Booking.findOne({_id: req.params.booking_id}).exec()
+    .then(booking => res.status(200).json({booking}))
+    .catch(error => res.status(500).json({error}))
+})
+
 
 bookings.get('/open', verifyToken(process.env.patient_secret_key), (req, res) => {
-    if(req.authData){
-        return Promise.all([
-            Booking.findOne({booked_for_patient: req.authData.patient, closed: false}).exec(),
-            Request.findOne({requested_by_patient: req.authData.patient, closed: false}).exec()
-        ])
-        .then(([booking, request]) => {
-            if(booking || request){
-                res.status(200).json({status: true})
-            }
-            else{
-                res.status(200).json({status: false})
-            }
-        })
-        .catch(error => res.status(500).json({error}))
-    }
+    Booking.findOne({patient_id: req.authData.patient, closed: false}).exec()
+    .then(booking => {
+        if(!booking){
+            res.status(204).json({message: 'No open booking'})
+        }
+        else{
+            res.status(200).json({message: 'Booking exists'})
+        }
+    })
+    .catch(error => res.status(500).json({error}))
 })
 
 
 bookings.get('/status', verifyToken(process.env.patient_secret_key), (req, res) => {
-    if(req.authData){
-        return Promise.all([
-            Booking.findOne({booked_for_patient: req.authData.patient, closed: false}).exec(),
-            Request.findOne({requested_by_patient: req.authData.patient, closed: false}).exec()
-        ])
-        .then(([booking, request]) => {
-            if(booking){
-                res.status(200).json({booking, status: 'Confirmed'})
-            }
-            else if(request){
-                if(request.mapped_consultant){
-                    res.status(200).json({request, status: 'Processed'})
-                }
-                else{
-                    res.status(200).json({request, status: 'Pending'})
-                }
-            }
-            else{
-                res.status(404).json({message: 'Not Found'})
-            }
-        })
-        .catch(error => res.status(500).json({error}))
-    }
-})
-
-
-
-bookings.get('/requests', verifyToken(process.env.admin_secret_key), (req, res) => {   
-    Request.find(req.query).exec()
-    .then((requests) => {
-        res.status(200).json({requests})
-    })
-    .catch(error => res.status(500).json({error}))
-})
-
-bookings.get('/requests/:request_id', verifyToken(process.env.admin_secret_key), (req, res) => {  
-    Request.findOne({_id: req.params.request_id}).exec()
-    .then((request) => {
-        res.status(200).json({request})
-    })
-    .catch(error => res.status(500).json({error}))
-})
-
-
-// replace request id with booking id in patient bookings
-bookings.post('/new/:request_id', verifyToken(process.env.admin_secret_key), (req, res) => {
-    return Promise.all([
-        Request.findOne({_id: req.params.request_id, ready_for_booking: true, closed: false}).exec(),
-        Physio.findOne({physio_id: req.body.physio_id}).exec(),
-        Incident.findOne({action_route: 'api/bookings/new/' + req.params.request_id, status: 'new'}).exec(),
-        Patient.findOne({bookings: req.params.request_id}).exec() 
-    ])
-    .then(([request, physio, incident, patient]) => {
-        if(!request){
-            res.status(403).json({message: 'invalid request'})
+    Booking.findOne({patient_id: req.authData.patient, closed: false}).exec()
+    .then(booking => {
+        if(!booking){
+            res.status(404).json({message: 'Not found'})
         }
         else{
-            request.closed = true
-            physio.current_patients.push(request.requested_by_patient)
-            physio.number_of_patients++
-            if(request.booking_amount_payable > request.booking_amount_received){
-                incident.action_route = 'api/admin/booking-payment-due/' + request.requested_by_patient
-                incident.status = 'intermediate'
-                incident.timestamp = Date.now()
-                incident.incident_title = 'Booking Payment Pending'
-            }
-            else{
-                incident.status = 'processed'
-            }
-            const booking =  new Booking({
-                booked_for_patient: request.requested_by_patient,
-                assigned_physio: physio._id,
-                allotted_sessions: request.sessions_fixed_by_consultant,
-                sessions_completed: 0,
-                session_status: 'not started',
-                booked_at: new Date(),
-                amount_payable: request.booking_amount_payable - request.booking_amount_received, 
-                closed: false
-            })
-            patient.bookings = patient.bookings.filter(rq => rq._id !== req.params.request_id)
-            patient.bookings.push(booking._id)
-            return Promise.all([
-                booking.save(),
-                request.save(),
-                physio.save(),
-                patient.save(),
-                incident.save()
-            ])
-            .then(() => res.status(200).json({message: 'Booking created'}))        
+            res.status(200).json({status: booking.status})
         }
     })
-    .catch(error => res.status(500).json(error))
-})
-
-bookings.put('/extend', verifyToken(process.env.physio_secret_key), (req, res) => {
-    //
+    .catch(error => res.status(500).json({error}))
 })
 
 
-bookings.post('/assign-consultant/:request_id', verifyToken(process.env.admin_secret_key), (req, res) => {   
+bookings.post('/assign-consultant/:booking_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     return Promise.all([
-        Request.findOne({_id: req.params.request_id}).exec(),
+        Booking.findOne({_id: req.params.booking_id}).exec(),
         Consultant.findOne({consultant_id: req.body.consultant_id}).exec(),
-        Incident.findOne({action_route: `api/bookings/assign-consultant/${req.params.request_id}`}).exec()
+        Incident.findOne({action_route: `api/bookings/assign-consultant/${req.params.booking_id}`}).exec()
     ])
-    .then(([request, consultant, incident]) => {
-        request.serviced_at = new Date()
-        request.serviced_by = req.authData.admin
+    .then(([booking, consultant, incident]) => {
+        booking.status = 'Consultant Assigned'
+        booking.assigned_consultant = consultant._id
+        booking.consultant_otp = generateOTP()
         consultant.pending_consultations++
-        consultant.patients_to_visit.push(request.requested_by_patient)
-        request.mapped_consultant = consultant._id 
-        request.consultant_otp = generateOTP()
-        request.ready_for_booking = false
+        consultant.patients_to_visit.push(booking.patient_id)
         incident.status = 'intermediate'
-        incident.info = 'Awaiting consultation'
+        incident.info = 'Consultant visit pending'
         return Promise.all([
-            Patient.findOne({_id: request.requested_by_patient}).exec(),
-            request.save(),
+            booking.save(),
             consultant.save(),
-            incident.save()  
+            incident.save(),
+            Patient.findOne({_id: booking.patient_id}).exec()
         ])
-        .then(([patient, request_saved, consultant_saved, incident_saved]) => {
-            let his_her = 'his'
-            if(consultant.consultant_gender == 'female'){
-                his_her = 'her'
-            }
+        .then(([bs, cs, is, patient]) => {
+            const his_her = consultant.consultant_gender === 'male' ? 'his' : 'her'
             sendSMSmock(patient.patient_phone,
                 `Your consultant is ${consultant.consultant_name} 
                 and ${his_her} contact no is ${consultant.consultant_phone}.
-                Your OTP is ${request.consultant_otp}`
+                Your OTP is ${booking.consultant_otp}`
             )
             sendSMSmock(consultant.consultant_phone,
                 `Patient name: ${patient.patient_name}, 
                 Contact no: ${patient.patient_phone},
                 Address: ${patient.patient_address}`
             )
-            res.status(200).json({message: 'Consultant assigned and sms messages sent'})
-
+            res.status(200).json({message: 'Consultant assigned and SMS messages sent'})
         })
     })
     .catch(error => res.status(500).json({error}))
 })
 
 
-// route to be accessed by consultant (otp needed) 
-// rethink amount payable and amount received
-bookings.put('/assign-sessions/:request_id', verifyToken(process.env.consultant_secret_key), (req, res) => {  
-    let saveTxn = Promise.resolve()
+
+
+bookings.post('/assign-sessions/:booking_id', verifyToken(process.env.consultant_secret_key), (req, res) => {
     return Promise.all([
-        Request.findOne({_id: req.params.request_id, 
-                        consultant_otp: req.body.consultant_otp}).exec(),
-        Consultant.findOne({_id: req.authData.consultant}).exec()
+        Booking.findOne({_id: req.params.booking_id}).exec(),
+        Consultant.findOne({_id: req.authData.consultant}).exec(),
+        Incident.findOne({action_route: `api/bookings/assign-consultant/${req.params.booking_id}`}).exec()
     ])
-    .then(([request, consultant]) => {
-        if(!request){
+    .then(([booking, consultant, incident]) => {
+        if(req.body.consultant_otp !== booking.consultant_otp){
             res.status(403).json({message: 'Invalid OTP'})
         }
         else{
-            Incident.findOne({customer: request.requested_by_patient}).exec() 
-            .then(incident => {
-                request.sessions_fixed_by_consultant = req.body.sessions_fixed
-                request.processed_by_consultant = true
-                request.ready_for_booking = true
-                request.booking_amount_payable = req.body.booking_amount_payable
-                request.booking_amount_received = req.body.booking_amount_received
-                consultant.debit_amount += parseInt(req.body.amount_received)
-                if(req.body.amount_received > 0){
-                    saveTxn = new Transaction({
-                        //
-                    }).save()
-                }
-                consultant.number_of_consultations++
-                consultant.pending_consultations--
-                consultant.patients_to_visit = 
-                    consultant.patients_to_visit.filter(patient_id => patient_id !== request.requested_by_patient)
-                consultant.last_consultation_date = new Date()
-                incident.action_route = `api/bookings/new/${request._id}`
-                incident.status = 'new'
-                incident.timestamp = consultant.last_consultation_date
-                incident.incident_title = 'Request Ready for Booking'
-                incident.priority = 1,
-                incident.info = 'Ready for booking'
-                return Promise.all([
-                    request.save(),
-                    consultant.save(),
-                    incident.save(),
-                    saveTxn
-                ])
-                .then(() => res.status(200).json({message: 'Ready for booking'}))
-            })
+            booking.allotted_sessions = req.body.allotted_sessions
+            booking.number_of_sessions_unlocked = req.body.number_of_sessions_paid_for
+            booking.sessions_completed = 0
+            booking.status = 'Sessions Assigned'
+            booking.session_status = 'not started'
+            consultant.number_of_consultations++
+            consultant.pending_consultations--
+            consultant.patients_to_visit = 
+                consultant.patients_to_visit.filter(patient_id => patient_id !== booking.patient_id)
+            consultant.last_consultation_date = new Date()
+            incident.incident_title = 'Request Ready for Booking' // change the title to something better
+            incident.action_route = `api/bookings/assign-physio/${booking._id}`
+            incident.status = 'new'
+            incident.info = 'Assign physio to patient'
+            
+            return Promise.all([
+                booking.save(),
+                consultant.save(),
+                new Payment({
+                    booking_id: booking._id,
+                    customer_id: booking.patient_id,
+                    amount: req.body.amount_paid,
+                    paid: false
+                }).save(),
+                incident.save()
+            ])
+            .then(() => res.status(200).json({message: 'Sessions assigned'}))  
         }
     })
     .catch(error => res.status(500).json({error}))
 })
 
 
+bookings.post('/assign-physio/:booking_id', verifyToken(process.env.admin_secret_key), (req, res) => {
+    return Promise.all([
+        Booking.findOne({_id: req.params.booking_id}).exec(),
+        Physio.findOne({physio_id: req.body.physio_id}).exec(),
+        Incident.findOne({action_route: `api/bookings/assign-physio/${req.params.booking_id}`}).exec()
+    ]) 
+    .then(([booking, physio, incident]) => {
+        booking.assigned_physio = physio._id
+        physio.current_patients.push(booking.patient_id)
+        physio.number_of_patients++
+        incident.status = 'processed'
+        incident.info = 'Physio has been assigned'
+        return Promise.all([
+            booking.save(),
+            physio.save(),
+            incident.save()
+        ])
+        .then(() => res.status(201).json({message: 'Physio assigned'}))
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
+
+bookings.post('/unlock-sessions/:booking_id', 
+verifyToken(process.env.physio_secret_key, process.env.patient_secret_key), 
+(req, res) => {
+    Booking.findOne({_id: req.params.booking_id}).exec()    
+    .then(booking => {
+        booking.number_of_sessions_unlocked += parseInt(req.body.number_of_sessions_paid_for)
+        if(booking.number_of_sessions_unlocked > booking.allotted_sessions){
+            booking.allotted_sessions += 7
+        }
+        return Promise.all([
+            booking.save(),
+            new Payment({
+                booking_id: booking._id,
+                customer_id: booking.patient_id,
+                amount: booking.session_fee * req.body.number_of_sessions_paid_for,
+                paid: false
+            }).save()
+        ])
+        .then(() => res.status(201).json({message: 'Sessions Unlocked'}))
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
+
+
+
 bookings.get('/pending-consultations', verifyToken(process.env.consultant_secret_key), (req, res) => {
-    Request.find({mapped_consultant: req.authData.consultant, processed_by_consultant: false}).exec()
-    .then(requests => res.status(200).json({requests}))
+    Booking.find({assigned_consultant: req.authData.consultant, status: 'Consultant Assigned'}).exec()
+    .then(bookings => res.status(200).json({bookings}))
     .catch(error => res.status(500).json({error}))
 })
 

@@ -1,7 +1,6 @@
 import { Component, OnInit, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
 import { PatientService } from '../../services/patient.service';
-import { Patient } from '../../models/patient';
 
 @Component({
   selector: 'app-profile',
@@ -10,10 +9,11 @@ import { Patient } from '../../models/patient';
 })
 export class ProfileComponent implements OnInit, AfterViewChecked {
 
-  private patient = new Patient();
-  private loggedIn = false;
-  private hasBooking = false;
-  private hasOrdered = false;
+  patient;
+  loaded = false;
+  loggedIn = false;
+  hasBooking = false;
+  hasOrdered = false;
 
   constructor(private patientService: PatientService, private router: Router) { }
 
@@ -22,7 +22,8 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
     this.patientService.viewProfile()
     .subscribe(
       response => {
-        this.patient.populate(response);
+        this.patient = (response as any).patient;
+        this.loaded = true;
       },
       error => {
         console.log('error occured');
@@ -38,26 +39,12 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
     this.patientService.getState()
     .subscribe(state => {
       this.loggedIn = state.loggedIn;
-      this.hasBooking = state.hasBooking;
-      this.hasOrdered = state.hasOrdered;
+      // this.hasBooking = state.hasBooking;
+      // this.hasOrdered = state.hasOrdered;
     });
   }
 
 
-  viewBookingStatus() {
-    console.log('booking status');
-  }
 
-  viewOrders() {
-    console.log('orders');
-  }
-
-  bookPhysio() {
-    console.log('book physio');
-  }
-
-  viewItems() {
-    console.log('Shop');
-  }
 
 }

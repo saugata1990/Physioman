@@ -12,9 +12,9 @@ import { Patient } from '../../models/patient';
 })
 export class PaymentComponent implements OnInit, AfterViewInit {
 
-  @Input() private amount;
+  @Input() amount;
   @Output() successMessage = new EventEmitter();
-  private patient = new Patient();
+  patient = new Patient(); // remove model dependency
 
   constructor(private patientService: PatientService, private elementRef: ElementRef) { }
 

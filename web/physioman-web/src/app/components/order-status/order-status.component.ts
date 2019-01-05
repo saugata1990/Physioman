@@ -11,6 +11,8 @@ import { Router } from '@angular/router';
 })
 export class OrderStatusComponent implements OnInit {
   orders = new Array();
+  loaded = false;
+
   constructor(private patientService: PatientService, private router: Router, private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
@@ -31,6 +33,7 @@ export class OrderStatusComponent implements OnInit {
                 product.order_mode = 'rent';
               }
               order.items_in_detail.push(product);
+              this.loaded = true;
               console.log(this.orders);
             });
           });

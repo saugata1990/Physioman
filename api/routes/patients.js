@@ -69,7 +69,7 @@ patients.post('/signup', (req, res) => {
                     patient_dob: date.parse(req.body.patient_dob.toString(), 'YYYY-MM-DD') || null,
                     date_joined: new Date(),
                     patient_address: req.body.patient_address,
-                    ailment_history: date.format(new Date(), 'DD/MM/YYYY').toString()+':--> '+req.body.ailment_history,
+                    ailment_history: {date: new Date(), description: req.body.ailment_history},
                     total_number_of_sessions: 0,
                     wallet_amount: 0
                 }).save(),

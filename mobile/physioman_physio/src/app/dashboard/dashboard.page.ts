@@ -5,6 +5,7 @@ import { ModalController } from '@ionic/angular';
 import { ProcessAppointmentPage } from '../process-appointment/process-appointment.page';
 import { Router } from '@angular/router';
 import { ProcessBookingPage } from '../process-booking/process-booking.page';
+import { noComponentFactoryError } from '@angular/core/src/linker/component_factory_resolver';
 
 
 @Component({
@@ -14,15 +15,16 @@ import { ProcessBookingPage } from '../process-booking/process-booking.page';
 })
 export class DashboardPage implements OnInit {
 
-  private loggedInAs;
-  private requests = new Array();
-  private bookings = new Array();
+  loggedInAs;
+  requests = new Array();
+  bookings = new Array();
   private token;
   // private otherAccount;
   // private alternateAcct;
-  private otherAccount;
-  private username;
-  private password;
+  otherAccount;
+  username;
+  password;
+  payment_needed = false;
 
 
   constructor(
@@ -64,13 +66,15 @@ export class DashboardPage implements OnInit {
   getAppointments() {
     this.apiService.getPendingConsultations(this.token)
     .subscribe(consultations => {
-      this.requests = (consultations as any).requests;
+      this.requests = (consultations as any).bookings;
       this.requests.map(request => {
-        this.apiService.getPatientInfo(request.requested_by_patient, this.token)
+        this.apiService.getPatientInfo(request.patient_id, this.token)
         .subscribe(details => {
+          request.patient_id = (details as any).patient._id;
           request.name = (details as any).patient.patient_name;
           request.phone = (details as any).patient.patient_phone;
           request.address = (details as any).patient.patient_address;
+          request.collect_cash = request.consultation_fee_paid ? 'PAID' : 'NOT PAID';
         });
       });
     });
@@ -86,29 +90,34 @@ export class DashboardPage implements OnInit {
       console.log(response);
       this.bookings = (response as any).bookings;
       this.bookings.map(booking => {
-        this.apiService.getPatientInfo(booking.booked_for_patient, this.token)
+        this.apiService.getPatientInfo(booking.patient_id, this.token)
         .subscribe(details => {
+          booking.patient_id = (details as any).patient._id;
           booking.name = (details as any).patient.patient_name;
           booking.phone = (details as any).patient.patient_phone;
           booking.address = (details as any).patient.patient_address;
+          if (booking.number_of_sessions_unlocked === booking.sessions_completed) {
+            this.payment_needed = true;
+          }
         });
       });
     });
   }
 
-  async processBooking(booking_id, session_status) {
+  async processBooking(booking) {
     const modal = await this.modalController.create({
       component: ProcessBookingPage,
-      componentProps: {booking_id, session_status, token: this.token}
+      componentProps: {booking, payment_needed: this.payment_needed, token: this.token}
     });
     await modal.present();
     await modal.onDidDismiss().then(() => this.reloadBookings());
   }
 
-  async processAppointment(request_id, payment_mode) {
+  // request_id, patient_id, consultation_fee_paid
+  async processAppointment(request) {
     const modal = await this.modalController.create({
       component: ProcessAppointmentPage,
-      componentProps: {request_id, payment_mode, token: this.token}
+      componentProps: {request, token: this.token}
     });
     await modal.present();
     await modal.onDidDismiss().then(() => this.reloadAppointments());

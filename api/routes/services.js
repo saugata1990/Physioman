@@ -7,6 +7,7 @@ const Booking = require('../models/bookingModel')
 const Request = require('../models/requestModel')
 const Order = require('../models/orderModel')
 const Incident = require('../models/incidentModel')
+const Payment = require('../models/paymentModel')
 const payments = require('./payments')
 const jwt = require('jsonwebtoken')
 const date = require('date-and-time')
@@ -14,26 +15,28 @@ const date = require('date-and-time')
 
 services.use('/payments', payments)
 
-// to be accessed by patient
 services.post('/new-booking-request', verifyToken(process.env.patient_secret_key), (req, res) => {
     return Promise.all([
-        Request.findOne({requested_by_patient: req.authData.patient, closed: false}).exec(),
+        Booking.findOne({patient_id: req.authData.patient, closed: false}).exec(),
         Patient.findOne({_id: req.authData.patient}).exec()
     ])
-    .then(([request, patient]) => {
-        if(request){
-            res.status(400).json({message: 'Request already logged'})
+    .then(([booking, patient]) => {
+        if(booking){
+            res.status(403).json({message: 'Booking already exists'})
         }
         else{
-            patient.ailment_history += '\n'+date.format(new Date(), 'DD/MM/YYYY')+':-->'+req.body.ailment_description
-            const booking_request = new Request({
-                requested_by_patient: req.authData.patient,
+            let isPaid = req.body.consultation_fee_paid ? Boolean(req.body.consultation_fee_paid) : null
+            patient.ailment_history.push({date: new Date(), description: req.body.ailment_description})
+            const booking_request = new Booking({
+                patient_id: req.authData.patient,
                 ailment_description: req.body.ailment_description,
                 physio_gender_preference: req.body.physio_gender_preference,
-                consultation_payment_mode: req.body.consultation_payment_mode,
+                consultation_fee: 100,  // hardcoding to be removed
+                session_fee: 300,
+                consultation_fee_paid: isPaid,
+                payment_by_cash: !isPaid,
                 request_timestamp: new Date(),
-                ready_for_booking: false,
-                processed_by_consultant: false,
+                status: 'Request Placed',
                 closed: false
             })
             patient.bookings.push(booking_request._id)
@@ -44,22 +47,24 @@ services.post('/new-booking-request', verifyToken(process.env.patient_secret_key
             .then(() => {
                 new Incident({
                     action_route: `api/bookings/assign-consultant/${booking_request._id}`,
-                    customer: booking_request.requested_by_patient,
+                    customer: booking_request.patient_id,
                     priority: 2,
                     status: 'new',
                     timestamp: booking_request.request_timestamp,
                     incident_title: 'Booking Request',
                     info: 'New Booking Request'
                 }).save()
-                .then(() => res.status(200).json({message: 'New Request logged'}))
+                .then(() => res.status(201).json({message: 'New Booking Request Created'}))
             })
         }
     })
-    .catch(error => res.status(500).json(error)) 
+    .catch(error => res.status(500).json({error}))
 })
 
 
 
+
+// these 2 routes are to be merged into one
 services.post('/cancel-booking-request/:request_id', verifyToken(process.env.patient_secret_key),(req, res) => {
     Request.findOne({_id: req.params.request_id}).exec()
     .then(request => {

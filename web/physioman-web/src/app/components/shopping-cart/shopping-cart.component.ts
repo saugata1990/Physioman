@@ -10,22 +10,24 @@ import { HASORDERED } from '../../store/actions/actions';
 })
 export class ShoppingCartComponent implements OnInit {
 
-  @Input() private purchased_items: [any];
-  @Input() private rented_items: [any];
+  @Input() purchased_items: [any];
+  @Input() rented_items: [any];
   @Input() total_price: number;
-  private paymentMode;
-  private orderSuccess = false;
-  private onlinePaymentSuccess = false;
+  paymentMode;
+  orderSuccess = false;
+  onlinePaymentSuccess = false;
   @ViewChild('submit') submit: ElementRef;
-  private loggedIn = false;
-  private hasBooking = false;
-  private hasOrdered = false;
+  loggedIn = false;
+  hasBooking = false;
+  hasOrdered = false;
+  hasWalletBalance = false;
 
   constructor(private patientService: PatientService, private router: Router) { }
 
   ngOnInit() {
+    this.patientService.checkWalletBalance(this.total_price)
+    .subscribe(response => this.hasWalletBalance = true, error => this.hasWalletBalance = false);
   }
-
 
   openModal() {
     $(document).ready(() => {
@@ -57,6 +59,10 @@ export class ShoppingCartComponent implements OnInit {
     .subscribe(
       response => {
         this.orderSuccess = true;
+        if (this.paymentMode === 'wallet') {
+          this.patientService.payWithWallet(this.total_price)
+          .subscribe(response2 => console.log(response2));
+        }
         setTimeout(() => {
           $(document).ready(() => {
             // @ts-ignore

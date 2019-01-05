@@ -14,7 +14,7 @@ export class PatientService {
   private signup_url = this.baseUrl + 'api/patients/signup';
   private login_url = this.baseUrl + 'api/patients/login';
   private my_profile_url = this.baseUrl + 'api/patients/viewProfile';
-  private name_and_email_url = this.baseUrl + 'api/patients/name-and-email';
+  // private name_and_email_url = this.baseUrl + 'api/patients/name-and-email';
   private booking_request_url = this.baseUrl + 'api/services/new-booking-request';
   private payumoney_hash_url = this.baseUrl + 'api/services/payments/payumoney-hash';
   private payumoney_response_url = this.baseUrl + 'api/services/payments/payumoney-response';
@@ -26,6 +26,8 @@ export class PatientService {
   private eqp_details_url = this.baseUrl + 'api/products/details/';
   private send_otp_url = this.baseUrl + 'api/patients/send-verification-code/';
   private verify_otp_url = this.baseUrl + 'api/patients/verify-otp/';
+  private wallet_balance_url = this.baseUrl + 'api/services/payments/check-wallet-balance?amount=';
+  private wallet_pay_url = this.baseUrl + 'api/services/payments/wallet-payment';
 
 
   constructor(private http: HttpClient, private store: Store<any>) { }
@@ -59,10 +61,10 @@ export class PatientService {
     return this.http.get(this.my_profile_url, {headers: this.setHeader(token)});
   }
 
-  requestBooking(ailment_description, physio_gender_preference, consultation_payment_mode) {
+  requestBooking(ailment_description, physio_gender_preference, consultation_payment_mode, consultation_fee) {
     const token = JSON.parse(localStorage.getItem('patientToken'));
     return this.http.post(this.booking_request_url,
-                          {ailment_description, physio_gender_preference, consultation_payment_mode},
+                          {ailment_description, physio_gender_preference, consultation_payment_mode, consultation_fee},
                           {headers: this.setHeader(token)});
   }
 
@@ -127,6 +129,16 @@ export class PatientService {
   verifyOTP(number, otp) {
     const token = JSON.parse(localStorage.getItem('patientToken'));
     return this.http.post(this.verify_otp_url + number, {otp});
+  }
+
+  checkWalletBalance(amount) {
+    const token = JSON.parse(localStorage.getItem('patientToken'));
+    return this.http.get(this.wallet_balance_url + amount, {headers: this.setHeader(token)});
+  }
+
+  payWithWallet(amount) {
+    const token = JSON.parse(localStorage.getItem('patientToken'));
+    return this.http.post(this.wallet_pay_url, {amount}, {headers: this.setHeader(token)});
   }
 
   getState() {

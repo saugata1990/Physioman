@@ -13,21 +13,24 @@
       <ion-label>Set number of sessions</ion-label>
       <ion-input type="text" [(ngModel)]="numSessions" name="numSessions" required></ion-input>
     </ion-item>
-    <ion-item *ngIf="payment_mode==='cash'">
+    <!-- <ion-item *ngIf="!consultation_fee_paid">
       <ion-checkbox [(ngModel)]="cpr" name="cpr" required></ion-checkbox>
       <ion-label text-wrap>Payment received for consultation</ion-label>
+    </ion-item> -->
+    <ion-item>
+      <ion-label>Set advance booking payment details</ion-label>
     </ion-item>
     <ion-item>
-      <ion-label>Set booking payment details</ion-label>
+      <ion-label>Number of sessions paid for</ion-label>
+      <ion-input type="text" [(ngModel)]="numSessionsPaid" name="numSessionsPaid" required></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label>Booking amount payable</ion-label>
-      <ion-input type="text" [(ngModel)]="amountPayable" name="amountPayable"></ion-input>
+      <ion-label>Amount payable: {{ getPayableAmount() }}</ion-label>
     </ion-item>
-    <ion-item>
-      <ion-label>Booking amount receved</ion-label>
-      <ion-input type="text" [(ngModel)]="amountReceived" name="amountReceived"></ion-input>
-    </ion-item>
+    <!-- <ion-item>
+      <ion-label>Amount paid: </ion-label>
+      <ion-input type="text" [(ngModel)]="amountPaid" name="amountPaid" required></ion-input>
+    </ion-item> -->
     <ion-item>
       <ion-label>Enter OTP</ion-label>
       <ion-input type="text" [(ngModel)]="otp" name="otp" required></ion-input>

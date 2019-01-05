@@ -1,5 +1,5 @@
 <div class="modal" id="cart" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Cart</h4>
@@ -39,15 +39,17 @@
           <form class="form" #orderForm="ngForm" (ngSubmit)="onOrderPlaced()">
             <div class="form-group">
               <label for="paymentMode"><h5>Payment mode</h5></label>
+              <!-- to be changed to radio-group -->
               <select class="form-control" [(ngModel)]="paymentMode" name="paymentMode" (change)="openModal()" required>
                 <option value="card" data-toggle="modal" data-target="#payment">Card</option>
                 <option value="cash">Cash</option>
+                <option *ngIf="hasWalletBalance" value="wallet">Wallet</option>
               </select>
               <div *ngIf="paymentMode==='card' ">
                 <app-payment [amount]="total_price" (successMessage)="onPaymentCompletion($event)"></app-payment>
               </div>
             </div>
-            <button type="submit" class="btn btn-danger btn-lg order-button" #submit [disabled]="orderForm.invalid">Place order</button>
+            <button [hidden]="paymentMode==='card' " type="submit" class="btn btn-danger btn-lg order-button" #submit [disabled]="orderForm.invalid">Place order</button>
             <h5 *ngIf="orderSuccess" class="alert alert-success">Order placed successfully!!!</h5><br>
           </form>
         </div>

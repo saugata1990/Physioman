@@ -12,22 +12,23 @@
 
 <ion-content main padding *ngIf="loggedInAs==='consultant'">
   <ion-list *ngFor="let request of requests">
-    <ion-card (click)="processAppointment(request._id, request.consultation_payment_mode)">
+    <ion-card (click)="processAppointment(request)">
       <ion-item text-wrap>Patient: {{ request.name }}</ion-item>
       <ion-item text-wrap>Contact: {{ request.phone }}</ion-item>
       <ion-item text-wrap>Symptoms: {{ request.ailment_description }}</ion-item>
       <ion-item text-wrap>Address: {{ request.address }}</ion-item>
-      <ion-item text-wrap>Payment: {{ request.consultation_payment_mode }}</ion-item> 
+      <ion-item text-wrap>Payment: {{ request.collect_cash }}</ion-item> 
     </ion-card>
   </ion-list>
 </ion-content>
 
 <ion-content main padding *ngIf="loggedInAs==='physio'">
   <ion-list *ngFor="let booking of bookings">
-    <ion-card (click)="processBooking(booking._id, booking.session_status)">
+    <ion-card (click)="processBooking(booking)">
       <ion-item text-wrap>Patient: {{ booking.name }}</ion-item>
       <ion-item text-wrap>Contact: {{ booking.phone }}</ion-item>
       <ion-item text-wrap>Address: {{ booking.address }}</ion-item>
+      <ion-item text-wrap>Sessions booked in advance: {{ booking.number_of_sessions_unlocked }}</ion-item>
       <ion-item text-wrap>Sessions completed: {{ booking.sessions_completed }}/{{ booking.allotted_sessions }}</ion-item>
       <ion-item text-wrap>Status: {{ booking.session_status }}</ion-item> 
     </ion-card>

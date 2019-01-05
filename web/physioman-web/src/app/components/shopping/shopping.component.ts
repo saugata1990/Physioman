@@ -10,16 +10,17 @@ import { Router } from '@angular/router';
 })
 export class ShoppingComponent implements OnInit, AfterViewChecked {
 
-  private loaded_list: [any];
-  private count: number;
+  loaded_list: [any];
+  count: number;
   // private ordered_items: [any];
-  private rented_items = new Array();
-  private purchased_items = new Array();
+  rented_items = new Array();
+  purchased_items = new Array();
   total_price = 0;
-  private checkout = false;
-  private loggedIn = false;
-  private hasBooking = false;
-  private hasOrdered = false;
+  checkout = false;
+  loggedIn = false;
+  hasBooking = false;
+  hasOrdered = false;
+  itemsLoaded = false;
 
   constructor(private patientService: PatientService, private router: Router, private sanitizer: DomSanitizer) { }
 
@@ -27,6 +28,7 @@ export class ShoppingComponent implements OnInit, AfterViewChecked {
     this.checkState();
     this.patientService.listEquipment()
     .subscribe(response => {
+      this.itemsLoaded = true;
       this.onLoadEquipmentList(response);
     },
     error => console.log(error));

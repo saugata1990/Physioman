@@ -1,19 +1,6 @@
-/* .dropdown .dropdown-menu a:hover
-{
-  color: #fff;
-  background-color: blue;
-  border-color: #fff;
-} */
 
-/* navbar {
-    background-color: transparent !important;
-} */
-
-/* .dropdown-menu {
-    background-color: blue !important;
-} */
 .navbar {
-	background: rgba(0,0,0,1);
+  background: rgb(18, 146, 18, 0.7);
 	color: #fff;
 }
 

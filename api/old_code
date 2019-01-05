@@ -1,0 +1,392 @@
+services.post('/new-booking-request', verifyToken(process.env.patient_secret_key), (req, res) => {
+    return Promise.all([
+        Request.findOne({requested_by_patient: req.authData.patient, closed: false}).exec(),
+        Patient.findOne({_id: req.authData.patient}).exec()
+    ])
+    .then(([request, patient]) => {
+        if(request){
+            res.status(400).json({message: 'Request already logged'})
+        }
+        else{
+            patient.ailment_history += '\n'+date.format(new Date(), 'DD/MM/YYYY')+':-->'+req.body.ailment_description
+            const booking_request = new Request({
+                requested_by_patient: req.authData.patient,
+                ailment_description: req.body.ailment_description,
+                physio_gender_preference: req.body.physio_gender_preference,
+                consultation_payment_mode: req.body.consultation_payment_mode,
+                request_timestamp: new Date(),
+                ready_for_booking: false,
+                processed_by_consultant: false,
+                closed: false
+            })
+            patient.bookings.push(booking_request._id)
+            return Promise.all([
+                patient.save(),
+                booking_request.save()
+            ])
+            .then(() => {
+                new Incident({
+                    action_route: `api/bookings/assign-consultant/${booking_request._id}`,
+                    customer: booking_request.requested_by_patient,
+                    priority: 2,
+                    status: 'new',
+                    timestamp: booking_request.request_timestamp,
+                    incident_title: 'Booking Request',
+                    info: 'New Booking Request'
+                }).save()
+                .then(() => res.status(200).json({message: 'New Request logged'}))
+            })
+        }
+    })
+    .catch(error => res.status(500).json(error)) 
+})
+
+
+
+bookings.get('/open', verifyToken(process.env.patient_secret_key), (req, res) => {
+    if(req.authData){
+        return Promise.all([
+            Booking.findOne({booked_for_patient: req.authData.patient, closed: false}).exec(),
+            Request.findOne({requested_by_patient: req.authData.patient, closed: false}).exec()
+        ])
+        .then(([booking, request]) => {
+            if(booking || request){
+                res.status(200).json({status: true})
+            }
+            else{
+                res.status(200).json({status: false})
+            }
+        })
+        .catch(error => res.status(500).json({error}))
+    }
+})
+
+
+bookings.get('/status', verifyToken(process.env.patient_secret_key), (req, res) => {
+    if(req.authData){
+        return Promise.all([
+            Booking.findOne({booked_for_patient: req.authData.patient, closed: false}).exec(),
+            Request.findOne({requested_by_patient: req.authData.patient, closed: false}).exec()
+        ])
+        .then(([booking, request]) => {
+            if(booking){
+                res.status(200).json({booking, status: 'Confirmed'})
+            }
+            else if(request){
+                if(request.mapped_consultant){
+                    res.status(200).json({request, status: 'Processed'})
+                }
+                else{
+                    res.status(200).json({request, status: 'Pending'})
+                }
+            }
+            else{
+                res.status(404).json({message: 'Not Found'})
+            }
+        })
+        .catch(error => res.status(500).json({error}))
+    }
+})
+
+bookings.get('/requests', verifyToken(process.env.admin_secret_key), (req, res) => {   
+    Request.find(req.query).exec()
+    .then((requests) => {
+        res.status(200).json({requests})
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
+bookings.get('/requests/:request_id', verifyToken(process.env.admin_secret_key), (req, res) => {  
+    Request.findOne({_id: req.params.request_id}).exec()
+    .then((request) => {
+        res.status(200).json({request})
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
+
+bookings.post('/assign-consultant/:request_id', verifyToken(process.env.admin_secret_key), (req, res) => {   
+    return Promise.all([
+        Request.findOne({_id: req.params.request_id}).exec(),
+        Consultant.findOne({consultant_id: req.body.consultant_id}).exec(),
+        Incident.findOne({action_route: `api/bookings/assign-consultant/${req.params.request_id}`}).exec()
+    ])
+    .then(([request, consultant, incident]) => {
+        request.serviced_at = new Date()
+        request.serviced_by = req.authData.admin
+        consultant.pending_consultations++
+        consultant.patients_to_visit.push(request.requested_by_patient)
+        request.mapped_consultant = consultant._id 
+        request.consultant_otp = generateOTP()
+        request.ready_for_booking = false
+        incident.status = 'intermediate'
+        incident.info = 'Awaiting consultation'
+        return Promise.all([
+            Patient.findOne({_id: request.requested_by_patient}).exec(),
+            request.save(),
+            consultant.save(),
+            incident.save()  
+        ])
+        .then(([patient, request_saved, consultant_saved, incident_saved]) => {
+            let his_her = 'his'
+            if(consultant.consultant_gender == 'female'){
+                his_her = 'her'
+            }
+            sendSMSmock(patient.patient_phone,
+                `Your consultant is ${consultant.consultant_name} 
+                and ${his_her} contact no is ${consultant.consultant_phone}.
+                Your OTP is ${request.consultant_otp}`
+            )
+            sendSMSmock(consultant.consultant_phone,
+                `Patient name: ${patient.patient_name}, 
+                Contact no: ${patient.patient_phone},
+                Address: ${patient.patient_address}`
+            )
+            res.status(200).json({message: 'Consultant assigned and sms messages sent'})
+
+        })
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
+
+bookings.put('/assign-sessions/:request_id', verifyToken(process.env.consultant_secret_key), (req, res) => {  
+    let saveTxn = Promise.resolve()
+    return Promise.all([
+        Request.findOne({_id: req.params.request_id, 
+                        consultant_otp: req.body.consultant_otp}).exec(),
+        Consultant.findOne({_id: req.authData.consultant}).exec()
+    ])
+    .then(([request, consultant]) => {
+        if(!request){
+            res.status(403).json({message: 'Invalid OTP'})
+        }
+        else{
+            Incident.findOne({customer: request.requested_by_patient}).exec() 
+            .then(incident => {
+                request.sessions_fixed_by_consultant = req.body.sessions_fixed
+                request.processed_by_consultant = true
+                request.ready_for_booking = true
+                request.booking_amount_payable = req.body.booking_amount_payable
+                request.booking_amount_received = req.body.booking_amount_received
+                consultant.debit_amount += parseInt(req.body.amount_received)
+                if(req.body.amount_received > 0){
+                    saveTxn = new Transaction({
+                        //
+                    }).save()
+                }
+                consultant.number_of_consultations++
+                consultant.pending_consultations--
+                consultant.patients_to_visit = 
+                    consultant.patients_to_visit.filter(patient_id => patient_id !== request.requested_by_patient)
+                consultant.last_consultation_date = new Date()
+                incident.action_route = `api/bookings/new/${request._id}`
+                incident.status = 'new'
+                incident.timestamp = consultant.last_consultation_date
+                incident.incident_title = 'Request Ready for Booking'
+                incident.priority = 1,
+                incident.info = 'Ready for booking'
+                return Promise.all([
+                    request.save(),
+                    consultant.save(),
+                    incident.save(),
+                    saveTxn
+                ])
+                .then(() => res.status(200).json({message: 'Ready for booking'}))
+            })
+        }
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
+
+payments.post('/confirm-cash-received/:patient_id', 
+verifyToken(process.env.physio_secret_key, process.env.consultant_secret_key), (req, res) => {
+    let collector = null
+    let id = null
+    let saveIncident = Promise.resolve()
+    let saveTransaction = Promise.resolve()
+    let saveBooking = Promise.resolve()
+    return Promise.all([
+        Patient.findOne({_id: req.params.patient_id}).exec(),
+        Physio.findOne({_id: req.authData.physio }).exec(),
+        Consultant.findOne({_id: req.authData.consultant }).exec(),
+        Incident.findOne({action_route: `api/admin/booking-payment-due/${req.params.patient_id}`}).exec(),
+        Booking.findOne({booked_for_patient: req.params_patient_id}).exec()
+    ])
+    .then(([patient, physio, consultant, incident, booking]) => {
+        patient.wallet_amount += parseInt(req.body.amount_received - req.body.amount_payable)
+        if(incident && patient.wallet_amount >= booking.amount_payable){
+            patient.wallet_amount -= parseInt(booking.amount_payable)
+            booking.amount_payable = 0
+            booking.closed = booking.sessions_completed === booking.allotted_sessions ? true : false
+            incident.status = 'processed'
+            saveIncident = incident.save()
+            saveTransaction = new Transaction({
+                transaction_type: 'cash',
+                transaction_amount: booking.amount_payable,
+                payee: patient.patient_name,
+                recipient: 'Physioman',
+                timestamp: new Date()
+            }).save()
+            saveBooking = booking.save()
+        }
+        if(physio){
+            physio.debit_amount += parseInt(req.body.amount_received)
+            collector = `${physio.physio_name}(${physio.physio_id})`
+            id = physio._id
+        }
+        else if(consultant){
+            consultant.debit_amount += parseInt(req.body.amount_received)
+            collector = `${consultant.consultant_name}(${consultant.consultant_id})`
+            id = consultant._id
+        }
+        let savePhysio = physio? physio.save() : Promise.resolve()
+        let saveConsultant = consultant? consultant.save() : Promise.resolve()
+        return Promise.all([
+            patient.save(),
+            new Incident({
+                action_route: `api/services/payments/collect-cash/${id}`,
+                customer: patient.patient_id,
+                priority: 1,
+                status: 'new',
+                timestamp: new Date(),
+                incident_title: 'Cash Collection',
+                info: `Collect Rs. ${req.body.amount_received} from ${collector}` 
+            }).save(),
+            new Transaction({
+                transaction_type: 'cash',
+                transaction_amount: req.body.amount_received,
+                payee: patient.patient_name,
+                recipient: 'Physioman',
+                timestamp: new Date()
+            }).save(),
+            saveTransaction,
+            savePhysio,
+            saveConsultant,
+            saveIncident,
+            saveBooking
+        ])
+        .then(() => res.status(201).json({message: 'Transaction successful'}))
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
+
+// replace request id with booking id in patient bookings // change the whole function
+bookings.post('/new/:request_id', verifyToken(process.env.admin_secret_key), (req, res) => {
+    return Promise.all([
+        Request.findOne({_id: req.params.request_id, ready_for_booking: true, closed: false}).exec(),
+        Physio.findOne({physio_id: req.body.physio_id}).exec(),
+        Incident.findOne({action_route: 'api/bookings/new/' + req.params.request_id, status: 'new'}).exec(),
+        Patient.findOne({bookings: req.params.request_id}).exec() 
+    ])
+    .then(([request, physio, incident, patient]) => {
+        if(!request){
+            res.status(403).json({message: 'invalid request'})
+        }
+        else{
+            request.closed = true
+            physio.current_patients.push(request.requested_by_patient)
+            physio.number_of_patients++
+            if(request.booking_amount_payable > request.booking_amount_received){
+                incident.action_route = 'api/admin/booking-payment-due/' + request.requested_by_patient
+                incident.status = 'intermediate'
+                incident.timestamp = Date.now()
+                incident.incident_title = 'Booking Payment Pending'
+            }
+            else{
+                incident.status = 'processed'
+            }
+            const booking =  new Booking({
+                booked_for_patient: request.requested_by_patient,
+                assigned_physio: physio._id,
+                allotted_sessions: request.sessions_fixed_by_consultant,
+                sessions_completed: 0,
+                session_status: 'not started',
+                booked_at: new Date(),
+                amount_payable: request.booking_amount_payable - request.booking_amount_received, 
+                closed: false
+            })
+            patient.bookings = patient.bookings.filter(rq => rq._id !== req.params.request_id)
+            patient.bookings.push(booking._id)
+            return Promise.all([
+                booking.save(),
+                request.save(),
+                physio.save(),
+                patient.save(),
+                incident.save()
+            ])
+            .then(() => res.status(200).json({message: 'Booking created'}))        
+        }
+    })
+    .catch(error => res.status(500).json(error))
+})
+
+
+const verifyToken = (key) => {
+    return (req, res, next) => {
+        const bearerHeader = req.headers['authorization']
+        if(bearerHeader !== undefined){
+            const bearer = bearerHeader.split(' ')
+            const token = bearer[1]
+            jwt.verify(token, key, (err, authData) => {
+                if(err){
+                    res.status(403).json({message: 'Not allowed'})
+                }
+                else{
+                    req.authData = authData
+                }
+                next()
+            })    
+        }
+        else{
+            res.status(403).json({message: 'Not allowed'})
+        }
+    }
+}
+
+payments.post('/pay-with-wallet', verifyToken(process.env.patient_secret_key), (req, res) => {
+    let savePatient = Promise.resolve(), saveBooking = Promise.resolve(), saveIncident = Promise.resolve()
+    let success = true
+    return Promise.all([
+        Patient.findOne({_id: req.authData.patient}).exec(),
+        Incident.findOne({action_route: `api/admin/booking-payment-due/${req.authData.patient}`}).exec(),
+        Booking.findOne({booked_for_patient: req.authData.patient}).exec()
+    ])
+    .then(([patient, incident, booking]) => {
+        if(incident && patient.wallet_amount >= booking.amount_payable){
+            patient.wallet_amount -= parseFloat(booking.amount_payable)
+            savePatient = patient.save()
+            booking.amount_payable = 0
+            booking.closed = booking.sessions_completed === booking.allotted_sessions ? true : false
+            saveBooking = booking.save()
+            incident.status = 'processed'
+            saveIncident = incident.save()
+        }
+        if(req.body.amount){
+            if(patient.wallet_amount >= req.body.amount){
+                patient.wallet_amount -= parseInt(req.body.amount)
+                savePatient = patient.save()
+            }
+            else{
+                success = false
+            }
+        }
+        
+        return Promise.all([
+            savePatient,
+            saveBooking,
+            saveIncident
+        ])
+        .then(() => {
+            if(success){
+                res.status(201).json({message: 'Payment successful'})
+            }
+            else{
+                res.status(400).json({message: 'Payment failed due to insufficient balance'})
+            }
+        })
+    })
+    .catch(error => res.status(500).json({error}))
+})

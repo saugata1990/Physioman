@@ -29,19 +29,19 @@
         <a class="nav-link" routerLink="/contact-us">Contact Us</a>
       </li>
       <li *ngIf="!loggedIn" class="nav-item">
-        <a class="nav-link" routerLink="/login">Login</a>
+        <a class="nav-link" routerLink="/login">Login / Sign Up</a>
       </li>
       <li class="nav-item dropdown" *ngIf="loggedIn">
         <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false">
-          Account
-          <!-- User's name and may be the image as wee has to bind here -->
+          {{ name }}
+          <!-- Indranil: User's name and may be the image as we have to bind here -->
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a *ngIf="loggedIn" class="dropdown-item" routerLink="/my-profile" >My Profile</a>
-          <a *ngIf="loggedIn&&hasBooking" class="dropdown-item" routerLink="/booking-status">My Booking Status</a>
-          <a *ngIf="loggedIn&&hasOrdered" class="dropdown-item" routerLink="/order-status">My Order Status</a>
-          <a *ngIf="loggedIn" class="dropdown-item" (click)="onLogout()">Log Out</a>
+          <a class="dropdown-item" routerLink="/my-profile">My Profile</a>
+          <a *ngIf="hasBooking" class="dropdown-item" routerLink="/booking-status">My Booking Status</a>
+          <a *ngIf="hasOrdered" class="dropdown-item" routerLink="/order-status">My Order Status</a>
+          <a class="dropdown-item" (click)="onLogout()">Log Out</a>
         </div>
       </li>
     </ul>

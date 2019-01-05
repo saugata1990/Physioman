@@ -34,12 +34,18 @@
          name="paymentMode" value="card" (change)="openModal()" required>Card
       </label>
     </div>
+    <div class="form-check-inline">
+      <label class="form-check-label" for="radio5">
+        <input type="radio" id="radio5" class="form-check-input" [(ngModel)]="paymentMode"
+         name="paymentMode" value="wallet" (change)="openModal()" required>Wallet
+      </label>
+    </div>
     <div *ngIf="paymentMode==='card' ">
       <app-payment [amount]="bookingPrice" (successMessage)="onPaymentCompletion($event)"></app-payment>
     </div>
   </div>
   <div class="text-right">
-  <button type="submit" class="btn btn-info btn-lg" #submit [disabled]="bookingForm.invalid">Submit Request</button>
+  <button [hidden]="paymentMode==='card'" type="submit" class="btn btn-info btn-lg" #submit [disabled]="bookingForm.invalid">Submit Request</button>
 </div>
 </form>
 </div>

@@ -42,7 +42,7 @@ export class BookingComponent implements OnInit {
 
   onBookingRequest(form) {
     if (this.paymentMode === 'cash' || this.paymentMode  === 'card' && this.onlinePaymentSuccess) {
-      this.patientService.requestBooking(form.value.ailment, form.value.genderPreference, form.value.paymentMode)
+      this.patientService.requestBooking(form.value.ailment, form.value.genderPreference, form.value.paymentMode, this.bookingPrice)
       .subscribe(
         response => {
           console.log(response);

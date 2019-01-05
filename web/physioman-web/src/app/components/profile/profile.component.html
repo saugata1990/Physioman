@@ -1,5 +1,6 @@
-<div class="container">
+<div *ngIf="loaded" class="container">
   <h2>My Profile</h2>
+  <div *ngIf="!loaded" class="spinner-1"></div>
   <div class="row profile-wrapper">
     <div class="col-sm-6 profile-image" style="background-image: url('../../../assets/img/background3.jpg');">
       <div class="image-overlay">
@@ -8,14 +9,14 @@
       </div>
     </div>
     <div class="col-sm-6 profile-data">
-      <div><strong>Name:</strong> {{ patient.name }}</div>
-      <div><strong>Registered Phone Number:</strong> {{ patient.id }}</div>
-      <div><strong>Contact Number</strong> {{ patient.phone }}</div>
-      <div><strong>Email id:</strong> {{patient.email}}</div>
-      <div><strong>Gender</strong> {{patient.gender}}</div>
-      <div><strong>Date of Birth</strong> {{ patient.dob | date: 'dd/MM/yyyy'}}</div>
-      <div><strong>Address:</strong> {{ patient.address }}</div>
-      <div><strong>Ailment History:</strong> {{patient.ailment}}</div>
+      <div><strong>Name:</strong> {{ patient.patient_name }}</div>
+      <div><strong>Registered Phone Number:</strong> {{ patient.patient_id }}</div>
+      <div><strong>Contact Number</strong> {{ patient.patient_phone }}</div>
+      <div><strong>Email id:</strong> {{patient.patient_email}}</div>
+      <div><strong>Gender</strong> {{patient.patient_gender}}</div>
+      <div><strong>Date of Birth</strong> {{ patient.patient_dob | date: 'dd/MM/yyyy'}}</div>
+      <div><strong>Address:</strong> {{ patient.patient_address }}</div>
+      <div><strong>Wallet Balance:</strong> {{ patient.wallet_amount }}</div>
     </div>
   </div>
 </div>

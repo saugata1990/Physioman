@@ -9,9 +9,11 @@ import { LOGGEDOUT, LOGGEDIN, HASBOOKING, HASORDERED } from '../../store/actions
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  private loggedIn = false;
-  private hasBooking = false;
-  private hasOrdered = false;
+  loggedIn = false;
+  hasBooking = false;
+  hasOrdered = false;
+  name;
+
 
   constructor(private patientService: PatientService, private router: Router) { }
 
@@ -28,7 +30,10 @@ export class NavbarComponent implements OnInit {
       this.loggedIn = state.loggedIn;
       this.hasBooking = state.hasBooking;
       this.hasOrdered = state.hasOrdered;
-      console.log(state);
+      if (this.loggedIn) {
+        this.patientService.viewProfile()
+        .subscribe(response => this.name = (response as any).patient.patient_name.split(' ')[0]);
+      }
     });
   }
 

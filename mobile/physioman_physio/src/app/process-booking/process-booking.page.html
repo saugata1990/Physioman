@@ -8,25 +8,40 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-item>
-    <ion-button *ngIf="session_status === 'not started' " (click)="onSendOTP()">Send OTP</ion-button>
-    <ion-button *ngIf="session_status === 'otp sent' " (click)="onSendOTP()">Resend OTP</ion-button>
+  <ion-item *ngIf="!payment_needed">
+    <ion-button size="large" *ngIf="booking.session_status === 'not started' " (click)="onSendOTP()">Send OTP</ion-button>
+    <ion-button size="large" *ngIf="booking.session_status === 'otp sent' " (click)="onSendOTP()">Resend OTP</ion-button>
   </ion-item>
-  <ion-item>
+  <!-- <ion-item padding *ngIf="payment_needed">
     <ion-label>Cash Received from Patient</ion-label>
     <ion-checkbox [(ngModel)]="cash_received"></ion-checkbox>
-  </ion-item>
-  <ion-item *ngIf="cash_received">ok</ion-item>
-  <form #sessionForm="ngForm" *ngIf="session_status === 'otp sent' " (ngSubmit)="onStartSession()">
-    <ion-item padding>
-      <ion-label>Enter session OTP:</ion-label>
-      <ion-input type="text" [(ngModel)]="session_otp" name="session_otp" required></ion-input>
+  </ion-item> -->
+  
+  <!-- can be moved to menu -->
+  <form #advancePaymentForm="ngForm" *ngIf="payment_needed" padding (ngSubmit)="onAdvancePayment()">
+    <ion-item text-wrap>Advance Payment</ion-item>
+    <ion-item>
+      <ion-label text-wrap>Number of sessions to book in advance</ion-label>
+      <ion-input type="text" [(ngModel)]="advance_sessions" name="advance_sessions" required></ion-input>
     </ion-item>
     <ion-item>
-      <ion-button type="submit" size="large" expand="block" [disabled]="sessionForm.invalid">Start session</ion-button>
+      <ion-label>Amount to collect: {{ advance_sessions * booking.session_fee }}</ion-label>
+    </ion-item>
+    <ion-item *ngIf="advance_sessions > 0">
+      <ion-button type="submit" size="medium"  [disabled]="advancePaymentForm.invalid">Cash Collected</ion-button>
     </ion-item>
   </form>
-  <div *ngIf="session_status === 'started' ">
+
+  <form #sessionForm="ngForm" padding *ngIf="booking.session_status === 'otp sent' " (ngSubmit)="onStartSession()">
+    <ion-item padding>
+      <ion-label>Enter session OTP:</ion-label>
+      <ion-input type="text" [(ngModel)]="booking.session_otp" name="session_otp" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-button type="submit" size="large"  [disabled]="sessionForm.invalid">Start session</ion-button>
+    </ion-item>
+  </form>
+  <div *ngIf="booking.session_status === 'started' ">
     <ion-item>
       <ion-label>Session in progress</ion-label>
     </ion-item>

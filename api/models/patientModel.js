@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const url = 'mongodb://localhost:27017/physioman'
-// const Physio = require('./physioModel')
 const Schema = mongoose.Schema
 mongoose.Promise = global.Promise
 const db = mongoose.createConnection(process.env.mongo_url)
@@ -15,7 +14,7 @@ const patientSchema = new Schema({
     email_verified: Boolean,
     patient_phone: String,
     patient_address: String,
-    ailment_history: String,
+    ailment_history: [{date: Date, description: String}],
     bookings: [String],
     orders: [String],
     assigned_physio: String,

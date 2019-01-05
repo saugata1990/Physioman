@@ -19,28 +19,6 @@ const upload = multer({
 
 
 // JWT middleware
-const verifyToken_old = (key) => {
-    return (req, res, next) => {
-        const bearerHeader = req.headers['authorization']
-        if(bearerHeader !== undefined){
-            const bearer = bearerHeader.split(' ')
-            const token = bearer[1]
-            jwt.verify(token, key, (err, authData) => {
-                if(err){
-                    res.status(403).json({message: 'Not allowed'})
-                }
-                else{
-                    req.authData = authData
-                }
-                next()
-            })    
-        }
-        else{
-            res.status(403).json({message: 'Not allowed'})
-        }
-    }
-}
-
 const verifyToken = (...keys) => {
     return (req, res, next) => {
         let authorized = false
@@ -50,6 +28,9 @@ const verifyToken = (...keys) => {
             const token = bearer[1]
             keys.map(key => {
                 jwt.verify(token, key, (err, authData) => {
+                    if(err){
+                        console.log(err)
+                    }
                     if(authData){
                         req.authData = authData
                         authorized = true

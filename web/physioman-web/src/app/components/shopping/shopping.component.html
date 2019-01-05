@@ -16,6 +16,7 @@
     </div>
   </form>
 </div>
+<div *ngIf="!itemsLoaded" class="spinner-1"></div>
 <div class="container items-container">
   <div *ngFor="let item of loaded_list" class="item-wrapper">
     <div class="item-photo">

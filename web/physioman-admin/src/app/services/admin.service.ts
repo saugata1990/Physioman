@@ -13,7 +13,7 @@ export class AdminService {
   private physio_create_url = this.baseUrl + 'api/physios/new-account';
   private consultant_create_url = this.baseUrl + 'api/consultants/new-consultant';
   private incidents_url = this.baseUrl + 'api/incidents?status=';
-  private requests_url = this.baseUrl + 'api/bookings/requests/';
+  private requests_url = this.baseUrl + 'api/bookings/all/';
   private patient_name_url = this.baseUrl + 'api/patients/name-and-contact?patient_id=';
   private consultant_list_url = this.baseUrl + 'api/consultants';
   private physio_list_url = this.baseUrl + 'api/physios';
@@ -117,7 +117,8 @@ export class AdminService {
   }
 
   listEquipment() {
-    return this.http.get(this.list_equipment_url);
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.get(this.list_equipment_url, {headers: this.setHeader(token)});
   }
 
   getEquipmentDetails(id) {

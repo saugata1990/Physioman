@@ -19,8 +19,11 @@ export class ApiService {
   private session_otp_url = this.baseUrl + 'api/sessions/sendOTP/';
   private session_start_url = this.baseUrl + 'api/sessions/start-session/';
   private session_end_url = this.baseUrl + 'api/sessions/end-session/';
-  private money_received_url = this.baseUrl + 'api/services/payments/confirm-cash-received/';
+  private money_received_url = this.baseUrl + 'api/services/payments/cash-receipt/';
   private payable_amount_url = this.baseUrl + 'api/services/payments/payable-amount/';
+  private booking_payment_cash_url = this.baseUrl + 'api/services/payments/booking-cash-payment/';
+  private unlock_sessions_url = this.baseUrl + 'api/bookings/unlock-sessions/';
+
 
   constructor(private http: HttpClient) { }
 
@@ -52,10 +55,20 @@ export class ApiService {
     return this.http.get(this.patient_info_url + id, {headers: this.setHeader(userToken)});
   }
 
-  assignSessions(request_id, consultant_otp, sessions_fixed, booking_amount_payable, booking_amount_received, userToken) {
-    return this.http.put(this.assign_sessions_url + request_id,
-      {consultant_otp, sessions_fixed, booking_amount_payable, booking_amount_received}, {headers: this.setHeader(userToken)});
+  assignSessions(request_id, consultant_otp, allotted_sessions, number_of_sessions_paid_for, amount_paid, userToken) {
+    return this.http.post(this.assign_sessions_url + request_id,
+      {consultant_otp, allotted_sessions, number_of_sessions_paid_for, amount_paid}, {headers: this.setHeader(userToken)});
   }
+
+
+  unlockSessions(booking_id, number_of_sessions_paid_for, userToken) {
+    return this.http.post(this.unlock_sessions_url + booking_id, {number_of_sessions_paid_for}, {headers: this.setHeader(userToken)});
+  }
+
+  collectCash(patient_id, amount, userToken) {
+    return this.http.post(this.money_received_url + patient_id, {amount}, {headers: this.setHeader(userToken)});
+  }
+
 
   sendSessionOTP(userToken, booking_id) {
     return this.http.post(this.session_otp_url + booking_id, {}, {headers: this.setHeader(userToken)});
@@ -73,9 +86,12 @@ export class ApiService {
     return this.http.get(this.payable_amount_url + patient_id, {headers: this.setHeader(userToken)});
   }
 
-  confirm_cash_received(patient_id, amount_received, userToken) {
-    return this.http.post(this.money_received_url + patient_id, {amount_received}, {headers: this.setHeader(userToken)});
+
+  booking_cash_payment(booking_id, userToken) {
+    return this.http.post(this.booking_payment_cash_url + booking_id, {}, {headers: this.setHeader(userToken)});
   }
+
+
 
 
   checkForOtherAccount(loggedInAs, userToken) {
