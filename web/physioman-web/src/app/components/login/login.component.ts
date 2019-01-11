@@ -15,6 +15,14 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
 
+  getPayUMoneyAuth() {
+    this.patientService.getPayUAuth()
+    .subscribe(auth => {
+      const key = (auth as any).auth;
+      localStorage.setItem('payumoney-auth', key);
+    });
+  }
+
   onLogin(form) {
     this.patientService.login(form.value.phone, form.value.password)
     .subscribe(
@@ -24,7 +32,8 @@ export class LoginComponent implements OnInit {
           action: LOGGEDIN
         });
         this.checkBookingsAndOrders();
-        this.router.navigate(['/my-profile']);
+        this.getPayUMoneyAuth();
+        this.router.navigate(['/user/profile']);
       },
       error => {
         console.log('incorrect username/password');

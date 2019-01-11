@@ -13,9 +13,10 @@ export class NavbarComponent implements OnInit {
   hasBooking = false;
   hasOrdered = false;
   name;
+  recharge_amount;
+  accept_payment = false;
 
-
-  constructor(private patientService: PatientService, private router: Router) { }
+  constructor(private patientService: PatientService, public router: Router) { }
 
   ngOnInit() {
     this.checkBookingsAndOrders();
@@ -51,9 +52,27 @@ export class NavbarComponent implements OnInit {
         action: HASORDERED
       });
       localStorage.setItem('orderActive', 'true');
-    }, error => console.log(error));
+    }, error => console.log('No orders yet'));
   }
 
+  onRecharge() {
+    $(document).ready(() => {
+      // @ts-ignore
+      $('#recharge').modal('show');
+    });
+  }
+
+  onAmountEntered() {
+    this.accept_payment = true;
+    $(document).ready(() => {
+      $('#recharge').on('hidden.bs.modal', () => {
+        // @ts-ignore
+        $('#payment').modal('show');
+      });
+      // @ts-ignore
+      $('#recharge').click().modal('hide');
+    });
+  }
 
 
   onLogout() {
@@ -63,6 +82,15 @@ export class NavbarComponent implements OnInit {
     this.patientService.updateState({ action: LOGGEDOUT });
     this.router.navigate(['/']);
     alert('You are logged out');
+  }
+
+  onPaymentCompletion(event) {
+    console.log('payment event fired and accepted');
+    this.patientService.walletRecharge(this.recharge_amount)
+    .subscribe(response => {
+      console.log(response);
+      this.router.navigate(['/user/profile']);
+    });
   }
 
 

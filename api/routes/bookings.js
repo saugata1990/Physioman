@@ -1,7 +1,6 @@
 const express = require('express')
 const bookings = express.Router()
 const Booking = require('../models/bookingModel')
-const Request = require('../models/requestModel')
 const Physio = require('../models/physioModel')
 const Patient = require('../models/patientModel')
 const Consultant = require('../models/consultantModel')
@@ -54,7 +53,7 @@ bookings.get('/status', verifyToken(process.env.patient_secret_key), (req, res) 
             res.status(404).json({message: 'Not found'})
         }
         else{
-            res.status(200).json({status: booking.status})
+            res.status(200).json({booking})
         }
     })
     .catch(error => res.status(500).json({error}))
@@ -206,6 +205,10 @@ bookings.get('/assigned-bookings', verifyToken(process.env.physio_secret_key), (
     .then(bookings => res.status(200).json({bookings}))
     .catch(error => res.status(500).json({error}));
 })
+
+
+
+
 
 bookings.post('/request-booking-transfer', verifyToken(process.env.physio_secret_key), (req, res) => {
     //

@@ -18,6 +18,14 @@ physios.get('/', verifyToken(process.env.admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json(error))
 })
 
+
+physios.get('/name/:id', verifyToken(process.env.patient_secret_key), (req, res) => {
+    Physio.findOne({_id: req.params.id}, 'physio_name').exec()
+    .then(physio => res.status(200).json({physio}))
+    .catch(error => res.status(500).json({error}))
+})
+
+
 // this route is to be accessed by admin
 physios.post('/new-account', verifyToken(process.env.admin_secret_key), (req, res) => {
     return Promise.all([

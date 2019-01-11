@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 export class SignupComponent implements OnInit {
 
   signedUp = false;
+  // password;
+  // confirm_password;
   otp;
   phone;
   phoneVerified = false;
@@ -31,7 +33,7 @@ export class SignupComponent implements OnInit {
     });
   }
 
-  onOTPEntered(otp) {
+  onOTPEntered(otp, form) {
     this.patientService.verifyOTP(this.phone, otp)
     .subscribe(response => {
       $(document).ready(() => {
@@ -39,27 +41,23 @@ export class SignupComponent implements OnInit {
         $('#verification').modal('hide');
         console.log(response);
         this.phoneVerified = true;
+        this.signup(form);
       });
     }, error => console.log(error));
   }
 
-  onSignup(form) {
-    if (!this.phoneVerified) {
-      alert('Verify phone first');
-    } else {
-      this.patientService.signup(form.value.phone, form.value.password, form.value.name, form.value.email, form.value.gender,
-                              form.value.dob, form.value.address, form.value.ailment)
-      .subscribe(
-        response => {
-          this.signedUp = true;
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 3000);
-        },
-        error => {
-          console.log(error.error.message);
-        }
-      );
-    }
+  signup(form) {
+    this.patientService.signup(form.value.phone, form.value.password, form.value.name, form.value.gender)
+    .subscribe(
+      response => {
+        this.signedUp = true;
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 3000);
+      },
+      error => {
+        console.log(error.error.message);
+      }
+    );
   }
 }

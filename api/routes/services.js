@@ -25,7 +25,7 @@ services.post('/new-booking-request', verifyToken(process.env.patient_secret_key
             res.status(403).json({message: 'Booking already exists'})
         }
         else{
-            let isPaid = req.body.consultation_fee_paid ? Boolean(req.body.consultation_fee_paid) : null
+            let isPaid = req.body.consultation_payment_mode === 'cash' ? false : true
             patient.ailment_history.push({date: new Date(), description: req.body.ailment_description})
             const booking_request = new Booking({
                 patient_id: req.authData.patient,

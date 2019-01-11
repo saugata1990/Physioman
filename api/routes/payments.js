@@ -12,6 +12,11 @@ const Payment = require('../models/paymentModel')
 const {verifyToken} = require('../utils/helper')
 
 
+payments.get('/payumoney-auth', verifyToken(process.env.patient_secret_key), (req, res) => {
+    res.status(200).json({auth: process.env.auth_header})
+})
+
+
 payments.post('/payumoney-hash', (req, res) => {
     const txnid = req.body.txnid
     const amount = req.body.amount

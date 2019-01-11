@@ -40,6 +40,12 @@ consultants.get('/', verifyToken(process.env.admin_secret_key), (req, res) => {
     .catch(error => res.status(500).json({error}))
 })
 
+consultants.get('/name/:id', verifyToken(process.env.patient_secret_key), (req, res) => {
+    Consultant.findOne({_id: req.params.id}, 'consultant_name').exec()
+    .then(consultant => res.status(200).json({consultant}))
+    .catch(error => res.status(500).json({error}))
+})
+
 consultants.post('/new-consultant', verifyToken(process.env.admin_secret_key), (req, res) => {
     return Promise.all([
         phoneExists(req.body.consultant_phone),

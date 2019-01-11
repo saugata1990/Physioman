@@ -40,11 +40,34 @@
             <div class="form-group">
               <label for="paymentMode"><h5>Payment mode</h5></label>
               <!-- to be changed to radio-group -->
-              <select class="form-control" [(ngModel)]="paymentMode" name="paymentMode" (change)="openModal()" required>
+
+              <div class="form-check-inline">
+                <label class="form-check-label" for="radio1">
+                  <input type="radio" id="radio1" class="form-check-input" [(ngModel)]="paymentMode"
+                   name="paymentMode" value="cash" (change)="openModal()">Cash
+                </label>
+              </div>
+
+              <div class="form-check-inline">
+                <label class="form-check-label" for="radio2">
+                  <input type="radio" id="radio2" class="form-check-input" [(ngModel)]="paymentMode"
+                    name="paymentMode" value="card" (change)="openModal()">Cash
+                </label>
+              </div>
+
+              <div *ngIf="hasWalletBalance" class="form-check-inline">
+                <label class="form-check-label" for="radio3">
+                  <input type="radio" id="radio3" class="form-check-input" [(ngModel)]="paymentMode"
+                    name="paymentMode" value="wallet" (change)="openModal()">Wallet
+                </label>
+              </div>
+
+
+              <!-- <select class="form-control" [(ngModel)]="paymentMode" name="paymentMode" (change)="openModal()" required>
                 <option value="card" data-toggle="modal" data-target="#payment">Card</option>
                 <option value="cash">Cash</option>
                 <option *ngIf="hasWalletBalance" value="wallet">Wallet</option>
-              </select>
+              </select> -->
               <div *ngIf="paymentMode==='card' ">
                 <app-payment [amount]="total_price" (successMessage)="onPaymentCompletion($event)"></app-payment>
               </div>

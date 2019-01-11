@@ -2,18 +2,61 @@
   <h2>My Booking</h2>
   <div *ngIf="loaded" class="booking-block">
       <h5><strong>Booking status:</strong> {{ booking_data.status }}</h5>
-      <div *ngIf="booking_data.request">
-        <h5 *ngIf="booking_data.status!=='Confirmed'"><strong>Request date:</strong> {{ booking_data.request.request_timestamp | date: 'dd/MM/yyyy' }}</h5>
-        <h5 *ngIf="booking_data.status!=='Confirmed' && !booking_data.request.processed_by_consultant"><strong>Consultation payment mode:</strong> {{ booking_data.request.consultation_payment_mode }}</h5>
-        <h5 *ngIf="booking_data.status!=='Confirmed' && booking_data.request.processed_by_consultant"><strong>Payable booking amount:</strong> {{ booking_data.request.booking_amount_payable - booking_data.request.booking_amount_received }}</h5>
-        <button *ngIf="booking_data.status!=='Confirmed' && booking_data.request.processed_by_consultant">Pay Now</button>
-        <h5 *ngIf="booking_data.status==='Processed'"><strong>Serviced on:</strong> {{ booking_data.request.serviced_at | date: 'dd/MM/yyyy' }}</h5>
-        <h5 *ngIf="booking_data.status==='Processed' && !booking_data.request.processed_by_consultant"><strong>Consultation OTP:</strong> {{ booking_data.request.consultant_otp}}</h5>
+      <div *ngIf="booking_data.status!=='Confirmed'">
+          <h5><strong>Request date: </strong>{{ booking_data.request_timestamp | date: 'dd/MM/yyyy' }}</h5>
+          <h5 *ngIf="!booking_data.consultation_fee_paid"><strong>Pay to consultant: </strong>
+            {{ booking_data.consultation_fee }}</h5>
       </div>
-      <div *ngIf="booking_data.booking">
-        <h5><strong>Sessions completed:</strong> {{ booking_data.booking.sessions_completed }} / {{ booking_data.booking.allotted_sessions }}</h5>
-        <h5 *ngIf="booking_data.booking.amount_payable "><strong>Booking Amount Pending</strong> {{ booking_data.booking.amount_payable }}</h5>
+      <h5 *ngIf="booking_data.assigned_consultant"><strong>Assigned Consultant: </strong>
+        {{ booking_data.consultant_name }}</h5>
+      <h5 *ngIf="booking_data.status === 'Consultant Assigned'"><strong>OTP for consultation: </strong>
+        {{ booking_data.consultant_otp }}</h5>
+
+      <div *ngIf="booking_data.status === 'Sessions Assigned'">
+        <h5 *ngIf="booking_data.status === 'Sessions Assigned'"><strong>Sessions allotted: </strong>
+          {{ booking_data.allotted_sessions }}</h5>
+
+        <h5 *ngIf="booking_data.status === 'Sessions Assigned'"><strong>Number of sessions booked: </strong>
+          {{ booking_data.number_of_sessions_unlocked }} </h5>
+        <button *ngIf="booking_data.sessions_completed === booking_data.number_of_sessions_unlocked"
+          class="btn btn-outline-danger float-right" (click)="openModal()">
+          Unlock sessions
+        </button>
+        <button *ngIf="booking_data.sessions_completed < booking_data.number_of_sessions_unlocked && booking_data.assigned_physio"
+          class="btn btn-outline-success float-right" (click)="openModal()">
+          Unlock more sessions
+        </button>
+
+        <h5 *ngIf="booking_data.status === 'Sessions Assigned'"><strong>Number of sessions completed: </strong>
+          {{ booking_data.sessions_completed }}</h5>
       </div>
+
+      <h5 *ngIf="booking_data.assigned_physio"><strong>Assigned Physio: </strong>
+        {{ booking_data.physio_name }}</h5>
+      <h5 *ngIf="booking_data.session_status === 'otp sent'"><strong>Session OTP: </strong>
+        {{ booking_data.session_otp }}</h5>
+  </div>
+</div>
+
+<div *ngIf="online_payment_needed">
+    <app-payment [amount]="amount_to_pay" (successMessage)="onPaymentCompletion($event)"></app-payment>
+  </div>
+
+<div class="modal" id="bookSessions" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Advance Booking</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form #frm="ngForm" (ngSubmit)="onSessionsSet()">
+          <label for="numSessions">Set number of sessions to book in advance</label>
+          <input type="text" id="numSessions" [(ngModel)]="numSessions" name="numSessions" class="form-control" required>
+          <button type="submit" class="btn btn-success btn-space-top float-right" [disabled]="frm.invalid">Proceed</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 

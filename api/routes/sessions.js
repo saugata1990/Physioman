@@ -9,6 +9,16 @@ const Patient = require('../models/patientModel')
 const date = require('date-and-time')
 
 
+
+sessions.get('/otp', verifyToken(process.env.patient_secret_key), (req, res) => {
+    Booking.findOne({session_status: 'otp sent'}).exec()
+    .then(booking => {
+        Session.findOne({booking_id: booking._id, session_ended: false}).exec()
+        .then(session => res.status(200).json({otp: session.session_otp}))
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
 // to be used by physio before each session 
 sessions.post('/sendOTP/:booking_id', verifyToken(process.env.physio_secret_key), (req, res) => {
     let otp = generateOTP()

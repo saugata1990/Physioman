@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken')
 const fs = require('fs')
 
 
-products.get('/search', verifyToken(process.env.patient_secret_key), (req, res) => {
+products.get('/search', (req, res) => {
     Product.search(req.query.q)
     .then(products => res.status(200).json({products, count: products.length}))
     .catch(error => res.status(500).json({error}))
@@ -20,7 +20,10 @@ products.get('/:product_model', verifyToken(process.env.admin_secret_key), (req,
     .then(product => res.status(200).json({product}))
 })
 
-products.get('/', verifyToken(process.env.admin_secret_key, process.env.patient_secret_key), (req, res) => { 
+
+// verifyToken(process.env.admin_secret_key, process.env.patient_secret_key)
+// use a different route for users not logged in
+products.get('/',  (req, res) => { 
     Product.find(req.query).exec()
     .then(products => {
         if(products.length){

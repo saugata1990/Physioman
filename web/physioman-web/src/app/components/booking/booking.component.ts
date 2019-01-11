@@ -11,7 +11,7 @@ import { HASBOOKING } from '../../store/actions/actions';
 export class BookingComponent implements OnInit {
 
   paymentMode;
-  bookingPrice = 100;
+  bookingPrice = 100;  // this value should be read from the database
   onlinePaymentPending = false;
   onlinePaymentSuccess = false;
   @ViewChild('submit') submit: ElementRef;
@@ -19,12 +19,15 @@ export class BookingComponent implements OnInit {
   constructor(private patientService: PatientService, private router: Router) { }
 
   ngOnInit() {
+    // fetch booking price from database
   }
 
   openModal() {
     $(document).ready(() => {
-      // @ts-ignore
-      $('#payment').modal('show');
+      if (this.paymentMode === 'card') {
+        // @ts-ignore
+        $('#payment').modal('show');
+      }
     });
   }
 
@@ -41,20 +44,22 @@ export class BookingComponent implements OnInit {
   }
 
   onBookingRequest(form) {
-    if (this.paymentMode === 'cash' || this.paymentMode  === 'card' && this.onlinePaymentSuccess) {
-      this.patientService.requestBooking(form.value.ailment, form.value.genderPreference, form.value.paymentMode, this.bookingPrice)
+    if (this.paymentMode === 'card' && !this.onlinePaymentSuccess) {
+      console.log('payment error');
+    } else {
+      this.patientService.requestBooking(form.value.ailment, form.value.genderPreference, form.value.paymentMode)
       .subscribe(
         response => {
           console.log(response);
-          this.patientService.updateState({action: HASBOOKING});
-          this.router.navigate(['/booking-status']);
+          this.patientService.payWithWallet(this.bookingPrice).subscribe(response2 => {
+            this.patientService.updateState({action: HASBOOKING});
+            this.router.navigate(['/booking-status']);
+          });
         },
         error => {
           console.log(error);
         }
       );
-    } else {
-      alert('payment pending');
     }
   }
 

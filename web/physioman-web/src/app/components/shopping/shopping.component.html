@@ -9,7 +9,7 @@
           <button class="btn btn-info" type="button" (click)="onSearch(searchform)">Search</button>
         </div>
       </div>
-      <button class="fas fa-shopping-cart btn btn-lg cart-icon" (click)="viewCart()">
+      <button *ngIf="loggedIn" class="fas fa-shopping-cart btn btn-lg cart-icon" (click)="viewCart()">
         Cart
         <span class="badge badge-light" *ngIf="rented_items.length || purchased_items.length">{{getCartCount()}}</span>
       </button>
@@ -31,8 +31,9 @@
         <h5><strong>Description:</strong> {{ item.product_description }}</h5>
         <h5><strong>Selling Price:</strong> {{ item.selling_price }}</h5>
         <h5><strong>Rent Price:</strong> {{ item.rent_price }}</h5>
+        <div *ngIf="!loggedIn">To order the item, please sign in with your account</div>
       </div>
-      <div class="item-buttons">
+      <div *ngIf="loggedIn" class="item-buttons">
                 <button class="fas fa-cart-plus btn btn-warning btn-lg btn-space" type="button" (click)="addToCart(item, 0)">Purchase</button>
         <button class="fas fa-cart-plus btn btn-success btn-lg btn-space" type="button" (click)="addToCart(item, 1)">Rent</button><br>
       </div>

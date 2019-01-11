@@ -31,8 +31,10 @@ export class ShoppingCartComponent implements OnInit {
 
   openModal() {
     $(document).ready(() => {
-      // @ts-ignore
-      $('#payment').modal('show');
+      if (this.paymentMode === 'card') {
+        // @ts-ignore
+        $('#payment').modal('show');
+      }
     });
   }
 

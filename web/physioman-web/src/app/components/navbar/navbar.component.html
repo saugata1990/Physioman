@@ -1,46 +1,50 @@
 <nav class="navbar navbar-expand-lg sticky-top">
   <div class="container">
 
-  <a class="navbar-brand" routerLink="/">PHYSIOMAN</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+  <a class="navbar-brand" routerLink="/">
+    <img src="/src/assets/img/physioman_logo.jpg" alt="logo" style="height:50px">
+  </a>
+  <button class="navbar-toggler navbar-light" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item active">
-        <a class="nav-link" routerLink="/">Home <span class="sr-only">(current)</span></a>
+    <ul class="navbar-nav ml-auto ">
+      <li class="nav-item">
+        <a class="nav-link"  routerLink="/" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" >Home<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/about-us">About</a>
+        <a class="nav-link"  routerLink="/about-us" [routerLinkActive]="['active']">About</a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false">
-          Services & Sales
+          aria-haspopup="true" aria-expanded="false"
+          [class.active]="router.isActive('/services')">
+          Services
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a *ngIf="loggedIn&&!hasBooking" class="dropdown-item" routerLink="/new-booking">Book an appointment</a>
-          <a class="dropdown-item" routerLink="/shop">Medical Equipment</a>
+          <a *ngIf="loggedIn&&!hasBooking" class="dropdown-item" routerLink="/services/new-booking">Book an appointment</a>
+          <a class="dropdown-item" routerLink="/services/shop">Medical Equipment</a>
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/contact-us">Contact Us</a>
+        <a class="nav-link"  routerLink="/contact-us" [routerLinkActive]="['active']">Contact Us</a>
       </li>
       <li *ngIf="!loggedIn" class="nav-item">
-        <a class="nav-link" routerLink="/login">Login / Sign Up</a>
+        <a class="nav-link"  routerLink="/login" [routerLinkActive]="['active']">Login</a>
       </li>
       <li class="nav-item dropdown" *ngIf="loggedIn">
         <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false">
+          aria-haspopup="true" aria-expanded="false" [class.active]="router.isActive('/user')" >
           {{ name }}
           <!-- Indranil: User's name and may be the image as we have to bind here -->
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" routerLink="/my-profile">My Profile</a>
-          <a *ngIf="hasBooking" class="dropdown-item" routerLink="/booking-status">My Booking Status</a>
-          <a *ngIf="hasOrdered" class="dropdown-item" routerLink="/order-status">My Order Status</a>
+          <a class="dropdown-item" routerLink="/user/profile">My Profile</a>
+          <a *ngIf="hasBooking" class="dropdown-item" routerLink="/user/booking-status">My Booking Status</a>
+          <a *ngIf="hasOrdered" class="dropdown-item" routerLink="/user/order-status">My Order Status</a>
+          <a class="dropdown-item" (click)="onRecharge()">Recharge Wallet</a>
           <a class="dropdown-item" (click)="onLogout()">Log Out</a>
         </div>
       </li>
@@ -48,3 +52,27 @@
   </div>
 </div>
 </nav>
+
+
+<div *ngIf="accept_payment">
+  <app-payment [amount]="recharge_amount" (successMessage)="onPaymentCompletion($event)"></app-payment>
+</div>
+
+<div class="modal" id="recharge" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Wallet Recarge</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form #frm="ngForm" (ngSubmit)="onAmountEntered()">
+            <label for="recharge_amount">Enter recharge amount</label>
+            <input type="text" id="recharge_amount" [(ngModel)]="recharge_amount" name="recharge_amount"
+              class="form-control" required>
+            <button type="submit" class="btn btn-success btn-space-top float-right" [disabled]="frm.invalid">Pay</button>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>

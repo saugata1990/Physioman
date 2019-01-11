@@ -39,19 +39,18 @@ patients.get('/info', verifyToken(process.env.physio_secret_key, process.env.con
 })
 
 
+// signup to contain basic info like name, phone no and password
+// another route 'complete-profile' to enter other details
+
 patients.post('/signup', (req, res) => {
     return Promise.all([
         phoneExists(req.body.patient_phone),
-        emailExists(req.body.patient_email),
         Patient.findOne({patient_phone: req.body.patient_phone}).exec(),
         bcrypt.hash(req.body.password, 10)
     ])
-    .then(([phoneTaken, emailTaken, patient, hash]) => {
+    .then(([phoneTaken, patient, hash]) => {
         if(phoneTaken){
             res.status(400).json({message: 'phone number already taken'})
-        }
-        else if(emailTaken){
-            res.status(400).json({message: 'email already taken'})
         }
         else if(patient){
             res.status(400).json({message: 'patient already exists'})
@@ -62,24 +61,38 @@ patients.post('/signup', (req, res) => {
                     patient_id: req.body.patient_phone,
                     patient_phone: req.body.patient_phone,
                     password_hash: hash,
-                    patient_name: req.body.patient_name,
-                    patient_email: req.body.patient_email || null,
-                    email_verified: false,
+                    patient_name: req.body.patient_name,                   
                     patient_gender: req.body.patient_gender,
-                    patient_dob: date.parse(req.body.patient_dob.toString(), 'YYYY-MM-DD') || null,
                     date_joined: new Date(),
-                    patient_address: req.body.patient_address,
-                    ailment_history: {date: new Date(), description: req.body.ailment_history},
                     total_number_of_sessions: 0,
                     wallet_amount: 0
                 }).save(),
                 new PhoneAndEmail({
                     registered_phone_number: req.body.patient_phone,
-                    registered_email: req.body.patient_email
                 }).save()
             ])
             .then(() => res.status(201).json({message: 'Patient created in database'})) 
         }
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
+
+patients.post('/edit-profile', verifyToken(process.env.patient_secret_key), (req, res) => {
+    Patient.findOne({_id: req.authData.patient}).exec()
+    .then(patient => {
+        if(req.body.patient_email){
+            patient.patient_email = req.body.patient_email
+            patient.email_verified = false
+        }
+        patient.patient_dob = req.body.patient_dob ? date.parse(req.body.patient_dob.toString(), 'YYYY-MM-DD') 
+                                                   : patient.patient_dob 
+        patient.patient_address = req.body.patient_address
+        if(req.body.ailment_description){
+            patient.ailment_history.push({date: new Date(), description: req.body.ailment_description})
+        }
+        patient.save()
+        .then(() => res.status(201).json({message: 'Profile edited'}))
     })
     .catch(error => res.status(500).json({error}))
 })
@@ -154,11 +167,11 @@ patients.post('/verify-otp/:phone_no', (req, res) => {
 
 
 patients.post('/verify-email', verifyToken(process.env.patient_secret_key), (req, res) => {
-    //
+    // add email to registered phonesandemails after verification
 })
 
 
-patients.put('/update', (req, res) => {
+patients.put('/change-phone', (req, res) => {
     //
 })
 

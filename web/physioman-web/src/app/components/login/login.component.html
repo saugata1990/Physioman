@@ -1,29 +1,31 @@
-<div style="background-image: url('../../../assets/img/big_135853_cagfeeq.jpg');" class="login-page-wrapper text-center">
+<div style="background-image: url('../../../assets/img/login_signup.jpg');" class="login-page-wrapper text-center">
   <div class="login-container">
-<h1 class="login-header">PHYSIOMAN</h1>
-<div class="login-sub-header">A perfect solution for all physio problems</div>
-<div class="login-block">
-<form class="text-capitalize" #frm="ngForm" (ngSubmit)="onLogin(frm)">
-  <h3>Log In To Your Account</h3>
-  <div class="form-group">
-    <label for="phone">Registered Phone Number</label>
-    <input type="tel" minlength="10" maxlength="10" class="form-control" id="phone" name="phone" ngModel #phone="ngModel" required>
-  </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" minlength="6" class="form-control" id="password" name="password" ngModel #password="ngModel" required>
-  </div>
-  <div class="forgot-container">
-    <input type="checkbox" name="remember" value="true"> <span>Remember Me</span>
-    <a routerLink="/forgot-password" class="pull-right">Forgot Password?</a>
-  </div>
-  <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="frm.invalid">Login</button>
+    <h1 class="login-header">PHYSIOMAN</h1>
+    <div class="login-sub-header">Bid Farewell to Pain</div>
+    <div class="login-block">
+      <form class="text-capitalize" #frm="ngForm" (ngSubmit)="onLogin(frm)">
+        <h3>Log In To Your Account</h3>
+        <div class="form-group">
+          <label for="phone">Registered Phone Number</label>
+          <input type="tel" minlength="10" maxlength="10" class="form-control" id="phone" name="phone"
+            ngModel #phone="ngModel" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" minlength="6" class="form-control" id="password" name="password"
+           ngModel #password="ngModel" required>
+        </div>
+        <div class="forgot-container">
+          <input type="checkbox" name="remember" value="true"> <span>Remember Me</span>
+          <a routerLink="/forgot-password" class="pull-right">Forgot Password?</a>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-space" [disabled]="frm.invalid">Login</button>
 
-<div class="text-center signup-text">
-  Need an account? <a routerLink="/signup">Sign Up</a>
-</div>
-</form>
-</div>
-</div>
+        <div class="text-center signup-text">
+          Need an account? <a routerLink="/signup">Sign Up</a>
+        </div>
+        </form>
+      </div>
+    </div>
 </div>
 

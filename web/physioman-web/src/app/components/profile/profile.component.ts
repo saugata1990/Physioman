@@ -10,6 +10,9 @@ import { PatientService } from '../../services/patient.service';
 export class ProfileComponent implements OnInit, AfterViewChecked {
 
   patient;
+  address;
+  email;
+  dob;
   loaded = false;
   loggedIn = false;
   hasBooking = false;
@@ -19,10 +22,40 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.checkState();
+    this.loadProfile();
+  }
+
+  ngAfterViewChecked() {
+    this.checkState();
+  }
+
+  openModal() {
+    $(document).ready(() => {
+      // @ts-ignore
+      $('#edit').modal('show');
+    });
+  }
+
+  onEdit(form) {
+    $(document).ready(() => {
+      // @ts-ignore
+      $('#edit').modal('hide');
+      this.patientService.editProfile(form.value.email, form.value.dob, form.value.address, form.value.ailment)
+      .subscribe(response => {
+        console.log(response);
+        this.loadProfile();
+      });
+    });
+  }
+
+  loadProfile() {
     this.patientService.viewProfile()
     .subscribe(
       response => {
         this.patient = (response as any).patient;
+        this.address = this.patient.patient_address;
+        this.email = this.patient.patient_email;
+        this.dob = this.patient.patient_dob;
         this.loaded = true;
       },
       error => {
@@ -31,16 +64,12 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
     );
   }
 
-  ngAfterViewChecked() {
-    this.checkState();
-  }
-
   checkState() {
     this.patientService.getState()
     .subscribe(state => {
       this.loggedIn = state.loggedIn;
-      // this.hasBooking = state.hasBooking;
-      // this.hasOrdered = state.hasOrdered;
+      this.hasBooking = state.hasBooking;
+      this.hasOrdered = state.hasOrdered;
     });
   }
 

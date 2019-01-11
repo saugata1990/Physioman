@@ -10,10 +10,9 @@
                 <div class="row" style="height:100%">
                 <div class="col-sm-6" style="height:100%"></div>
                 <div class="col-sm-6 text-center carousel-text">
-                <div class="heading-text">Book appointment to get services from our experienced physiotherapist.</div>
-                <button *ngIf="loggedIn&&!hasBooking" type="button" class="btn btn-outline-light btn-lg  carousel-btn" routerLink="/new-booking">Book An appointment</button>
-                <div class="heading-subtitle">Don't know how to book an appointment?</div>
-                <button type="button" class="btn btn-outline-light btn-sm  carousel-sm-btn" data-toggle="modal" data-target="#how2book">How To Book</button>
+                  <div class="heading-text">WELCOME TO PHYSIOMAN</div>
+                  <div class="heading-subtitle">Bid farewell to pain</div>
+                    <button *ngIf="!loggedIn" type="button" class="btn btn-outline-light btn-lg  carousel-btn" routerLink="/signup">Click here to register</button>
                 </div>
             </div>
             </div>
@@ -23,103 +22,83 @@
                                 <div class="row" style="height:100%">
                 <div class="col-sm-6" style="height:100%"></div>
                 <div class="col-sm-6 text-center carousel-text">
-                    <div class="heading-text">Buy our top quality medical equipments</div>
-             <button *ngIf="!hasOrdered" type="button" class="btn btn-outline-light btn-lg btn-space carousel-btn" routerLink="/shop">Buy/Rent Equipment</button>
-             <div class="heading-subtitle">Don't know how to book an appointment?</div>
-                <button type="button" class="btn btn-outline-light btn-sm carousel-sm-btn" data-toggle="modal" data-target="#how2order">How To Order</button>
+                    <div class="heading-text">Avail our top quality physiotherapy service at your home,
+                      and order state-of-the-art medical equipment at affordable prices
+                    </div>
+             <!-- <button *ngIf="!hasOrdered" type="button" class="btn btn-outline-light btn-lg btn-space carousel-btn" routerLink="/shop">Buy/Rent Equipment</button>
+             <div class="heading-subtitle">Need help?</div>
+                <button type="button" class="btn btn-outline-light btn-sm carousel-sm-btn" data-toggle="modal" data-target="#how2order">How To Order</button> -->
                 </div>
             </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <div class="container-fluid jumbotron bg-transparent">
-    <h2>Why we recommend Booking Online</h2>
-    <hr>
-    <div #why>
-
-      <p>
-          We provide our services both online and offline. However, by signing up online, you get several advantages.
-          First of all, you can login and check out our various services and upon booking/purchasing online, you become
-          our premium customer, thereby becoming eligible for various offers that we rollout from time to time. Also, you can
-          browse our site and search for the medical equipment you need, and you can also choose to subscribe to our blog,
-          which we recommend. Having a mode of communication online would be a huge advantage over just communicating via phone.
-      </p>
-      <p>
-          For a seamless experience, we recommend using our mobile app which is available for both android/ios.<br>
-      </p>
-
+    <h2>Our Vision and Mission</h2>
+    <div>
+      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Et animi voluptas consectetur ut ducimus, officiis est nihil sequi, vero minima ipsum voluptatibus perferendis? Incidunt odio quo quaerat modi accusamus laudantium dicta veniam qui eaque commodi tenetur in nulla sequi, corporis nihil asperiores doloremque illum numquam. Eos, alias sunt. Fuga facere consectetur expedita ipsam quae eum quisquam ut eius. Deserunt minima ad expedita libero labore ratione error nesciunt reprehenderit exercitationem at cumque, perspiciatis ut dignissimos. Doloremque quibusdam laborum officia sapiente eius aperiam perferendis labore optio neque repellendus assumenda cum quasi consectetur corrupti voluptatem voluptates, tenetur atque, quam quis deleniti magni saepe?
     </div>
-    <h2>Looking to buy/rent Medical Equipment? Look no further</h2>
-    <hr>
-    <div #equipment>
 
-      <p>
-          Apart from providing patients with our top notch physiotherapy service, we also offer various medical equipment
-          pertaining to, but not limited to physiotherapy. You can browse our collection of medical equipment up for sale/rent,
-          or you can search for a specific equipment from our collection.<a routerLink="/shop" style="color:blue">
-          Visit the marketplace.</a>
-      </p>
+    <h2>Our Services</h2>
+    <div class="flex-container" >
+      <div class="card" style="width: 30rem">
+        <img class="card-img-top img-fluid" src="../../../assets/img/maxresdefault.jpg" style="height: 300px">
+        <div class="card-body text-center" style="background:rgb(18, 146, 18, 0.7)">
+          <h4 class="card-title text-white">Physiotherapy</h4>
+          <div class="card-text" *ngIf="loggedIn && !hasBooking">
+            <button class="btn btn-outline-light carousel-btn" type="button" routerLink="/services/new-booking">Book an appointment</button>
+          </div>
+          <div class="card-text" *ngIf="loggedIn && hasBooking">
+            <button class="btn btn-outline-light  carousel-btn" type="button" routerLink="/user/booking-status">Check booking status</button>
+          </div>
+          <div class="card-text" *ngIf="!loggedIn">
+            <button class="btn btn-outline-light  carousel-btn" type="button" routerLink="/login">Click here to login</button>
+          </div>
+          <div class="card-text" *ngIf="!hasBooking">
+            <button class="btn btn-outline-light  carousel-btn btn-space-top" type="button"
+              data-toggle="modal" data-target="#learn_more">Learn More</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="width: 30rem">
+        <img class="card-img-top img-fluid" src="../../../assets/img/physio-equipment.png" style="height: 300px">
+        <div class="card-body text-center" style="background: rgb(18, 146, 18, 0.7)">
+          <h4 class="card-title text-white">Medical Equipment</h4>
+          <div class="card-text">
+            <div>
+              <button class="btn carousel-btn btn-outline-light " type="button" routerLink="/services/shop">Go to Market</button>
+            </div>
+            <div>
+            <button class="btn carousel-btn btn-outline-light  btn-space-top" *ngIf="hasOrdered" routerLink="/user/order-status">View Orders</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
 </div>
 
 
-
-
-<div class="modal" id="how2book">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">How to Book Online</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                            <p>
-                                It is assumed that you have already signed up on Physioman via the mobile app or through this website.
-                                Login to your profile using your registered mobile number and the password you have set. To book a physio,
-                                fill out the form describing your current ailment and choose payment mode(cash or online). Note that discounts
-                                and other offers are available only to our customers who pay online. Once the request is lodged, you will get a
-                                confirmation as well as an OTP on your mobile no. through SMS, and also in your email inbox. Keep that OTP secure
-                                and do not share with anyone. Only share it with our representative when requested.
-                            </p>
-                            <p>
-                                Our representative will get in touch with you at the earliest either through phone or by visiting your home.
-                                The representative will decide your treatment plan and discuss the same with you. We will then assign a
-                                physiotherapist to you based on your needs and your treatment plan. Your sessions will start shortly thereafter.
-                            </p>
-                            <p>
-                                Before each session, your physio will send you an OTP for the session which you must share with your physio
-                                once he/she is there for the session, for the session to start. After the session is over, you can log into
-                                your account and share your feedback on the session. Your feedback will help us know how we are doing as a
-                                service, and what are the potential areas of improvement.
-                            </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-info" data-dismiss="modal">Got it</button>
-                </div>
+<div class="modal" id="learn_more">
+  <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">Our Physiotherapy Offerings</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">
+                Text goes here........
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-info" data-dismiss="modal">Got it</button>
+              </div>
         </div>
     </div>
 </div>
 
-<div class="modal" id="how2order">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">How to Order Equipment Online</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>
-                    here we will have the instructions for ordering online
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-info" data-dismiss="modal">Got it</button>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 

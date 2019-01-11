@@ -7,9 +7,9 @@ import { PatientService } from '../../services/patient.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  private loggedIn = false;
-  private hasBooking = false;
-  private hasOrdered = false;
+  loggedIn = false;
+  hasBooking = false;
+  hasOrdered = false;
 
   constructor(private patientService: PatientService) { }
 
