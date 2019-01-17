@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { StoreModule } from '@ngrx/store';
 import { AppRoutingModule } from './app-routing.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ng6-toastr-notifications';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { HomeComponent } from './components/home/home.component';
@@ -24,6 +26,7 @@ import { ContactUsComponent } from './components/contact-us/contact-us.component
 import { OrderStatusComponent } from './components/order-status/order-status.component';
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,12 +43,14 @@ import { OrderStatusComponent } from './components/order-status/order-status.com
     ShoppingComponent,
     ShoppingCartComponent,
     ContactUsComponent,
-    OrderStatusComponent
+    OrderStatusComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot(),
     FormsModule,
     StoreModule.forRoot(reducers, {})
   ],

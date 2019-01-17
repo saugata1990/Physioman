@@ -1,7 +1,7 @@
 const express = require('express')
 const services = express.Router()
 const crypto = require('crypto')
-const {verifyToken, sendSMS, geocode} = require('../utils/helper')
+const {verifyToken, sendMail, sendSMS, geocode} = require('../utils/helper')
 const Patient = require('../models/patientModel')
 const Booking = require('../models/bookingModel')
 const Request = require('../models/requestModel')
@@ -14,6 +14,11 @@ const date = require('date-and-time')
 
 
 services.use('/payments', payments)
+
+services.get('/test-mail', (req, res) => {
+    sendMail('saugata1990@gmail.com', 'test subject', `<h1>this is a test</h1>`)
+    res.status(200).json({message:'mail sent'})
+})
 
 services.post('/new-booking-request', verifyToken(process.env.patient_secret_key), (req, res) => {
     return Promise.all([

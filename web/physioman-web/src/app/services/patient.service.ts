@@ -15,7 +15,7 @@ export class PatientService {
   private login_url = this.baseUrl + 'api/patients/login';
   private edit_url = this.baseUrl + 'api/patients/edit-profile';
   private my_profile_url = this.baseUrl + 'api/patients/viewProfile';
-  // private name_and_email_url = this.baseUrl + 'api/patients/name-and-email';
+  private verification_link_url = this.baseUrl + 'api/patients/email-verification';
   private consultant_name_url = this.baseUrl + 'api/consultants/name/';
   private physio_name_url = this.baseUrl + 'api/physios/name/';
   private booking_request_url = this.baseUrl + 'api/services/new-booking-request';
@@ -35,6 +35,9 @@ export class PatientService {
   private wallet_pay_url = this.baseUrl + 'api/services/payments/wallet-payment';
   private wallet_recharge_url = this.baseUrl + 'api/services/payments/wallet-recharge-success';
   private unlock_sessions_url = this.baseUrl + 'api/bookings/unlock-sessions/';
+  private post_query_url = this.baseUrl + 'api/patients/query';
+  private update_password_url = this.baseUrl + 'api/patients/update-password';
+  private password_reset_url = this.baseUrl + 'api/patients/reset-password';
 
   constructor(private http: HttpClient, private store: Store<any>) { }
 
@@ -51,13 +54,17 @@ export class PatientService {
     return new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': JSON.stringify(localStorage.getItem('paymoney-auth'))
+      'Authorization': JSON.stringify(localStorage.getItem('payumoney-auth'))
     });
   }
 
   getPayUAuth() {
     const token = JSON.parse(localStorage.getItem('patientToken'));
     return this.http.get(this.payu_auth_url, {headers: this.setHeader(token)});
+  }
+
+  postQuery(name, phone, query) {
+    return this.http.post(this.post_query_url, {name, phone, query});
   }
 
   signup(patient_phone, password, patient_name, patient_gender) {
@@ -67,6 +74,15 @@ export class PatientService {
 
   login(patient_id, password) {
     return this.http.post(this.login_url, {patient_id, password});
+  }
+
+  updatePassword(current_password, new_password) {
+    const token = JSON.parse(localStorage.getItem('patientToken'));
+    return this.http.post(this.update_password_url, {current_password, new_password}, {headers: this.setHeader(token)});
+  }
+
+  resetPassword(patient_id, patient_name) {
+    return this.http.post(this.password_reset_url, {patient_id, patient_name});
   }
 
   editProfile(patient_email, patient_dob, patient_address, ailment_description) {
@@ -139,6 +155,11 @@ export class PatientService {
   getEquipmentDetails(id) {
     const token = JSON.parse(localStorage.getItem('patientToken'));
     return this.http.get(this.eqp_details_url + id, {headers: this.setHeader(token)});
+  }
+
+  sendEmailVerificationLink() {
+    const token = JSON.parse(localStorage.getItem('patientToken'));
+    return this.http.post(this.verification_link_url, {}, {headers: this.setHeader(token)});
   }
 
   getOTP() {

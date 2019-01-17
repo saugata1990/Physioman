@@ -390,3 +390,48 @@ payments.post('/pay-with-wallet', verifyToken(process.env.patient_secret_key), (
     })
     .catch(error => res.status(500).json({error}))
 })
+
+patients.post('/signup', (req, res) => {
+    return Promise.all([
+        phoneExists(req.body.patient_phone),
+        emailExists(req.body.patient_email),
+        Patient.findOne({patient_phone: req.body.patient_phone}).exec(),
+        bcrypt.hash(req.body.password, 10)
+    ])
+    .then(([phoneTaken, emailTaken, patient, hash]) => {
+        if(phoneTaken){
+            res.status(400).json({message: 'phone number already taken'})
+        }
+        else if(emailTaken){
+            res.status(400).json({message: 'email already taken'})
+        }
+        else if(patient){
+            res.status(400).json({message: 'patient already exists'})
+        }
+        else{
+            return Promise.all([
+                new Patient({
+                    patient_id: req.body.patient_phone,
+                    patient_phone: req.body.patient_phone,
+                    password_hash: hash,
+                    patient_name: req.body.patient_name,
+                    patient_email: req.body.patient_email || null,
+                    email_verified: false,
+                    patient_gender: req.body.patient_gender,
+                    patient_dob: date.parse(req.body.patient_dob.toString(), 'YYYY-MM-DD') || null,
+                    date_joined: new Date(),
+                    patient_address: req.body.patient_address,
+                    ailment_history: {date: new Date(), description: req.body.ailment_history},
+                    total_number_of_sessions: 0,
+                    wallet_amount: 0
+                }).save(),
+                new PhoneAndEmail({
+                    registered_phone_number: req.body.patient_phone,
+                    registered_email: req.body.patient_email
+                }).save()
+            ])
+            .then(() => res.status(201).json({message: 'Patient created in database'})) 
+        }
+    })
+    .catch(error => res.status(500).json({error}))
+})

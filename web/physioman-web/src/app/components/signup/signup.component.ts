@@ -1,3 +1,4 @@
+import { ToastrManager } from 'ng6-toastr-notifications';
 import { Component, OnInit } from '@angular/core';
 import { PatientService } from '../../services/patient.service';
 import { Router } from '@angular/router';
@@ -16,7 +17,7 @@ export class SignupComponent implements OnInit {
   phone;
   phoneVerified = false;
 
-  constructor(private patientService: PatientService, private router: Router) { }
+  constructor(private patientService: PatientService, private router: Router, private toastr: ToastrManager) { }
 
   ngOnInit() {
   }
@@ -25,6 +26,7 @@ export class SignupComponent implements OnInit {
     this.phone = form.value.phone;
     this.patientService.sendOTP(this.phone)
     .subscribe(response => {
+      this.toastr.successToastr('OTP has been sent to your phone', 'Check your phone', {position: 'top-center'});
       $(document).ready(() => {
         // @ts-ignore
         $('#verification').modal('show');
@@ -51,6 +53,7 @@ export class SignupComponent implements OnInit {
     .subscribe(
       response => {
         this.signedUp = true;
+        this.toastr.successToastr('Signed up successfully', 'Success!', {position: 'top-center'});
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 3000);

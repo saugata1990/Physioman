@@ -1,13 +1,14 @@
 const express = require('express')
 const patients = express.Router()
 const Patient = require('../models/patientModel')
+const Incident = require('../models/incidentModel')
 const Physio = require('../models/physioModel')
 const Consultant = require('../models/consultantModel')
 const Booking = require('../models/bookingModel')
 const Request = require('../models/requestModel')
 const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
 const Verification = require('../models/phoneVerification')
-const {verifyToken, verifyToken2, generateOTP, sendSMSmock, phoneExists, emailExists} = require('../utils/helper')
+const {verifyToken, generateOTP, sendMail, sendSMSmock, phoneExists, emailExists} = require('../utils/helper')
 const bcrypt = require('bcrypt')
 const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
@@ -20,6 +21,20 @@ patients.get('/',verifyToken(process.env.admin_secret_key), (req, res) => {
     })
     .catch(error => res.status(500).json({error}))
 })
+
+
+// route for posting a query without login
+patients.post('/query', (req, res) => {
+    let message = 
+    `<h3>
+        <strong>Name</strong>: ${req.body.name} <br/>
+        <strong>Phone No</strong>: ${req.body.phone} <br/>
+        <strong>Query</strong>: ${req.body.query || 'Not provided by user'} 
+    </h3>`
+    sendMail('saugata1990@gmail.com', 'New Query', message)
+    res.status(200).json({message: 'Query posted'})
+})
+
 
 // might remove this route
 patients.get('/name-and-contact', verifyToken(process.env.admin_secret_key), (req, res) => {   
@@ -166,8 +181,47 @@ patients.post('/verify-otp/:phone_no', (req, res) => {
 })
 
 
-patients.post('/verify-email', verifyToken(process.env.patient_secret_key), (req, res) => {
-    // add email to registered phonesandemails after verification
+patients.post('/email-verification', verifyToken(process.env.patient_secret_key), (req, res) => {
+    Patient.findOne({_id: req.authData.patient}).exec()
+    .then(patient => {
+        if(patient.email_verified){
+            res.status(400).json({message: 'Email already verified'})
+        }
+        else {
+            jwt.sign({email: patient.patient_email}, process.env.patient_secret_key, (err, token) => {
+                const url = `${process.env.baseUrl}/api/patients/confirm-email/${token}`
+                sendMail(patient.patient_email, 'Verify your email', 
+                `<h5>Click <a href=${url}>here</a> to confirm your email</h5>`) 
+                res.status(200).json({message: 'Email sent'})
+            })
+        }
+    })
+    .catch(error => res.status(500).json({error})) 
+})
+
+patients.get('/confirm-email/:token', (req, res) => {
+    jwt.verify(req.params.token, process.env.patient_secret_key, (err, authData) => {
+        if(err){
+            res.status(403).json({message: 'Error occured'})
+        }
+        else {
+            Patient.findOne({patient_email: authData.email}).exec()
+            .then(patient => {
+                patient.email_verified = true
+                PhoneAndEmail.findOne({registered_phone_number: patient.patient_phone}).exec()
+                .then(entry => {
+                    entry.registered_email = patient.patient_email
+                    return Promise.all([
+                        entry.save(),
+                        patient.save()
+                    ])
+                    .then(() => res.status(201).send(`<h1>Your email has been verified. 
+                        You can close this window.</h1>`))
+                })
+            })
+            .catch(error => res.status(500).json({error}))
+        }
+    })
 })
 
 
@@ -175,13 +229,45 @@ patients.put('/change-phone', (req, res) => {
     //
 })
 
-patients.put('/update-password', (req, res) => {
-    //
+patients.post('/update-password', verifyToken(process.env.patient_secret_key), (req, res) => {
+    Patient.findOne({_id: req.authData.patient}).exec()
+    .then(patient => {
+        bcrypt.compare(req.body.current_password, patient.password_hash, (err, isValid) => {
+            if(err){
+                res.status(403).json({message: 'Current password is wrong'})
+            }
+            else{
+                bcrypt.hash(req.body.new_password, 10)
+                .then(hash => {
+                    patient.password_hash = hash
+                    patient.save()
+                    .then(() => res.status(201).json({message: 'Password updated'}))
+                })
+            }
+        })
+    })
+    .catch(error => res.status(500).json({error}))
 })
 
 
 patients.post('/reset-password', (req, res) => {
-    //
+    Patient.findOne({patient_id: req.body.patient_id, patient_name: req.body.patient_name}).exec()
+    .then(patient => {
+        const password = Math.random().toString(36).substr(2, 12)
+        const mailText = `Your password has been reset to ${password}`
+        if(patient.patient_email){
+            sendMail(patient.patient_email, 'Password reset', mailText)
+        }
+        sendSMSmock(patient.patient_phone, mailText)
+        bcrypt.hash(password, 10)
+        .then(hash => {
+            patient.password_hash = hash
+            patient.save()
+            .then(() => res.status(201).json({message: 'Password reset'}))
+        })
+        
+    })
+    .catch(error => res.status(500).json({error}))
 })
 
 

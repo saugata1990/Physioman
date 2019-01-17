@@ -12,6 +12,7 @@ import { ShoppingCartComponent } from './components/shopping-cart/shopping-cart.
 import { ContactUsComponent } from './components/contact-us/contact-us.component';
 import { OrderStatusComponent } from './components/order-status/order-status.component';
 
+
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },

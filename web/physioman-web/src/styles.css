@@ -88,8 +88,14 @@ p {
 }
 
 .modal-header {
-    background: #000;
+    background: rgb(18, 146, 18, 0.9);
     color: #fff;
+}
+
+.modal-footer {
+  /* background: black; */
+  /* color: #fff; */
+  position: left;
 }
 
 .modal-header .close {
@@ -101,6 +107,11 @@ p {
 .modal-title {
     font-weight: bold;
 }
+
+/* .clickable {
+  color: blue;
+  cursor: pointer;
+} */
 
 .spinner-1:before {
   content: "";

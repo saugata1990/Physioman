@@ -7,13 +7,18 @@
     <div class="carousel-inner" >
         <div class="carousel-item active">
             <div class="carousel-item-wrapper" style="background-image: url('../../../assets/img/Physical-Therapy-Tempe-Hip-1.jpg');">
-                <div class="row" style="height:100%">
-                <div class="col-sm-6" style="height:100%"></div>
-                <div class="col-sm-6 text-center carousel-text">
-                  <div class="heading-text">WELCOME TO PHYSIOMAN</div>
-                  <div class="heading-subtitle">Bid farewell to pain</div>
-                    <button *ngIf="!loggedIn" type="button" class="btn btn-outline-light btn-lg  carousel-btn" routerLink="/signup">Click here to register</button>
-                </div>
+              <div class="row" style="height:100%">
+              <div class="col-sm-6" style="height:100%"></div>
+              <div class="col-sm-6 text-center carousel-text">
+                <div class="heading-text">WELCOME TO PHYSIOMAN</div>
+                <div class="heading-subtitle">Bid farewell to pain</div>
+                <button *ngIf="!loggedIn" type="button" class="btn btn-outline-light btn-lg  carousel-btn"
+                  routerLink="/signup">Click here to register
+                </button>
+                <button *ngIf="!loggedIn" type="button" class="btn btn-success btn-space-top" (click)="onQuery()">
+                  Have a query? Talk to us
+                </button>
+              </div>
             </div>
             </div>
         </div>
@@ -25,6 +30,9 @@
                     <div class="heading-text">Avail our top quality physiotherapy service at your home,
                       and order state-of-the-art medical equipment at affordable prices
                     </div>
+                    <button *ngIf="!loggedIn" type="button" class="btn btn-success btn-space-top" (click)="onQuery()">
+                      Have a query? Talk to us
+                    </button>
              <!-- <button *ngIf="!hasOrdered" type="button" class="btn btn-outline-light btn-lg btn-space carousel-btn" routerLink="/shop">Buy/Rent Equipment</button>
              <div class="heading-subtitle">Need help?</div>
                 <button type="button" class="btn btn-outline-light btn-sm carousel-sm-btn" data-toggle="modal" data-target="#how2order">How To Order</button> -->
@@ -100,5 +108,34 @@
 </div>
 
 
+<div class="modal" id="query">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Please provide the following details. Our represntative will contact you shortly</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form #frm="ngForm">
+          <div class="form-group">
+            <input type="text" class="form-control" ngModel name="name" #name="ngModel"
+              placeholder="Enter your name..." required>
+          </div>
+          <div class="form-group">
+            <input type="tel" class="form-control" ngModel name="phone" #phone="ngModel"
+              placeholder="Enter your Phone Number..." required>
+          </div>
+          <div class="form-group">
+            <textarea rows="3" class="form-control" ngModel name="query" #query="ngModel"
+              placeholder="Enter your query(optional)...">
+            </textarea>
+          </div>
 
+          <button class="btn btn-success btn-space-top float-right" type="button"
+           [disabled]="frm.invalid" (click)="onQuerySubmitted(frm)">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 

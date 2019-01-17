@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
 import { PatientService } from '../../services/patient.service';
+import { ToastrManager } from 'ng6-toastr-notifications';
 
 @Component({
   selector: 'app-profile',
@@ -18,7 +19,7 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
   hasBooking = false;
   hasOrdered = false;
 
-  constructor(private patientService: PatientService, private router: Router) { }
+  constructor(private patientService: PatientService, private router: Router, private toastr: ToastrManager) { }
 
   ngOnInit() {
     this.checkState();
@@ -29,10 +30,34 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
     this.checkState();
   }
 
-  openModal() {
+  openEditModal() {
     $(document).ready(() => {
       // @ts-ignore
       $('#edit').modal('show');
+    });
+  }
+
+  openPasswordChangeModal() {
+    $(document).ready(() => {
+      // @ts-ignore
+      $('#pwd').modal('show');
+    });
+  }
+
+  onPasswordChanged(frm) {
+    $(document).ready(() => {
+      $('#pwd').on('hidden.bs.modal', () => {
+        this.patientService.updatePassword(frm.value.currentpwd, frm.value.newpwd)
+        .subscribe(response => {
+          console.log(response);
+          this.toastr.successToastr('Password changed successfully');
+        }, error => {
+          console.log(error);
+          this.toastr.errorToastr('Your entered password is incorrect');
+        });
+      });
+      // @ts-ignore
+      $('#pwd').modal('hide');
     });
   }
 
@@ -62,6 +87,11 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
         console.log('error occured');
       }
     );
+  }
+
+  onEmailVerify() {
+    this.patientService.sendEmailVerificationLink()
+    .subscribe(response => console.log(response));
   }
 
   checkState() {

@@ -1,5 +1,7 @@
 <div *ngIf="loaded" class="container">
-  <h2>My Profile <button class="btn btn-primary" (click)="openModal()">Edit</button></h2>
+  <h2>My Profile <button class="btn btn-primary btn-space" (click)="openEditModal()">Edit</button>
+    <button class="btn btn-sm btn-warning btn-space" (click)="openPasswordChangeModal()">Change password</button>
+  </h2>
   <div *ngIf="!loaded" class="spinner-1"></div>
   <div class="row profile-wrapper">
     <div class="col-sm-6 profile-image" style="background-image: url('../../../assets/img/background3.jpg');">
@@ -15,8 +17,9 @@
         <button class="btn btn-outline-warning btn-sm">Change</button>
       </div>
       <div><strong>Email id:</strong> {{patient.patient_email}}
-        <button class="btn btn-outline-success btn-space btn-sm">Verify</button>
-        <button class="btn btn-outline-warning btn-sm">Change</button>
+        <button *ngIf="patient.patient_email && !patient.email_verified"
+          class="btn btn-outline-success btn-space btn-sm" (click)="onEmailVerify()">Verify</button>
+        <!-- <button *ngIf="patient.patient_email" class="btn btn-outline-warning btn-sm">Change</button> -->
       </div>
       <div><strong>Gender</strong> {{patient.patient_gender}}</div>
       <div><strong>Date of Birth</strong> {{ patient.patient_dob | date: 'dd/MM/yyyy'}}</div>
@@ -61,6 +64,31 @@
 
           <button class="btn btn-primary btn-lg float-right" type="submit" >Submit</button>
 
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loaded" class="modal" id="pwd" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Change password</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form #pwdfrm="ngForm" (ngSubmit)="onPasswordChanged(pwdfrm)">
+          <div class="form-group">
+            <input class="form-control" type="password" minlength="6" ngModel name="currentpwd" #currentpwd="ngModel"
+              placeholder="Current password..." required>
+          </div>
+          <div>
+            <input class="form-control" type="password" minlength="6" ngModel name="newpwd" #newpwd="ngModel"
+              placeholder="New password..." required>
+          </div>
+          <button class="btn btn-primary btn-space-top float-right" type="submit"
+           [disabled]="pwdfrm.invalid">Change</button>
         </form>
       </div>
     </div>

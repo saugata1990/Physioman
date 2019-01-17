@@ -1,5 +1,6 @@
 const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
 const smsClient = require('twilio')(process.env.twilio_sid, process.env.twilio_token)
+const nodemailer = require('nodemailer')
 const NodeGeocoder = require('node-geocoder')
 const jwt = require('jsonwebtoken')
 const multer = require('multer')
@@ -28,9 +29,9 @@ const verifyToken = (...keys) => {
             const token = bearer[1]
             keys.map(key => {
                 jwt.verify(token, key, (err, authData) => {
-                    if(err){
-                        console.log(err)
-                    }
+                    // if(err){
+                    //     console.log('user not authorized')
+                    // }
                     if(authData){
                         req.authData = authData
                         authorized = true
@@ -77,6 +78,31 @@ const emailExists = (email) => {
     })
 }
 
+const sendMail = (recipient, subject, content) => {
+    const transporter = nodemailer.createTransport({
+        // values to be fetched from env
+        service: 'gmail',
+        auth: {
+            user: 'saugata1990@gmail.com',
+            pass: '12Bgarden@h3'
+        }
+    })
+    const mailOptions = {
+        from: 'saugata1990@gmail.com',
+        to: recipient,
+        subject: subject,
+        html: content
+    }
+    transporter.sendMail(mailOptions, (err, info) => {
+        if(err){
+            console.log(err)
+        }
+        else{
+            console.log('Email sent')
+        }
+    })
+}
+
 const sendSMS = (phone_number, message) => {
     smsClient.messages.create({
         to: phone_number,
@@ -105,4 +131,5 @@ const geocode = (address) => {
 } 
 
 
-module.exports = {upload, verifyToken, phoneExists, geocode, emailExists, sendSMS, sendSMSmock, generateOTP}
+module.exports = {upload, verifyToken, phoneExists, geocode, emailExists, sendMail, sendSMS, 
+    sendSMSmock, generateOTP}

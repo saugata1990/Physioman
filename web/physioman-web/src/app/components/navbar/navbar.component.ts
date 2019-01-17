@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PatientService } from '../../services/patient.service';
 import { LOGGEDOUT, LOGGEDIN, HASBOOKING, HASORDERED } from '../../store/actions/actions';
+import { ToastrManager } from 'ng6-toastr-notifications';
 
 @Component({
   selector: 'app-navbar',
@@ -16,7 +17,7 @@ export class NavbarComponent implements OnInit {
   recharge_amount;
   accept_payment = false;
 
-  constructor(private patientService: PatientService, public router: Router) { }
+  constructor(private patientService: PatientService, public router: Router, private toastr: ToastrManager) { }
 
   ngOnInit() {
     this.checkBookingsAndOrders();
@@ -81,7 +82,7 @@ export class NavbarComponent implements OnInit {
     localStorage.removeItem('orderActive');
     this.patientService.updateState({ action: LOGGEDOUT });
     this.router.navigate(['/']);
-    alert('You are logged out');
+    this.toastr.successToastr('You are logged out!');
   }
 
   onPaymentCompletion(event) {

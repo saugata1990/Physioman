@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PatientService } from '../../services/patient.service';
 import { LOGGEDIN, HASBOOKING, HASORDERED } from '../../store/actions/actions';
+import { ToastrManager } from 'ng6-toastr-notifications';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +11,7 @@ import { LOGGEDIN, HASBOOKING, HASORDERED } from '../../store/actions/actions';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private patientService: PatientService, private router: Router) { }
+  constructor(private patientService: PatientService, private router: Router, private toastr: ToastrManager) { }
 
   ngOnInit() {
   }
@@ -20,6 +21,30 @@ export class LoginComponent implements OnInit {
     .subscribe(auth => {
       const key = (auth as any).auth;
       localStorage.setItem('payumoney-auth', key);
+    });
+  }
+
+  onPasswordReset() {
+    $(document).ready(() => {
+      // @ts-ignore
+      $('#pwdreset').modal('show');
+    });
+  }
+
+  resetPassword(frm) {
+    $(document).ready(() => {
+      $('#pwdreset').on('hidden.bs.modal', () => {
+        this.patientService.resetPassword(frm.value.phone, frm.value.name)
+        .subscribe(response => {
+          this.toastr.successToastr('Password has been reset and sent to you');
+          console.log(response);
+        }, error => {
+          this.toastr.errorToastr('Wrong phone number or name');
+          console.log(error);
+        });
+      });
+      // @ts-ignore
+      $('#pwdreset').modal('hide');
     });
   }
 
@@ -36,6 +61,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/user/profile']);
       },
       error => {
+        this.toastr.errorToastr('Incorrect username/password', 'Error!', {position: 'bottom-center'});
         console.log('incorrect username/password');
       }
     );
