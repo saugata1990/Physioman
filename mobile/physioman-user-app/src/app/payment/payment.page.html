@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Online Payment</ion-title>
+  </ion-toolbar>
+</ion-header>
+  
+  <ion-content padding>
+    <form #paymentForm="ngForm" (ngSubmit)="onPayment(paymentForm)">
+      <ion-item>
+        <ion-label>Amount: {{ amount }}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-input type="text" [(ngModel)]="dataService.patient.patient_name" name="name" placeholder="Name" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input type="text" [(ngModel)]="dataService.patient.patient_email" name="email" placeholder="Email" required></ion-input>
+      </ion-item>
+      <ion-button type="submit" size="default" expand="block" [disabled]="paymentForm.invalid">Proceed</ion-button>
+      <ion-button (click)="cancelTxn()">Back to previous page</ion-button>
+    </form>
+  </ion-content>

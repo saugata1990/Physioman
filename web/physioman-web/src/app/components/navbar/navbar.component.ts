@@ -82,7 +82,7 @@ export class NavbarComponent implements OnInit {
     localStorage.removeItem('orderActive');
     this.patientService.updateState({ action: LOGGEDOUT });
     this.router.navigate(['/']);
-    this.toastr.successToastr('You are logged out!');
+    this.toastr.infoToastr('You are logged out!');
   }
 
   onPaymentCompletion(event) {

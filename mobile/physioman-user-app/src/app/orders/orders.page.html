@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-menu-button slot="start"></ion-menu-button>
+    <ion-title>My Orders</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-card *ngFor="let order of dataService.orders" color="primary" padding>
+      <ion-item detail>
+        <strong>Order status: <span *ngIf="!order.processed else processed">Placed</span></strong>
+        <ng-template #processed>Processed</ng-template>
+      </ion-item>
+      <ion-item *ngIf="order.payment_mode==='cash'" lines="full">
+        <strong>Payable amount: {{ order.payable_amount }}</strong>
+      </ion-item>
+      <span *ngFor="let item of order.items_in_detail">
+        <ion-card>
+          <ion-item>
+            <img class="rounded" [src]="item.imagePath" width="auto" height="auto">
+          </ion-item>
+          <ion-item lines="none">
+            {{ item.product_name }}
+          </ion-item>
+          <ion-item lines="none">
+            Model: {{ item.product_model }}
+          </ion-item>
+          <ion-item lines="none">
+            Order type: {{ item.order_mode }}
+          </ion-item>
+        </ion-card>
+      </span>
+  </ion-card>
+  
+
+</ion-content>

@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-menu-button slot="start"></ion-menu-button>
+    <ion-title>Home</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="loaded" padding>
+  <ion-item>
+    Welcome, {{ first_name }}
+  </ion-item>
+  <ion-item>
+    Your address: {{ address }} <ion-button type="button" size="small" (click)="onEditProfile()">Change</ion-button>
+  </ion-item>
+
+  <!-- use gridlayout for the following content -->
+  <ion-item *ngIf="dataService.hasBooking else show_appointment_button">
+    <ion-button size="large" expand="block" routerLink="/tabs/bookings" >View Booking status</ion-button>
+  </ion-item>
+  <ng-template #show_appointment_button>
+    <ion-button size="large" expand="block" (click)="onBookAppointment()" >Book an Appointment</ion-button>
+  </ng-template>
+
+  <ion-item *ngIf="dataService.hasOrdered">
+    <ion-button size="large" expand="block" routerLink="/tabs/orders">View Orders</ion-button>
+  </ion-item>
+
+  <ion-item>
+    <ion-button size="large" expand="block" routerLink="/tabs/shop">Medical Equipment</ion-button>
+  </ion-item>
+
+</ion-content>

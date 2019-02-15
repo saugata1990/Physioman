@@ -26,6 +26,8 @@ export class AdminService {
   private offline_sales_url = this.baseUrl + 'api/orders/process-offline-order/';
   private ordered_items_url = this.baseUrl + 'api/orders/ordered-items/';
   private item_name_url = this.baseUrl + 'api/orders/item-name/';
+  private collection_amount_url = this.baseUrl + 'api/services/payments/amount-to-collect/';
+  private cash_collection_url = this.baseUrl + 'api/services/payments/collect-cash/';
 
   constructor(private http: HttpClient) { }
 
@@ -98,6 +100,16 @@ export class AdminService {
   assignPhysio(url, physio_id) {
     const token = JSON.parse(localStorage.getItem('adminToken'));
     return this.http.post(this.baseUrl + url, {physio_id}, {headers: this.setHeader(token)});
+  }
+
+  getCollectionAmount(id) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.get(this.collection_amount_url + id, {headers: this.setHeader(token)});
+  }
+
+  collectCash(id) {
+    const token = JSON.parse(localStorage.getItem('adminToken'));
+    return this.http.post(this.cash_collection_url + id, {}, {headers: this.setHeader(token)});
   }
 
   processOrder(url) {

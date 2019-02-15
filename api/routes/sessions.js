@@ -1,7 +1,6 @@
 const express = require('express')
 const sessions = express.Router()
 const {sendSMSmock, generateOTP, verifyToken} = require('../utils/helper')
-const Request = require('../models/requestModel')
 const Booking = require('../models/bookingModel')
 const Session = require('../models/sessionModel')
 const Physio = require('../models/physioModel')

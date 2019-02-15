@@ -24,7 +24,7 @@ import * as $ from 'jquery';
 import { reducers } from './store/reducers';
 import { ContactUsComponent } from './components/contact-us/contact-us.component';
 import { OrderStatusComponent } from './components/order-status/order-status.component';
-
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 @NgModule({
@@ -52,6 +52,7 @@ import { OrderStatusComponent } from './components/order-status/order-status.com
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     FormsModule,
+    NgxPaginationModule,
     StoreModule.forRoot(reducers, {})
   ],
   providers: [

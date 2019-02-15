@@ -130,6 +130,16 @@ const geocode = (address) => {
     return geocoder.geocode(address)        
 } 
 
+const reverse_geocode = (lat, lon) => {
+    const options = {
+        provider: 'google',
+        apiKey: process.env.geocoder_api_key,
+        formatter: null
+    }
+    const geocoder = NodeGeocoder(options)
+    return geocoder.reverse({lat, lon})
+}
 
-module.exports = {upload, verifyToken, phoneExists, geocode, emailExists, sendMail, sendSMS, 
+
+module.exports = {upload, verifyToken, phoneExists, geocode, reverse_geocode, emailExists, sendMail, sendSMS, 
     sendSMSmock, generateOTP}

@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Create Account</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <form #frm="ngForm" (ngSubmit)="onFormSubmitted()">
+    <ion-input type="text" [(ngModel)]="phone" name="phone" placeholder="Enter phone number" required></ion-input>
+    <ion-input type="password" [(ngModel)]="password" name="password" placeholder="Enter password" required></ion-input>
+    <ion-input type="password" [(ngModel)]="confirm_password" name="cpassword" placeholder="Confirm password" required></ion-input>
+    <ion-input type="text" [(ngModel)]="name" name="name" placeholder="Enter your name" required></ion-input>
+    <ion-list-header>Gender</ion-list-header>
+    <ion-radio-group [(ngModel)]="gender" name="gender">
+      <ion-item>
+        <ion-label>Male</ion-label>
+        <ion-radio value="male" checked></ion-radio>
+      </ion-item>
+      <ion-item>
+        <ion-label>Female</ion-label>
+        <ion-radio value="female"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+    <ion-button type="submit" size="large" [disabled]="frm.invalid">Submit</ion-button>
+  </form>
+</ion-content>

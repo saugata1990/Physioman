@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <!-- <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons> -->
+    <ion-title>Shopping cart({{rented_items.length + purchased_items.length}})</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item *ngFor="let item of purchased_items" lines="inset" text-wrap>
+      <!-- <ion-avatar>
+        <img [src]="item.imagePath">
+      </ion-avatar> -->
+      <ion-thumbnail slot="end">
+        <img [src]="item.imagePath">
+      </ion-thumbnail>
+      
+      <p>{{ item.product_name }}</p>
+      <p>Purchase</p>
+      <p>Price: {{ item.selling_price }}</p>
+      <ion-button (click)="removeFromCart(item, 'purchase')">Remove from cart</ion-button>
+    </ion-item>
+    <ion-item *ngFor="let item of rented_items" text-wrap>
+      <!-- <ion-avatar>
+        <img [src]="item.imagePath">
+      </ion-avatar> -->
+      <ion-thumbnail slot="end">
+        <img [src]="item.imagePath">
+      </ion-thumbnail>
+      <p>{{ item.product_name }}</p>
+      <p>Rent</p>
+      <p>Price: {{ item.rent_price }}</p>
+      <ion-button (click)="removeFromCart(item, 'rent')">Remove from cart</ion-button>
+    </ion-item>
+  </ion-list>
+  <ion-item>
+    Total price: {{ total_price }}
+  </ion-item>
+  <ion-select [(ngModel)]="payment_mode" value="cash">
+    <ion-select-option value="card">Card</ion-select-option>
+    <ion-select-option value="cash">Cash</ion-select-option>
+    <ion-select-option value="wallet">Wallet</ion-select-option>
+  </ion-select>
+  <ion-button (click)="onOrderPlaced()">Place Order</ion-button>
+</ion-content>

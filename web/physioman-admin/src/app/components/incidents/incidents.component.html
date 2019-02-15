@@ -10,6 +10,7 @@
       <div (click)="onOpenIncident(incident, incident.incident_id)">
         <div><h5>{{ incident.incident_title }}</h5></div>
         <div>Customer: <strong>{{ incident.customer_name }}</strong>, Contact No: <strong>{{ incident.customer_contact }}</strong></div>
+        <div>Info: <strong>{{ incident.info }}</strong></div>
         <div *ngIf="incident.incident_title==='Equipment Order'">
           Ordered Items
           <ul *ngFor="let item of incident.ordered_items">
@@ -74,3 +75,18 @@
     </div>
   </div>
 </span>
+
+<!-- template for cash collection -->
+<div class="modal container" id="cashCollection" data-backdrop="static" data-keyboard=false>
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5>Amount to collect: {{ amount }}</h5>
+        <div class="form-group">
+          <input type="checkbox" [(ngModel)]="cash_collected" name="cash_collected">Cash Collected
+        </div>
+        <button *ngIf="cash_collected" class="btn btn-primary btn-space-top" (click)="onCashCollected()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

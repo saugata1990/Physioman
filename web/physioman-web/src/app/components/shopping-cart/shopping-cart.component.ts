@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { PatientService } from '../../services/patient.service';
 import { Router } from '@angular/router';
 import { HASORDERED } from '../../store/actions/actions';
+import { ToastrManager } from 'ng6-toastr-notifications';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -22,7 +23,7 @@ export class ShoppingCartComponent implements OnInit {
   hasOrdered = false;
   hasWalletBalance = false;
 
-  constructor(private patientService: PatientService, private router: Router) { }
+  constructor(private patientService: PatientService, private router: Router, private toastr: ToastrManager) { }
 
   ngOnInit() {
     this.patientService.checkWalletBalance(this.total_price)
@@ -48,6 +49,7 @@ export class ShoppingCartComponent implements OnInit {
       this.total_price -= this.rented_items[index].rent_price;
       this.rented_items.splice(index, 1);
     }
+    this.toastr.infoToastr('Item removed from cart');
     if (this.total_price === 0) {
       $(document).ready(() => {
         // @ts-ignore
@@ -70,7 +72,8 @@ export class ShoppingCartComponent implements OnInit {
             // @ts-ignore
             $('#cart').click().modal('hide');
             this.patientService.updateState({action: HASORDERED});
-            this.router.navigate(['/order-status']);
+            this.toastr.successToastr('Order placed successfully');
+            this.router.navigate(['/user/order-status']);
           });
         }, 3000);
       },

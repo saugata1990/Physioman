@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-menu-button slot="start"></ion-menu-button>
+    <ion-title>Medical Equipment</ion-title>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="getCartCount() > 0" (click)="viewCart()">
+        <ion-icon size="large" name="cart"></ion-icon>
+        <ion-badge color="danger">{{ getCartCount() }}</ion-badge>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+    
+  <ion-searchbar [(ngModel)]="search_item" (change)="onSearch()"></ion-searchbar>
+  <ion-content padding>
+    <ion-item lines="none" *ngIf="!loaded">
+      <ion-spinner></ion-spinner>
+    </ion-item>
+    <ion-item lines="none" *ngIf="loaded && count === 0">No items found</ion-item>
+    <ion-card *ngFor="let item of dataService.products">
+      <ion-card-header>
+        <ion-card-title>{{ item.product_name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item lines="none">
+          <img class="rounded" [src]="item.imagePath" width="auto" height="auto">
+        </ion-item>
+        <ion-item lines="none">
+          Manufacturer: {{ item.product_manufacturer }}
+        </ion-item>
+        <ion-item lines="none">
+          Category: {{ item.product_category }}
+        </ion-item>
+        <ion-item lines="none">
+          Specifications: {{ item.product_specifications }}
+        </ion-item>
+        <ion-item lines="none">
+          Description: {{ item.product_description }}
+        </ion-item>
+        <ion-item lines="none">
+          Selling Price: {{ item.selling_price }}
+        </ion-item>
+        <ion-item lines="none">
+          Rent Price: {{ item.rent_price }}
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button type="button" size="default" expand="block" (click)="addToCart(item, 0)">
+            <ion-icon name="cart"></ion-icon>
+            Purchase
+          </ion-button>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button type="button" size="default" expand="block" (click)="addToCart(item, 1)">
+            <ion-icon name="cart"></ion-icon>
+            Rent
+          </ion-button>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </ion-content>
+</ion-content>

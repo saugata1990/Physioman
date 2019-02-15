@@ -16,9 +16,11 @@
     </div>
   </form>
 </div>
+
 <div *ngIf="!itemsLoaded" class="spinner-1"></div>
 <div class="container items-container">
-  <div *ngFor="let item of loaded_list" class="item-wrapper">
+  <div style="text-align: center" *ngIf="itemsLoaded && count === 0">No items found</div>
+  <div *ngFor="let item of loaded_list | paginate: {itemsPerPage: 5, currentPage: p}" class="item-wrapper">
     <div class="item-photo">
       <img class="rounded" [src]="item.imagePath">
       </div>
@@ -34,7 +36,7 @@
         <div *ngIf="!loggedIn">To order the item, please sign in with your account</div>
       </div>
       <div *ngIf="loggedIn" class="item-buttons">
-                <button class="fas fa-cart-plus btn btn-warning btn-lg btn-space" type="button" (click)="addToCart(item, 0)">Purchase</button>
+        <button class="fas fa-cart-plus btn btn-warning btn-lg btn-space" type="button" (click)="addToCart(item, 0)">Purchase</button>
         <button class="fas fa-cart-plus btn btn-success btn-lg btn-space" type="button" (click)="addToCart(item, 1)">Rent</button><br>
       </div>
     </div>
@@ -42,3 +44,5 @@
   <div *ngIf="checkout">
     <app-shopping-cart [purchased_items]="purchased_items" [rented_items]="rented_items" [total_price]="total_price"></app-shopping-cart>
   </div>
+
+<pagination-controls *ngIf="count > 0" (pageChange)="p = $event"></pagination-controls>

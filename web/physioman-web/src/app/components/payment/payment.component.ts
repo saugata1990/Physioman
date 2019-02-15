@@ -58,7 +58,7 @@ export class PaymentComponent implements OnInit, AfterViewInit {
       key: MERCHANT_KEY,
       amount: this.amount,
       txnid: uuid(),
-      productinfo: 'some product', // this will come from the form
+      productinfo: 'some product', // this will come from the calling component
       firstname: this.patient.name.split(' ')[0],
       email: this.patient.email,
       phone: this.patient.phone,

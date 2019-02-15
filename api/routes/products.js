@@ -26,12 +26,7 @@ products.get('/:product_model', verifyToken(process.env.admin_secret_key), (req,
 products.get('/',  (req, res) => { 
     Product.find(req.query).exec()
     .then(products => {
-        if(products.length){
-            res.status(200).json({products, count: products.length})
-        }
-        else{
-            res.status(404).json({products: null})
-        }
+        res.status(200).json({products, count: products.length})
     })
     .catch(error => res.status(500).json({error}))
 })

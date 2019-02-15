@@ -74,6 +74,7 @@ verifyToken(process.env.physio_secret_key, process.env.consultant_secret_key),
     let savePhysio = Promise.resolve(), saveConsultant = Promise.resolve()
     let amount_payable = 0
     let id = null, collector = null
+    let reason_for_payment = null
     return Promise.all([
         Payment.findOne({booking_id: req.params.booking_id, paid: false}).exec(),
         Booking.findOne({_id: req.params.booking_id}).exec(),
@@ -92,12 +93,14 @@ verifyToken(process.env.physio_secret_key, process.env.consultant_secret_key),
             physio.debit_amount += amount_payable
             id = physio._id
             collector = `${physio.physio_name}(${physio.physio_id})`
+            reason_for_payment = '(booking fees)'
             savePhysio = physio.save()
         }
         else if(consultant){
             consultant.debit_amount += amount_payable
             id = consultant._id
             collector = `${consultant.consultant_name}(${consultant.consultant_id})`
+            reason_for_payment = '(consultation & booking_fees)'
             saveConsultant = consultant.save()
         }    
         
@@ -113,7 +116,7 @@ verifyToken(process.env.physio_secret_key, process.env.consultant_secret_key),
                 status: 'new',
                 timestamp: new Date(),
                 incident_title: 'Collect Cash from personnel',
-                info: `Collect Rs. ${amount_payable} from ${collector}`
+                info: `Collect Rs. ${amount_payable}${reason_for_payment} from ${collector}`
             }).save(),
             new Transaction({
                 transaction_type: 'cash',
@@ -147,12 +150,12 @@ payments.post('/cash-receipt/:patient_id', verifyToken(process.env.physio_secret
         if(physio){
             physio.debit_amount += parseFloat(req.body.amount)
             collector = `${physio.physio_name}(${physio.physio_id})`
-            id = physio._id
+            id = physio.physio_id
         }
         else if(consultant){
             consultant.debit_amount += parseFloat(req.body.amount)
             collector = `${consultant.consultant_name}(${consultant.consultant_id})`
-            id = consultant._id
+            id = consultant.consultant_id
         }
         let savePhysio = physio? physio.save() : Promise.resolve()
         let saveConsultant = consultant? consultant.save() : Promise.resolve()
@@ -169,13 +172,13 @@ payments.post('/cash-receipt/:patient_id', verifyToken(process.env.physio_secret
                 timestamp: new Date()
             }).save(),
             new Incident({
-                action_route: `api/services/payments/collect-cash/${id}`,
+                action_route: `api/services/payments/collect-cash/${id}`, 
                 customer: patient.patient_id,
                 priority: 1,
                 status: 'new',
                 timestamp: new Date(),
                 incident_title: 'Cash Collection',
-                info: `Collect Rs. ${req.body.amount} from ${collector}` 
+                info: `Collect Rs. ${req.body.amount}(wallet recharge) from ${collector}` 
             }).save()
 
         ])
@@ -197,31 +200,30 @@ payments.get('/payable-amount/:patient_id', verifyToken(process.env.consultant_s
 })
 
 
-// rethink
-payments.get('/amount-to-collect/:id', verifyToken(process.env.admin_secret_key), (req, res) => {
+payments.get('/amount-to-collect/:personnel_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     let amount = 0
     return Promise.all([
-        Physio.findOne({_id: req.params.id}).exec(),
-        Consultant.findOne({_id: req.params.id}).exec()
+        Physio.findOne({physio_id: req.params.personnel_id}).exec(),
+        Consultant.findOne({consultant_id: req.params.personnel_id}).exec()
     ])
     .then(([physio, consultant]) => {
         if(physio){
-            amount = physio.debit_amount
+            amount += physio.debit_amount
         }
-        else if(consultant){
-            amount = consultant.debit_amount
+        if(consultant){
+            amount += consultant.debit_amount
         }
         res.status(200).json({amount})
     })
     .catch(error => res.status(500).json({error}))
 })
 
-// All incidents involving the physio/consultant are handled at once
-payments.post('/collect-cash/:id', verifyToken(process.env.admin_secret_key), (req, res) => {
+
+payments.post('/collect-cash/:personnel_id', verifyToken(process.env.admin_secret_key), (req, res) => {
     return Promise.all([
-        Physio.findOne({_id: req.params.id}).exec(),
-        Consultant.findOne({_id: req.params.id}).exec(),
-        Incident.find({action_route: `api/services/payments/collect-cash/${req.params.id}`}).exec()
+        Physio.findOne({physio_id: req.params.personnel_id}).exec(),
+        Consultant.findOne({consultant_id: req.params.personnel_id}).exec(),
+        Incident.find({action_route: `api/services/payments/collect-cash/${req.params.personnel_id}`}).exec()
     ])
     .then(([physio, consultant, incidents]) => {
         let savePhysio = Promise.resolve(), saveConsultant = Promise.resolve()
@@ -229,7 +231,7 @@ payments.post('/collect-cash/:id', verifyToken(process.env.admin_secret_key), (r
             physio.debit_amount = 0
             savePhysio = physio.save()
         }
-        else if(consultant){
+        if(consultant){
             consultant.debit_amount = 0
             saveConsultant = consultant.save()
         }
@@ -238,6 +240,7 @@ payments.post('/collect-cash/:id', verifyToken(process.env.admin_secret_key), (r
             saveConsultant,
             incidents.map(incident => {
                 incident.status = 'processed'
+                incident.info = 'Cash collected'
                 return incident.save()
             })
         ])
@@ -245,6 +248,7 @@ payments.post('/collect-cash/:id', verifyToken(process.env.admin_secret_key), (r
     })
     .catch(error => res.status(500).json({error}))
 })
+
 
 payments.post('/wallet-recharge-success', verifyToken(process.env.patient_secret_key), (req, res) => {
     Patient.findOne({_id: req.authData.patient}).exec()
@@ -289,6 +293,8 @@ payments.post('/wallet-payment', verifyToken(process.env.patient_secret_key), (r
     })
     .catch(error => res.status(500).json({error}))
 })
+
+// add refund route...
 
 
 module.exports = payments

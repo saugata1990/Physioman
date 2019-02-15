@@ -207,6 +207,28 @@ bookings.get('/assigned-bookings', verifyToken(process.env.physio_secret_key), (
 })
 
 
+bookings.post('/terminate-booking/:booking_id', verifyToken(process.env.admin_secret_key), (req, res) => {
+    // also free physios and consultants assigned
+    return Promise.all([
+        Booking.findOne({_id: req.params.booking_id}).exec(),
+        Incident.findOne({action_route: `api/bookings/terminate-booking/${req.params.booking_id}`}).exec()
+    ])
+    .then(([booking, incident]) => {
+        booking.status = 'Terminated'
+        booking.closed = true
+        // optionally add reason for cancellation if not provided by user
+        if(incident){
+            incident.status = 'processed'
+        }
+        return Promise.all([
+            booking.save(),
+            incident.save()
+        ])
+        .then(() => res.status(201).json({message: 'Booking terminated'}))
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
 
 
 

@@ -24,7 +24,7 @@ export class DashboardPage implements OnInit {
   otherAccount;
   username;
   password;
-  payment_needed = false;
+
 
 
   constructor(
@@ -97,7 +97,9 @@ export class DashboardPage implements OnInit {
           booking.phone = (details as any).patient.patient_phone;
           booking.address = (details as any).patient.patient_address;
           if (booking.number_of_sessions_unlocked === booking.sessions_completed) {
-            this.payment_needed = true;
+            booking.payment_needed = true;
+          } else {
+            booking.payment_needed = false;
           }
         });
       });
@@ -107,7 +109,7 @@ export class DashboardPage implements OnInit {
   async processBooking(booking) {
     const modal = await this.modalController.create({
       component: ProcessBookingPage,
-      componentProps: {booking, payment_needed: this.payment_needed, token: this.token}
+      componentProps: {booking, payment_needed: booking.payment_needed, token: this.token}
     });
     await modal.present();
     await modal.onDidDismiss().then(() => this.reloadBookings());

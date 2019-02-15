@@ -33,15 +33,13 @@ export class LoginComponent implements OnInit {
 
   resetPassword(frm) {
     $(document).ready(() => {
-      $('#pwdreset').on('hidden.bs.modal', () => {
-        this.patientService.resetPassword(frm.value.phone, frm.value.name)
-        .subscribe(response => {
-          this.toastr.successToastr('Password has been reset and sent to you');
-          console.log(response);
-        }, error => {
-          this.toastr.errorToastr('Wrong phone number or name');
-          console.log(error);
-        });
+      this.patientService.resetPassword(frm.value.phone, frm.value.name)
+      .subscribe(response => {
+        this.toastr.successToastr('Password has been reset and sent to you');
+        console.log(response);
+      }, error => {
+        this.toastr.errorToastr('Wrong phone number or name');
+        console.log(error);
       });
       // @ts-ignore
       $('#pwdreset').modal('hide');

@@ -34,7 +34,6 @@ export class OrderStatusComponent implements OnInit {
               }
               order.items_in_detail.push(product);
               this.loaded = true;
-              console.log(this.orders);
             });
           });
         }

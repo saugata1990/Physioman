@@ -1,6 +1,5 @@
 const express = require('express')
 const admin = express.Router()
-const Request = require('../models/requestModel')
 const Booking = require('../models/bookingModel')
 const Consultant = require('../models/consultantModel')
 const Patient = require('../models/patientModel')
@@ -107,7 +106,7 @@ admin.post('/booking-payment-due/:patient_id', verifyToken(process.env.admin_sec
     .catch(error => res.status(500).json({error}))
 })
 
-
+// to be removed in prod
 admin.get('/refresh-app', (req, res) => {
     return Promise.all([
         Booking.collection.drop() || Promise.resolve(),

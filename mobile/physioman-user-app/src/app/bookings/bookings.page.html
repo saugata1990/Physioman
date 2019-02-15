@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-menu-button slot="start"></ion-menu-button>
+    <ion-title>My Bookings</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="loaded" padding>
+  <ion-card>
+    <ion-item lines="full" text-wrap>
+      <h5><strong>Booking status: </strong>{{ booking_data.status }}</h5>
+    </ion-item>
+    <ion-item lines="full" text-wrap *ngIf="booking_data.status!=='Confirmed'">
+      <h5><strong>Request date: </strong>{{ booking_data.request_timestamp | date: 'dd/MM/yyyy' }}</h5>
+    </ion-item>
+    <ion-item lines="full" text-wrap *ngIf="!booking_data.consultation_fee_paid">
+      <h5><strong>Pay to consultant: </strong>
+        {{ booking_data.consultation_fee }}</h5>
+    </ion-item>
+    <ion-item *ngIf="booking_data.assigned_consultant" detail lines="full" text-wrap (click)="showPersonnelDetails()">
+      <h5><strong>Assigned Consultant: </strong>
+        {{ booking_data.consultant_name }}</h5>
+    </ion-item>
+    <ion-item lines="full" *ngIf="booking_data.status === 'Consultant Assigned'">
+      <h5><strong>OTP for consultation: </strong>
+        {{ booking_data.consultant_otp }}
+      </h5>
+    </ion-item>
+    <ion-item  lines="full" text-wrap *ngIf="booking_data.status === 'Sessions Assigned'">
+      <h5 *ngIf="booking_data.status === 'Sessions Assigned'"><strong>Sessions allotted: </strong>
+        {{ booking_data.allotted_sessions }}</h5>
+    </ion-item>
+    <ion-item lines="none" *ngIf="booking_data.status === 'Sessions Assigned'" text-wrap>
+      <h5><strong>Number of sessions booked: </strong>{{ booking_data.number_of_sessions_unlocked }} </h5>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-button *ngIf="booking_data.sessions_completed === booking_data.number_of_sessions_unlocked"
+        class="btn btn-outline-danger float-right" (click)="onUnlockSessions()">
+        Unlock sessions
+      </ion-button>
+      <ion-button *ngIf="booking_data.sessions_completed < booking_data.number_of_sessions_unlocked && booking_data.assigned_physio"
+        class="btn btn-outline-success float-right" (click)="onUnlockSessions()">
+        Unlock more sessions
+      </ion-button>
+    </ion-item>
+    <ion-item lines="full" *ngIf="booking_data.status === 'Sessions Assigned'" text-wrap>
+      <h5><strong>Number of sessions completed: </strong>
+        {{ booking_data.sessions_completed }}</h5>
+    </ion-item>
+    <ion-item lines="full" *ngIf="booking_data.assigned_physio" detail text-wrap>
+      <h5><strong>Assigned Physio: </strong>
+        {{ booking_data.physio_name }}</h5>
+    </ion-item>
+    <ion-item lines="full" *ngIf="booking_data.session_status === 'otp sent'" text-wrap>
+      <h5><strong>Session OTP: </strong>
+        {{ booking_data.session_otp }}</h5>
+    </ion-item>
+  </ion-card>
+</ion-content>

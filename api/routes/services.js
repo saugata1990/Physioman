@@ -1,10 +1,9 @@
 const express = require('express')
 const services = express.Router()
 const crypto = require('crypto')
-const {verifyToken, sendMail, sendSMS, geocode} = require('../utils/helper')
+const {verifyToken, sendMail, sendSMS, geocode, reverse_geocode} = require('../utils/helper')
 const Patient = require('../models/patientModel')
 const Booking = require('../models/bookingModel')
-const Request = require('../models/requestModel')
 const Order = require('../models/orderModel')
 const Incident = require('../models/incidentModel')
 const Payment = require('../models/paymentModel')
@@ -15,24 +14,19 @@ const date = require('date-and-time')
 
 services.use('/payments', payments)
 
-services.get('/test-mail', (req, res) => {
-    sendMail('saugata1990@gmail.com', 'test subject', `<h1>this is a test</h1>`)
-    res.status(200).json({message:'mail sent'})
-})
-
 services.post('/new-booking-request', verifyToken(process.env.patient_secret_key), (req, res) => {
     return Promise.all([
         Booking.findOne({patient_id: req.authData.patient, closed: false}).exec(),
         Patient.findOne({_id: req.authData.patient}).exec()
     ])
-    .then(([booking, patient]) => {
-        if(booking){
+    .then(([booking_exists, patient]) => {
+        if(booking_exists){
             res.status(403).json({message: 'Booking already exists'})
         }
         else{
             let isPaid = req.body.consultation_payment_mode === 'cash' ? false : true
             patient.ailment_history.push({date: new Date(), description: req.body.ailment_description})
-            const booking_request = new Booking({
+            const booking = new Booking({
                 patient_id: req.authData.patient,
                 ailment_description: req.body.ailment_description,
                 physio_gender_preference: req.body.physio_gender_preference,
@@ -44,22 +38,22 @@ services.post('/new-booking-request', verifyToken(process.env.patient_secret_key
                 status: 'Request Placed',
                 closed: false
             })
-            patient.bookings.push(booking_request._id)
+            patient.bookings.push(booking._id)
             return Promise.all([
                 patient.save(),
-                booking_request.save()
+                booking.save()
             ])
             .then(() => {
                 new Incident({
-                    action_route: `api/bookings/assign-consultant/${booking_request._id}`,
-                    customer: booking_request.patient_id,
+                    action_route: `api/bookings/assign-consultant/${booking._id}`,
+                    customer: booking.patient_id,
                     priority: 2,
                     status: 'new',
-                    timestamp: booking_request.request_timestamp,
+                    timestamp: booking.request_timestamp,
                     incident_title: 'Booking Request',
                     info: 'New Booking Request'
                 }).save()
-                .then(() => res.status(201).json({message: 'New Booking Request Created'}))
+                .then(() => res.status(201).json({booking}))
             })
         }
     })
@@ -67,52 +61,31 @@ services.post('/new-booking-request', verifyToken(process.env.patient_secret_key
 })
 
 
-
-
-// these 2 routes are to be merged into one
-services.post('/cancel-booking-request/:request_id', verifyToken(process.env.patient_secret_key),(req, res) => {
-    Request.findOne({_id: req.params.request_id}).exec()
-    .then(request => {
-        request.cancellation_requested = true
-        request.reason_for_cancellation = req.body.reason_for_cancellation
-        return Promise.all([
-            new Incident({
-                action_route: 'TBD', // to be written soon
-                customer: req.authData.patient,
-                priority: 1,
-                status: 'new',
-                timestamp: new Date(),
-                incident_title: 'Booking Request Cancellation',
-                info: 'Customer wrote ' + req.body.reason_for_cancellation
-            }).save(),
-            request.save()
-        ])
-        .then(() => res.status(201).json({message: 'Booking Request cancellation request placed'}))
-    })
-    .catch(error => res.status(500).json({error}))
-})
-
 services.post('/cancel-booking/:booking_id', verifyToken(process.env.patient_secret_key), (req, res) => {
     Booking.findOne({_id: req.params.booking_id}).exec()
     .then(booking => {
         booking.cancellation_requested = true
         booking.reason_for_cancellation = req.body.reason_for_cancellation
         return Promise.all([
+            booking.save(),
             new Incident({
-                action_route: 'TBD',
-                customer: req.authData.patient,
-                priority: 1,
+                action_route: `api/bookings/terminate-booking/${req.params.booking_id}`,
+                customer: req.authData.patient, 
+                priority: 2,
                 status: 'new',
                 timestamp: new Date(),
                 incident_title: 'Booking Cancellation',
-                info: 'Customer wrote ' + req.body.reason_for_cancellation
-            }).save(),
-            booking.save()
+                info: `Reason for cancellation: ${req.body.reason_for_cancellation || 'Not mentioned'}`
+            }).save()
         ])
         .then(() => res.status(201).json({message: 'Booking cancellation request placed'}))
     })
     .catch(error => res.status(500).json({error}))
 })
+
+
+
+
 
 services.post('/place-order', verifyToken(process.env.patient_secret_key), (req, res) => {
     if(req.authData){
@@ -147,7 +120,7 @@ services.post('/place-order', verifyToken(process.env.patient_secret_key), (req,
                     info: 'New Equipment Order'
                 }).save()
             ])
-            .then(() => res.status(201).json({message: 'Order placed'}))
+            .then(() => res.status(201).json({order}))
         })  
         .catch(error => res.status(500).json({error}))
     }
@@ -220,6 +193,16 @@ services.get('/test-geocoding', (req, res) => {
         console.log(data)
         res.status(200).json({data})
     })
+    .catch(error => {
+        console.log(error)
+        res.status(500).json({error})
+    })
+})
+
+services.get('/test-reverse-geocoding', (req, res) => {
+    
+    reverse_geocode(22.5902592, 88.2884608)
+    .then(data => res.status(200).json({data}))
     .catch(error => {
         console.log(error)
         res.status(500).json({error})

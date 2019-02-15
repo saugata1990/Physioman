@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>New Booking Request</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+    <ion-fab-button color="danger" translucent (click)="goBack()">
+      <ion-icon name="arrow-back"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <form #bookingForm="ngForm" (ngSubmit)="onRequestSubmitted()">
+    <ion-textarea [(ngModel)]="ailment_description" name="symptoms"
+     placeholder="Mention your symptoms here...">
+    </ion-textarea>
+    <ion-list-header>Gender Preference</ion-list-header>
+    <ion-radio-group [(ngModel)]="gender_preference" name="gender">
+      <ion-item>
+        <ion-label>Male</ion-label>
+        <ion-radio value="male" checked></ion-radio>
+      </ion-item>
+      <ion-item>
+        <ion-label>Female</ion-label>
+        <ion-radio value="female"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+    <ion-list-header>Payment Mode</ion-list-header>
+    <ion-radio-group [(ngModel)]="payment_mode" name="payment">
+      <ion-item>
+        <ion-label>Cash</ion-label>
+        <ion-radio value="cash" checked></ion-radio>
+      </ion-item>
+      <ion-item>
+        <ion-label>Card</ion-label>
+        <ion-radio value="card"></ion-radio>
+      </ion-item>
+      <ion-item>
+        <ion-label>Wallet</ion-label>
+        <ion-radio value="wallet"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+    <ion-button type="submit">Confirm Booking</ion-button>
+  </form>
+
+
+</ion-content>

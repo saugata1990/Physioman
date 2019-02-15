@@ -1,0 +1,24 @@
+<ion-grid>
+  <ion-row justify-content-center>
+    <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
+      <ion-list-header>Login to your account</ion-list-header>
+        <form #loginForm="ngForm" (ngSubmit)="onLogin()">
+          <ion-item>
+            <ion-input type="text" [(ngModel)]="phone" name="phone" placeholder="Registered Phone Number" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input type="password" [(ngModel)]="password" name="password" placeholder="Password" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-button type="submit" size="large" expand="block" [disabled]="loginForm.invalid">Login</ion-button>
+          </ion-item>
+        </form>
+      <ion-item text-center>
+        Forgot password?
+      </ion-item>
+      <ion-item padding text-center routerLink="/signup">
+        New User? Register!
+      </ion-item>
+    </ion-col>
+  </ion-row>
+</ion-grid>

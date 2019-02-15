@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>My Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-item>
+    <ion-label>Name</ion-label>
+    <ion-input type="text" [(ngModel)]="dataService.patient.patient_name" readonly=true></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Phone Number</ion-label>
+    <ion-input type="tel" [(ngModel)]="dataService.patient.patient_phone" [readonly]="!editable"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Email</ion-label>
+    <ion-input type="email" [(ngModel)]="dataService.patient.patient_email" [readonly]="!editable"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Address</ion-label>
+    <ion-input type="text" [(ngModel)]="dataService.patient.patient_address" [readonly]="!editable"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Gender</ion-label>
+    <ion-input type="text" [(ngModel)]="dataService.patient.patient_gender" readonly=true></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Date of Birth</ion-label>
+    <ion-input type="text" [(ngModel)]="dataService.patient.patient_dob" [readonly]="!editable"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Wallet Amount</ion-label>
+    <ion-input type="text" [(ngModel)]="dataService.patient.wallet_amount" readonly=true></ion-input>
+  </ion-item>
+</ion-content>

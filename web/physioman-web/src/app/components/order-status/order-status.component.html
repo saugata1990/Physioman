@@ -1,7 +1,7 @@
 <div class="container">
   <h2>My Orders</h2>
   <div *ngIf="!loaded" class="spinner-1"></div>
-  <div *ngFor="let order of orders" class="order-container">
+  <div *ngFor="let order of orders | paginate: {itemsPerPage: 3, currentPage: p}" class="order-container">
     <div class="order-header">
     <strong>Order status: <span *ngIf="!order.processed else processed">Placed</span></strong>
     <strong *ngIf="order.payment_mode==='cash'" class="order-amount">Payable amount: {{ order.payable_amount }}</strong>
@@ -20,3 +20,5 @@
     </div>
   </div>
 </div>
+
+<pagination-controls (pageChange)="p = $event"></pagination-controls>

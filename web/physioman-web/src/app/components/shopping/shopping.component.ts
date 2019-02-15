@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewChecked } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { PatientService } from '../../services/patient.service';
 import { Router } from '@angular/router';
+import { ToastrManager } from 'ng6-toastr-notifications';
 
 @Component({
   selector: 'app-shopping',
@@ -22,7 +23,8 @@ export class ShoppingComponent implements OnInit, AfterViewChecked {
   hasOrdered = false;
   itemsLoaded = false;
 
-  constructor(private patientService: PatientService, private router: Router, private sanitizer: DomSanitizer) { }
+  constructor(private patientService: PatientService, private router: Router,
+    private sanitizer: DomSanitizer, private toastr: ToastrManager) { }
 
   ngOnInit() {
     this.checkState();
@@ -60,6 +62,7 @@ export class ShoppingComponent implements OnInit, AfterViewChecked {
     this.loaded_list = (response as any).products;
     this.loaded_list.map(item => item.imagePath = this.sanitizeUrl(item.product_image.data));
     this.count = (response as any).count;
+    console.log(this.count);
   }
 
   addToCart(item, mode) {
@@ -67,7 +70,7 @@ export class ShoppingComponent implements OnInit, AfterViewChecked {
       this.checkout = false;
     }
     if (!this.loggedIn) {
-      alert('Please log in to add items to cart');
+      this.toastr.warningToastr('Please log in to add items to cart');
     }
     // tslint:disable-next-line:one-line
     else {
@@ -76,7 +79,7 @@ export class ShoppingComponent implements OnInit, AfterViewChecked {
       } else {
         this.purchased_items.push(item);
       }
-      alert('Item added to cart');
+      this.toastr.successToastr('Item added to cart');
     }
   }
 
@@ -103,7 +106,7 @@ export class ShoppingComponent implements OnInit, AfterViewChecked {
         $('#cart').modal();
       });
     } else {
-      alert('Cart is empty');
+      this.toastr.errorToastr('Cart is empty');
     }
   }
 

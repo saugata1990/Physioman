@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const url = 'mongodb://localhost:27017/physioman'
-const Request = require('./requestModel') 
 const Schema = mongoose.Schema
 mongoose.Promise = global.Promise
 const db = mongoose.createConnection(process.env.mongo_url)

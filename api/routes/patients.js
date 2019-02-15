@@ -5,7 +5,6 @@ const Incident = require('../models/incidentModel')
 const Physio = require('../models/physioModel')
 const Consultant = require('../models/consultantModel')
 const Booking = require('../models/bookingModel')
-const Request = require('../models/requestModel')
 const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
 const Verification = require('../models/phoneVerification')
 const {verifyToken, generateOTP, sendMail, sendSMSmock, phoneExists, emailExists} = require('../utils/helper')
@@ -108,6 +107,16 @@ patients.post('/edit-profile', verifyToken(process.env.patient_secret_key), (req
         }
         patient.save()
         .then(() => res.status(201).json({message: 'Profile edited'}))
+    })
+    .catch(error => res.status(500).json({error}))
+})
+
+patients.post('/change-address', verifyToken(process.env.patient_secret_key), (req, res) => {
+    Patient.findOne({_id: req.authData.patient}).exec()
+    .then(patient => {
+        patient.patient_address = req.body.patient_address
+        patient.save()
+        .then(() => res.status(201).json({message: 'Patient address updated'}))
     })
     .catch(error => res.status(500).json({error}))
 })
@@ -280,32 +289,27 @@ patients.get('/viewProfile', verifyToken(process.env.patient_secret_key), (req, 
         .then((patient) => {
             res.status(200).json({patient})
         })
-        .catch(error => res.status(500).json(error))
+        .catch(error => res.status(500).json({error}))
     }
 })
 
 
-
-patients.get('/viewBookingStatus', verifyToken(process.env.patient_secret_key), (req, res) => {
-    if(req.authData){
-        return Promise.all([
-            Booking.findOne({booked_for_patient: req.authData.patient}).exec(),
-            Request.findOne({requested_by_patient: req.authData.patient}).exec()
-        ])
-        .then(([booking, request]) => {
-            if(booking){
-                res.status(200).json({booking})
-            }
-            else if(request){
-                res.status(200).json({request})
-            }
-            else{
-                res.status(403).json({message: 'no data found'})
-            }
+patients.get('/booking-and-orders', verifyToken(process.env.patient_secret_key), (req, res) => {
+    let hasBooking = false, hasOrdered = false
+    Patient.findOne({_id: req.authData.patient}).exec()
+    .then(patient => {
+        if(patient.orders.length > 0){
+            hasOrdered = true
+        }
+        Booking.findOne({patient_id: req.authData.patient, closed: false}).exec()
+        .then(booking => {
+           hasBooking = booking ? true : false
+           res.status(200).json({hasBooking, hasOrdered})
         })
-        .catch(error => res.status(500).json(error))
-    }
+    })
+    .catch(error => res.status(500).json({error}))
 })
+
 
 
 patients.get('/:patient_id', verifyToken(process.env.admin_secret_key), (req, res) => {

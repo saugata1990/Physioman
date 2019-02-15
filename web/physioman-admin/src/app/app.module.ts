@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -16,6 +16,7 @@ import { UserListComponent } from './components/user-list/user-list.component';
 import { EquipmentCreationComponent } from './components/equipment-creation/equipment-creation.component';
 import { ListEquipmentComponent } from './components/list-equipment/list-equipment.component';
 import { EditEquipmentComponent } from './components/edit-equipment/edit-equipment.component';
+import { ToastrModule } from 'ng6-toastr-notifications';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,10 @@ import { EditEquipmentComponent } from './components/edit-equipment/edit-equipme
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot(),
+
   ],
   providers: [AdminService],
   bootstrap: [AppComponent]

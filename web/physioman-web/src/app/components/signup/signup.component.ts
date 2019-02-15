@@ -45,7 +45,10 @@ export class SignupComponent implements OnInit {
         this.phoneVerified = true;
         this.signup(form);
       });
-    }, error => console.log(error));
+    }, error => {
+      this.toastr.errorToastr(error.error.message);
+      console.log(error);
+    });
   }
 
   signup(form) {
@@ -59,6 +62,7 @@ export class SignupComponent implements OnInit {
         }, 3000);
       },
       error => {
+        this.toastr.errorToastr(error.error.message);
         console.log(error.error.message);
       }
     );

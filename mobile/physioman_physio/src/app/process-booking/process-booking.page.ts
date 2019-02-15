@@ -17,7 +17,7 @@ export class ProcessBookingPage implements OnInit {
   token;
   // session_otp;
   session_id;
-  payment_needed;
+  payment_needed = false;
   // session_fee = 300;
   amount_payable: number;
   amount_received: number;

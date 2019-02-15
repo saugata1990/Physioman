@@ -19,26 +19,31 @@ export class HomeComponent implements OnInit {
     this.checkState();
   }
 
-  onQuery() {
+  showModal() {
     $(document).ready(() => {
       // @ts-ignore
       $('#query').modal('show');
     });
   }
 
+  closeModal() {
+    $(document).ready(() => {
+      // @ts-ignore
+      $('#query').click().modal('hide');
+    });
+  }
+
   onQuerySubmitted(frm) {
     $(document).ready(() => {
-      $('#query').on('hidden.bs.modal', () => {
-        this.patientService.postQuery(frm.value.name, frm.value.phone, frm.value.query)
+      this.patientService.postQuery(frm.value.name, frm.value.phone, frm.value.query)
         .subscribe(response => {
-          this.toastr.warningToastr('Your query has been posted. We will get back to you shortly', 'Success!');
+          this.toastr.successToastr('Your query has been posted. We will get back to you shortly', 'Success!');
           this.formValues.reset();
           console.log(response);
         });
       });
       // @ts-ignore
       $('#query').modal('hide');
-    });
   }
 
 

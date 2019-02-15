@@ -1,7 +1,6 @@
 const Consultant = require('../models/consultantModel')
 const {phoneExists, emailExists, verifyToken} = require('../utils/helper')
 const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
-const Request = require('../models/requestModel')
 const express = require('express')
 const consultants = express.Router()
 const bcrypt = require('bcrypt')
