@@ -33,4 +33,5 @@
     <ion-label>Wallet Amount</ion-label>
     <ion-input type="text" [(ngModel)]="dataService.patient.wallet_amount" readonly=true></ion-input>
   </ion-item>
+  <ion-button *ngIf="editable" type="button" (click)="onEdit()">Done Editing</ion-button>
 </ion-content>

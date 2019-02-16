@@ -18,4 +18,17 @@ export class ProfilePage implements OnInit {
   ngOnInit() {
   }
 
+  onEdit() {
+    this.apiService.editProfile(
+      this.dataService.patient.patient_email,
+      this.dataService.patient.patient_dob,
+      this.dataService.patient.patient_address,
+      this.dataService.patientToken
+    )
+    .subscribe(response => {
+      console.log(response);
+      this.editable = false;
+    });
+  }
+
 }

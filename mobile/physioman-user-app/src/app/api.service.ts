@@ -17,6 +17,7 @@ export class ApiService {
   private order_url = this.baseUrl + 'api/services/place-order';
   private order_status_url = this.baseUrl + 'api/orders/open';
   private my_profile_url = this.baseUrl + 'api/patients/viewProfile';
+  private edit_url = this.baseUrl + 'api/patients/edit-profile';
   private consultant_name_url = this.baseUrl + 'api/consultants/name/';
   private physio_name_url = this.baseUrl + 'api/physios/name/';
   private session_otp_url = this.baseUrl + 'api/sessions/otp';
@@ -46,6 +47,11 @@ export class ApiService {
   signup(patient_phone, password, patient_name, patient_gender) {
     return this.http.post(this.signup_url,
       {patient_phone, password, patient_name, patient_gender});
+  }
+
+  editProfile(patient_email, patient_dob, patient_address, token) {
+    return this.http.post(this.edit_url, {patient_email, patient_dob, patient_address},
+      {headers: this.setHeader(token)});
   }
 
   getUserActivity(token) {
