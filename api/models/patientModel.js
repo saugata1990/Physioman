@@ -5,7 +5,6 @@ mongoose.Promise = global.Promise
 const db = mongoose.createConnection(process.env.mongo_url)
 
 const patientSchema = new Schema({
-    patient_id: String, // unique, same as the phone number used to register
     password_hash: String,
     patient_name: String,
     patient_gender: String,
@@ -14,6 +13,8 @@ const patientSchema = new Schema({
     email_verified: Boolean,
     patient_phone: String,
     patient_address: String,
+    patient_location: {lat: Number, long: Number},
+    address_updated: Boolean,
     ailment_history: [{date: Date, description: String}],
     bookings: [String],
     orders: [String],

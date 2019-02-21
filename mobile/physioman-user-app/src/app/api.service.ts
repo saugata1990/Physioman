@@ -6,8 +6,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class ApiService {
 
-
-  public baseUrl = 'http://localhost:3000/';
+  public baseUrl = 'https://physioman.herokuapp.com/';
+  // public baseUrl = 'http://localhost:3000/';
 
   private signup_url = this.baseUrl + 'api/patients/signup';
   private login_url = this.baseUrl + 'api/patients/login';
@@ -40,8 +40,8 @@ export class ApiService {
     });
   }
 
-  login(patient_id, password) {
-    return this.http.post(this.login_url, {patient_id, password});
+  login(patient_phone, password) {
+    return this.http.post(this.login_url, {patient_phone, password});
   }
 
   signup(patient_phone, password, patient_name, patient_gender) {

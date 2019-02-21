@@ -25,11 +25,11 @@ const routes: Routes = [
   { path: 'services/shop', component: ShoppingComponent },
   { path: 'booking-status', component: BookingStatusComponent },
   { path: 'contact-us', component: ContactUsComponent },
-  {path: '**', component: HomeComponent}
+  {path: '**', redirectTo: ''}
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {anchorScrolling: 'enabled', useHash: false})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

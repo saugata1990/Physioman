@@ -8,8 +8,8 @@ import { Store } from '@ngrx/store';
 })
 export class PatientService {
 
-  // private baseUrl = 'https://physioman-api.herokuapp.com/';
-  private baseUrl = 'http://localhost:3000/';
+  private baseUrl = 'https://physioman.herokuapp.com/';
+  // private baseUrl = 'http://localhost:3000/';
 
   private signup_url = this.baseUrl + 'api/patients/signup';
   private login_url = this.baseUrl + 'api/patients/login';
@@ -67,13 +67,14 @@ export class PatientService {
     return this.http.post(this.post_query_url, {name, phone, query});
   }
 
-  signup(patient_phone, password, patient_name, patient_gender) {
+  signup(patient_phone, password, patient_name, patient_gender, location) {
+    console.log('location ', location);
     return this.http.post(this.signup_url,
-      {patient_phone, password, patient_name, patient_gender});
+      {patient_phone, password, patient_name, patient_gender, lat: location.lat, long: location.long});
   }
 
-  login(patient_id, password) {
-    return this.http.post(this.login_url, {patient_id, password});
+  login(patient_phone, password) {
+    return this.http.post(this.login_url, {patient_phone, password});
   }
 
   updatePassword(current_password, new_password) {
@@ -85,9 +86,9 @@ export class PatientService {
     return this.http.post(this.password_reset_url, {patient_id, patient_name});
   }
 
-  editProfile(patient_email, patient_dob, patient_address, ailment_description) {
+  editProfile(patient_email, patient_dob, patient_address) {
     const token = JSON.parse(localStorage.getItem('patientToken'));
-    return this.http.post(this.edit_url, {patient_email, patient_dob, patient_address, ailment_description},
+    return this.http.post(this.edit_url, {patient_email, patient_dob, patient_address},
       {headers: this.setHeader(token)});
   }
 

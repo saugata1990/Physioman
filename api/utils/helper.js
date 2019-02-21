@@ -130,6 +130,12 @@ const geocode = (address) => {
     return geocoder.geocode(address)        
 } 
 
+const geocode_mock = (address) => {
+    return new Promise((resolve, reject) => {
+        resolve(JSON.parse('[{"formattedAddress":"12/16, Botanical Garden Rd, Botanical Garden Area, Howrah, West Bengal 711103, India","latitude":22.5578794,"longitude":88.3041605,"extra":{"googlePlaceId":"ChIJW1o_Acp5AjoR6pYZkklwMhk","confidence":1,"premise":null,"subpremise":null,"neighborhood":"Botanical Garden Area","establishment":null},"administrativeLevels":{"level2long":"Howrah","level2short":"Howrah","level1long":"West Bengal","level1short":"WB"},"streetNumber":"12/16","streetName":"Botanical Garden Road","city":"Howrah","country":"India","countryCode":"IN","zipcode":"711103","provider":"google"}]'))
+    })
+}
+
 const reverse_geocode = (lat, lon) => {
     const options = {
         provider: 'google',
@@ -140,6 +146,12 @@ const reverse_geocode = (lat, lon) => {
     return geocoder.reverse({lat, lon})
 }
 
+const reverse_geocode_mock = (lat, lon) => {
+    return new Promise((resolve, reject) => {
+        resolve(JSON.parse('[{"formattedAddress":"12/3, B Shalimar Area, Shalimar, Howrah, West Bengal 711103, India","latitude":22.558005,"longitude":88.304345,"extra":{"googlePlaceId":"ChIJb-w0-LV5AjoR1ut2w3Id134","confidence":1,"premise":"12/3","subpremise":null,"neighborhood":"B Shalimar Area","establishment":null},"administrativeLevels":{"level2long":"Howrah","level2short":"Howrah","level1long":"West Bengal","level1short":"WB"},"city":"Howrah","country":"India","countryCode":"IN","zipcode":"711103","provider":"google"}]'))
+    })
+}
 
-module.exports = {upload, verifyToken, phoneExists, geocode, reverse_geocode, emailExists, sendMail, sendSMS, 
-    sendSMSmock, generateOTP}
+
+module.exports = {upload, verifyToken, phoneExists, geocode, geocode_mock, reverse_geocode, reverse_geocode_mock,
+     emailExists, sendMail, sendSMS, sendSMSmock, generateOTP}

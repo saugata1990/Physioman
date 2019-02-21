@@ -15,8 +15,9 @@ const date = require('date-and-time')
 services.use('/payments', payments)
 
 services.post('/new-booking-request', verifyToken(process.env.patient_secret_key), (req, res) => {
+    console.log(req.body)
     return Promise.all([
-        Booking.findOne({patient_id: req.authData.patient, closed: false}).exec(),
+        Booking.findOne({patient_phone: req.authData.patient, closed: false}).exec(),
         Patient.findOne({_id: req.authData.patient}).exec()
     ])
     .then(([booking_exists, patient]) => {
@@ -46,7 +47,7 @@ services.post('/new-booking-request', verifyToken(process.env.patient_secret_key
             .then(() => {
                 new Incident({
                     action_route: `api/bookings/assign-consultant/${booking._id}`,
-                    customer: booking.patient_id,
+                    customer: booking.patient_phone,
                     priority: 2,
                     status: 'new',
                     timestamp: booking.request_timestamp,
@@ -201,13 +202,17 @@ services.get('/test-geocoding', (req, res) => {
 
 services.get('/test-reverse-geocoding', (req, res) => {
     
-    reverse_geocode(22.5902592, 88.2884608)
-    .then(data => res.status(200).json({data}))
+    reverse_geocode(22.55800, 88.30433)
+    .then(data => {
+        console.log(data[0].formattedAddress)
+        res.status(200).json({data})
+    })
     .catch(error => {
         console.log(error)
         res.status(500).json({error})
     })
 })
+
 
 
 

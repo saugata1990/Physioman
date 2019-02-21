@@ -8,11 +8,11 @@
 }
 .login-container{
 	position: absolute;
-	top: 55px;
+	top: 75px;
 	right: 0px;
 	bottom: 0px;
 	left: 0px;
-	background: rgba(0,0,0,0.5);	
+	background: rgba(0,0,0,0.5);
 	overflow-y: auto;
 }
 

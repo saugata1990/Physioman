@@ -5,54 +5,67 @@
         <li data-target="#slides" data-slide-to="1"></li>
     </ul>
     <div class="carousel-inner" >
-        <div class="carousel-item active">
-            <div class="carousel-item-wrapper" style="background-image: url('../../../assets/img/Physical-Therapy-Tempe-Hip-1.jpg');">
-              <div class="row" style="height:100%">
-              <div class="col-sm-6" style="height:100%"></div>
-              <div class="col-sm-6 text-center carousel-text">
-                <div class="heading-text">WELCOME TO PHYSIOMAN</div>
-                <div class="heading-subtitle">Bid farewell to pain</div>
-                <button *ngIf="!loggedIn" type="button" class="btn btn-outline-light btn-lg  carousel-btn"
-                  routerLink="/signup">Click here to register
-                </button>
-                <button *ngIf="!loggedIn" type="button" class="btn btn-success btn-space-top" (click)="showModal()">
-                  Have a query? Talk to us
-                </button>
-              </div>
-            </div>
-            </div>
+      <div class="carousel-item active" id="slide1">
+        <div class="carousel-item-wrapper" style="background: url('../../../assets/img/carousel_1.jpg');">
+          <div class="carousel-text text-center">
+            <div class="heading-text animated fadeIn" id="heading">WELCOME TO PHYSIOMAN</div>
+            <div class="heading-subtitle animated fadeIn">Say Goodbye to chronic pain and aches</div>
+            <button *ngIf="!loggedIn" type="button"
+             class="btn carousel-btn btn-outline-light btn-lg animated delay-1s fadeInUp"
+              routerLink="/signup">Register Now
+            </button>
+            <button *ngIf="!loggedIn" type="button"
+             class="btn btn-success btn-space-top animated delay-1s fadeInUp" (click)="showModal()">
+              Have a query? Talk to us
+            </button>
+            <a *ngIf="loggedIn" class="carousel-caption animated delay-1s fadeInUp" routerLink='./' fragment="services" style="color: #fff">
+              <i class="fas fa-angle-double-down" style="font-size: 3em"></i>
+            </a>
+          </div>
         </div>
-        <div class="carousel-item">
-            <div class="carousel-item-wrapper" style="background-image: url('../../../assets/img/Physical-Therapy-Tempe-Back-Pain-1.jpg');">
-                                <div class="row" style="height:100%">
-                <div class="col-sm-6" style="height:100%"></div>
-                <div class="col-sm-6 text-center carousel-text">
-                    <div class="heading-text">Avail our top quality physiotherapy service at your home,
-                      and order state-of-the-art medical equipment at affordable prices
-                    </div>
-                    <button *ngIf="!loggedIn" type="button" class="btn btn-success btn-space-top" (click)="showModal()">
-                      Have a query? Talk to us
-                    </button>
-             <!-- <button *ngIf="!hasOrdered" type="button" class="btn btn-outline-light btn-lg btn-space carousel-btn" routerLink="/shop">Buy/Rent Equipment</button>
-             <div class="heading-subtitle">Need help?</div>
-                <button type="button" class="btn btn-outline-light btn-sm carousel-sm-btn" data-toggle="modal" data-target="#how2order">How To Order</button> -->
-                </div>
+      </div>
+      <div class="carousel-item" id="slide2">
+        <div class="carousel-item-wrapper" style="background: url('../../../assets/img/carousel_3.jpg');">
+          <div class="carousel-text text-center">
+            <div class="heading-text animated zoomIn">
+                Avail our top quality physiotherapy service at your home,
+                and order state-of-the-art medical equipment at affordable prices
             </div>
-            </div>
+            <button *ngIf="!loggedIn" type="button"
+             class="btn carousel-btn btn-outline-light btn-lg animated delay-1s fadeInUp"
+              routerLink="/signup">Register Now
+            </button>
+            <button *ngIf="!loggedIn" type="button"
+             class="btn btn-success btn-space-top animated delay-1s fadeInUp" (click)="showModal()">
+              Have a query? Talk to us
+            </button>
+            <a *ngIf="loggedIn" class="carousel-caption animated delay-1s fadeInUp" routerLink='./' fragment="services" style="color: #fff">
+              <i class="fas fa-angle-double-down" style="font-size: 3em"></i>
+            </a>
+          </div>
         </div>
+      </div>
     </div>
+    <a class="carousel-control-prev" href="#slides" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#slides" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
 </div>
 
 
-<div class="container-fluid jumbotron bg-transparent">
+<div id="main_content" class="container">
     <h2>Our Vision and Mission</h2>
-    <div>
+    <p>
       Lorem ipsum dolor sit, amet consectetur adipisicing elit. Et animi voluptas consectetur ut ducimus, officiis est nihil sequi, vero minima ipsum voluptatibus perferendis? Incidunt odio quo quaerat modi accusamus laudantium dicta veniam qui eaque commodi tenetur in nulla sequi, corporis nihil asperiores doloremque illum numquam. Eos, alias sunt. Fuga facere consectetur expedita ipsam quae eum quisquam ut eius. Deserunt minima ad expedita libero labore ratione error nesciunt reprehenderit exercitationem at cumque, perspiciatis ut dignissimos. Doloremque quibusdam laborum officia sapiente eius aperiam perferendis labore optio neque repellendus assumenda cum quasi consectetur corrupti voluptatem voluptates, tenetur atque, quam quis deleniti magni saepe?
-    </div>
+    </p>
 
     <h2>Our Services</h2>
-    <div class="flex-container" >
-      <div class="card" style="width: 30rem">
+    <div id="services" class="flex-container">
+      <div class="card">
         <img class="card-img-top img-fluid" src="../../../assets/img/maxresdefault.jpg" style="height: 300px">
         <div class="card-body text-center" style="background:rgb(18, 146, 18, 0.7)">
           <h4 class="card-title text-white">Physiotherapy</h4>
@@ -65,13 +78,13 @@
           <div class="card-text" *ngIf="!loggedIn">
             <button class="btn btn-outline-light  carousel-btn" type="button" routerLink="/login">Click here to login</button>
           </div>
-          <div class="card-text" *ngIf="!hasBooking">
+          <!-- <div class="card-text" *ngIf="!hasBooking">
             <button class="btn btn-outline-light  carousel-btn btn-space-top" type="button"
               data-toggle="modal" data-target="#learn_more">Learn More</button>
-          </div>
+          </div> -->
         </div>
       </div>
-      <div class="card" style="width: 30rem">
+      <div class="card">
         <img class="card-img-top img-fluid" src="../../../assets/img/physio-equipment.png" style="height: 300px">
         <div class="card-body text-center" style="background: rgb(18, 146, 18, 0.7)">
           <h4 class="card-title text-white">Medical Equipment</h4>
@@ -85,25 +98,36 @@
           </div>
         </div>
       </div>
-
     </div>
-</div>
+    <div id="services_in_detail" class="flex-container">
+      <p>Our <strong>Physiotherapy</strong> services comprise a range of services including Pain Management,
+        Neuro Rehab, Pulmonary Rehab and Geriatrics Rehab. Physioman's trained physiotherapists, who are among the best in
+        the business, provide you with the best possible treatment at the comfort of your home.<br><br>
+        <strong>Pain Management</strong>
+        Pain may be caused by chronic illnesses like arthritis or temporary conditions like a sprain or a broken bone or
+        after a surgery. The best non-drug way to deal with it is with physiotherapy. Manage chronic pain like knee pain,
+        back pain or arthritis and other kinds of pain like a frozen shoulder with Physioman's physiotherapy. We have
+        trained and experienced physiotherapists who help you manage pain at home.<br>
+        <strong>Neuro Rehab</strong>
+        Patients suffering from conditions like cerebral palsy, multiple sclerosis, Parkinson's disease, muscular
+        dystrophy, diabetic and peripheral neuropathy, motor neuron disease, GB syndrome or a slipped disc often
+        experience neurological malfunction. Our aim is to improve functionality through physiotherapy for those
+        suffering from neurological disorders or neurological impairment caused by trauma. Our physiotherapists
+        are trained to help improve mobility.<br>
+        <strong>Pulmonary Rehab</strong>
+        For those with pulmonary disorders, Physioman offers pulmonary rehab. Our chest physiotherapy or CPT is
+        targeted towards mobilising or loosening secretions in the lungs and the respiratory tract. Our pulmonary
+        rehab consists of external mechanical maneuvers, such as chest percussion, postural drainage, vibration
+        to help with mobilization and clearance of airway secretions, diaphragmatic breathing with pursed lips,
+        coughing and controlled coughing.<br>
+        <strong>Geriatric Rehab</strong>
+        Physioman's geriatric rehab service is physical therapy for elderly people suffering from conditions beginnig
+        from Alzheimer's to urinary incontinence. Physiotherapy in the elderly can help improve strength, mobility,
+        coordination, flexibility and endurance. It can also lessen the intensity of pain in those who suffer from
+        chronic conditions like arthritis. It is especially helpful for those temporarily paralysed after a stroke.<br>
+        
 
-
-<div class="modal" id="learn_more">
-  <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-              <div class="modal-header">
-                  <h4 class="modal-title">Our Physiotherapy Offerings</h4>
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-              </div>
-              <div class="modal-body">
-                Text goes here........
-              </div>
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-info" data-dismiss="modal">Got it</button>
-              </div>
-        </div>
+      </p>
     </div>
 </div>
 
@@ -112,24 +136,25 @@
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Please provide the following details. Our represntative will contact you shortly</h4>
+        <h4 class="modal-title">Talk to Us</h4>
         <button type="button" class="close" (click)="closeModal()">&times;</button>
       </div>
       <div class="modal-body">
+        <label>Please provide the following details. Our represntative will contact you shortly</label>
         <form #frm="ngForm" (ngSubmit)="onQuerySubmitted(frm)">
-          <div class="form-group">
-            <input type="text" class="form-control" ngModel name="name" #name="ngModel"
-              placeholder="Enter your name..." required>
-          </div>
-          <div class="form-group">
-            <input type="tel" class="form-control" ngModel name="phone" #phone="ngModel"
-              placeholder="Enter your Phone Number..." required>
-          </div>
-          <div class="form-group">
-            <textarea rows="3" class="form-control" ngModel name="query" #query="ngModel"
-              placeholder="Enter your query(optional)...">
+          <mat-form-field>
+            <input matInput type="text" ngModel name="name" #name="ngModel"
+              placeholder="Your name" required>
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput type="tel" ngModel name="phone" #phone="ngModel"
+              placeholder="Your Phone Number" required>
+          </mat-form-field>
+          <mat-form-field>
+            <textarea  matInput ngModel name="query" #query="ngModel"
+              placeholder="Your query">
             </textarea>
-          </div>
+          </mat-form-field>
 
           <button class="btn btn-success btn-space-top float-right" type="submit"
            [disabled]="frm.invalid">Submit</button>

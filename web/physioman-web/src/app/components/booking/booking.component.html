@@ -1,53 +1,42 @@
 <div class="container">
   <h2>New Booking Request</h2>
-<form #bookingForm="ngForm" (ngSubmit)="onBookingRequest(bookingForm)">
-  <div class="form-group">
-    <label for="ailment"><h5>Tell us about your current symptoms</h5></label>
-    <textarea rows="5" class="form-control" ngModel id ="ailment" name="ailment" #ailment="ngModel"></textarea>
-  </div>
-  <div class="form-group">
-    <label for="genderPreference"><h5>Gender preference&emsp;</h5></label>
-    <div class="form-check-inline">
-      <label class="form-check-label" for="radio1">
-        <input type="radio" id="radio1" class="form-check-input" ngModel name="genderPreference"
-         value="male" #genderPreference="ngModel" required>Male
-      </label>
+  <form #bookingForm="ngForm" (ngSubmit)="onBookingRequest(bookingForm)">
+    <mat-form-field>
+      <textarea matInput ngModel id ="ailment" name="ailment" placeholder="Write about your symptoms"
+      #ailment="ngModel"></textarea>
+    </mat-form-field>
+
+    <div class="form-group">
+      <label for="genderPreference">Gender preference&nbsp;</label>
+      <mat-radio-group [(ngModel)]="genderPreference" name="gender" required>
+        <mat-radio-button value="male">Male</mat-radio-button>
+        <mat-radio-button value="female">Female</mat-radio-button>
+      </mat-radio-group>
     </div>
-    <div class="form-check-inline">
-      <label class="form-check-label" for="radio2">
-        <input type="radio" id="radio2" class="form-check-input" ngModel name="genderPreference"
-         value="female" #genderPreference="ngModel" required>Female
-      </label>
+
+    <div class="form-group">
+      <label for="paymentMode">Consultation Payment mode&nbsp;</label>
+      <mat-radio-group [(ngModel)]="paymentMode" name="mode" required>
+        <mat-radio-button value="cash">Cash</mat-radio-button>
+        <mat-radio-button value="card">Card</mat-radio-button>
+        <mat-radio-button *ngIf="hasWalletBalance" value="wallet">Wallet</mat-radio-button>
+      </mat-radio-group>
     </div>
-  </div>
-  <div class="form-group" *ngIf="!genderPreference.errors">
-    <label for="paymentMode"><h5>Payment mode&emsp;</h5></label>
-    <div class="form-check-inline">
-      <label class="form-check-label" for="radio3">
-        <input type="radio" id="radio3" class="form-check-input" [(ngModel)]="paymentMode"
-         name="paymentMode" value="cash" (change)="openModal()" required>Cash
-      </label>
+
+    <div class="text-right">
+      <button type="submit" class="btn btn-info btn-lg" #submit [disabled]="bookingForm.invalid">Book</button>
     </div>
-    <div class="form-check-inline">
-      <label class="form-check-label" for="radio4">
-        <input type="radio" id="radio4" class="form-check-input" [(ngModel)]="paymentMode"
-         name="paymentMode" value="card" (change)="openModal()" required>Card
-      </label>
-    </div>
-    <div *ngIf="hasWalletBalance" class="form-check-inline">
-      <label class="form-check-label" for="radio5">
-        <input type="radio" id="radio5" class="form-check-input" [(ngModel)]="paymentMode"
-         name="paymentMode" value="wallet" (change)="openModal()" required>Wallet
-      </label>
-    </div>
-    <div *ngIf="paymentMode==='card' ">
-      <app-payment [amount]="bookingPrice" (successMessage)="onPaymentCompletion($event)"></app-payment>
-    </div>
-  </div>
-  <div class="text-right">
-  <button [hidden]="paymentMode==='card'" type="submit" class="btn btn-info btn-lg" #submit [disabled]="bookingForm.invalid">Submit Request</button>
+  </form>
+<div class="container" style="padding: 20px">
+  After you book, our representative will get in touch with you for consultation. The type and duration of
+  your therapy will be decided by our representative. Then our trained physio will be assigned to your case.
+  Your therapy will commence soon after our representative discusses your treatment plan with you and has
+  your approval.
 </div>
-</form>
+</div>
+
+<div *ngIf="paymentMode==='card' ">
+  <app-payment [amount]="bookingPrice" (successMessage)="onPaymentCompletion($event, bookingForm)"></app-payment>
 </div>
 
 

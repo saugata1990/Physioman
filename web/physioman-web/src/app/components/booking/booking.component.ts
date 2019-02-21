@@ -12,11 +12,13 @@ import { ToastrManager } from 'ng6-toastr-notifications';
 export class BookingComponent implements OnInit {
 
   paymentMode;
+  genderPreference;
   bookingPrice = 100;  // this value should be read from the database
   onlinePaymentPending = false;
   onlinePaymentSuccess = false;
   hasWalletBalance = false;
-  @ViewChild('submit') submit: ElementRef;
+  cardPayment = false;
+  // @ViewChild('submit') submit: ElementRef;
 
   constructor(private patientService: PatientService, private router: Router, private toastr: ToastrManager) { }
 
@@ -28,7 +30,7 @@ export class BookingComponent implements OnInit {
     .subscribe(response => this.hasWalletBalance = true, error => this.hasWalletBalance = false);
   }
 
-  openModal() {
+  openCardPayment() {
     $(document).ready(() => {
       if (this.paymentMode === 'card') {
         // @ts-ignore
@@ -37,7 +39,7 @@ export class BookingComponent implements OnInit {
     });
   }
 
-  onPaymentCompletion(event) {
+  onPaymentCompletion(event, form) {
     console.log('event fired and accepted ', event);
     $(document).ready(() => {
       // @ts-ignore
@@ -45,35 +47,44 @@ export class BookingComponent implements OnInit {
     });
     this.onlinePaymentSuccess = event === 'success' ? true : false;
     if (this.onlinePaymentSuccess) {
-      this.submit.nativeElement.click();
+      this.createBooking(form);
     }
   }
 
   onBookingRequest(form) {
-    if (this.paymentMode === 'card' && !this.onlinePaymentSuccess) {
-      console.log('payment error');
+    if (this.paymentMode === 'card') {
+      this.openCardPayment();
     } else {
-      this.patientService.requestBooking(form.value.ailment, form.value.genderPreference, form.value.paymentMode)
-      .subscribe(
-        response => {
-          console.log(response);
-          this.toastr.successToastr((response as any).message);
-          if (this.paymentMode === 'wallet') {
-            this.patientService.payWithWallet(this.bookingPrice).subscribe(response2 => {
-              this.patientService.updateState({action: HASBOOKING});
-              this.router.navigate(['/booking-status']);
-            });
-          } else {
-            this.patientService.updateState({action: HASBOOKING});
-            this.router.navigate(['/booking-status']);
-          }
-
-        },
-        error => {
-          console.log(error);
-        }
-      );
+      this.createBooking(form);
     }
   }
+
+  createBooking(form) {
+    // if (this.paymentMode === 'card') {
+    //   this.openCardPayment();
+    // }
+
+    this.patientService.requestBooking(form.value.ailment, this.genderPreference, this.paymentMode)
+    .subscribe(
+      (response: any) => {
+        console.log(response);
+        this.toastr.successToastr('Thank you for booking with us. We will get back to you shortly');
+        if (this.paymentMode === 'wallet') {
+          this.patientService.payWithWallet(this.bookingPrice).subscribe(response2 => {
+            this.patientService.updateState({action: HASBOOKING});
+            this.router.navigate(['/booking-status']);
+          });
+        } else {
+          this.patientService.updateState({action: HASBOOKING});
+          this.router.navigate(['/booking-status']);
+        }
+
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
+
 
 }

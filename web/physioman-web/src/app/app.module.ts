@@ -25,6 +25,8 @@ import { reducers } from './store/reducers';
 import { ContactUsComponent } from './components/contact-us/contact-us.component';
 import { OrderStatusComponent } from './components/order-status/order-status.component';
 import { NgxPaginationModule } from 'ngx-pagination';
+import {MatButtonModule, MatCheckboxModule, MatRadioModule,
+   MatFormFieldModule, MatInputModule} from '@angular/material';
 
 
 @NgModule({
@@ -53,7 +55,13 @@ import { NgxPaginationModule } from 'ngx-pagination';
     ToastrModule.forRoot(),
     FormsModule,
     NgxPaginationModule,
-    StoreModule.forRoot(reducers, {})
+    StoreModule.forRoot(reducers, {}),
+    MatButtonModule,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
   ],
   providers: [
     PatientService

@@ -1,6 +1,6 @@
 .page-header {
   position: fixed;
-  background: #fff;
+  background: rgb(217,215,220, 0.9);
   border-bottom: 1px solid #eee;
 }
 h2 {
@@ -11,7 +11,7 @@ h2 {
 	margin-bottom: 25px;
 	display: flex;
 	align-items: center;
-	margin-top: 25px;
+  margin-top: 25px;
 }
 
 .cart-icon {

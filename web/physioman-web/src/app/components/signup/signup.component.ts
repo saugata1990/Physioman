@@ -13,16 +13,20 @@ export class SignupComponent implements OnInit {
   signedUp = false;
   // password;
   // confirm_password;
+  gender;
   otp;
   phone;
   phoneVerified = false;
+  location;
 
   constructor(private patientService: PatientService, private router: Router, private toastr: ToastrManager) { }
 
   ngOnInit() {
+    this.location = {lat: 10.001, long: 0.003};
   }
 
   sendVerificationCode(form) {
+    console.log('gender ', this.gender);
     this.phone = form.value.phone;
     this.patientService.sendOTP(this.phone)
     .subscribe(response => {
@@ -52,14 +56,14 @@ export class SignupComponent implements OnInit {
   }
 
   signup(form) {
-    this.patientService.signup(form.value.phone, form.value.password, form.value.name, form.value.gender)
+    this.patientService.signup(form.value.phone, form.value.password, form.value.name, form.value.gender, this.location)
     .subscribe(
       response => {
         this.signedUp = true;
         this.toastr.successToastr('Signed up successfully', 'Success!', {position: 'top-center'});
         setTimeout(() => {
           this.router.navigate(['/login']);
-        }, 3000);
+        }, 2000);
       },
       error => {
         this.toastr.errorToastr(error.error.message);

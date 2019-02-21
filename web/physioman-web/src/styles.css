@@ -1,3 +1,7 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import '~animate.css/animate.min.css';
+
+
 @font-face {
     font-family: 'Roboto';
     src: url('assets/fonts/Roboto-Regular.eot');
@@ -8,6 +12,10 @@
         url('assets/fonts/Roboto-Regular.svg#Roboto-Regular') format('svg');
     font-weight: normal;
     font-style: normal;
+}
+
+.animated {
+  animation-duration: 5s;
 }
 
 
@@ -23,21 +31,27 @@
 @media (max-width: 576px) {
 
 }
+
 * {
 font-family: 'Roboto';
 }
 
 /* firefox bug fixes to be added */
 
+
+
 body {
-    background-position: top;
+  background-position: top;
+  background: linear-gradient(to bottom,rgb(217,215,220),rgb(199,223,223));
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  margin-bottom: 0px;
 }
 
 
 h1 {
     font-weight: 700;
     text-align: center;
-    /* color: white; */
 }
 
 h2, h3 {
@@ -69,9 +83,18 @@ p {
     max-width: 80% !important;
 }
 
-/* .shadow {
-    text-shadow: 0 2px blue !important;
-} */
+mat-radio-group {
+  display: inline-flex;
+  flex-direction: row;
+}
+
+mat-radio-button {
+  margin: 5px;
+}
+
+mat-form-field {
+  width: 100%;
+}
 
 .center {
     text-align: center;
@@ -108,12 +131,14 @@ p {
     font-weight: bold;
 }
 
+
+
 /* .clickable {
   color: blue;
   cursor: pointer;
 } */
 
-.spinner-1:before {
+.spinner-1::before {
   content: "";
   box-sizing: border-box;
   position: absolute;

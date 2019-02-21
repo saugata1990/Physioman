@@ -1,23 +1,33 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked, HostListener, ElementRef } from '@angular/core';
 import { PatientService } from '../../services/patient.service';
 import { ToastrManager } from 'ng6-toastr-notifications';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewChecked {
   loggedIn = false;
   hasBooking = false;
   hasOrdered = false;
+  subscription;
   @ViewChild('frm') formValues;
 
-  constructor(private patientService: PatientService, private toastr: ToastrManager) { }
+
+  constructor(private patientService: PatientService, private toastr: ToastrManager, private location: Location) { }
 
   ngOnInit() {
     this.checkState();
   }
+
+  ngAfterViewChecked() {
+    const pathWithoutHash = this.location.path(false);
+    this.location.replaceState(pathWithoutHash);
+  }
+
+
 
   showModal() {
     $(document).ready(() => {

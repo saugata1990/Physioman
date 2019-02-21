@@ -7,7 +7,8 @@ const Consultant = require('../models/consultantModel')
 const Booking = require('../models/bookingModel')
 const PhoneAndEmail = require('../models/registeredPhonesAndEmails')
 const Verification = require('../models/phoneVerification')
-const {verifyToken, generateOTP, sendMail, sendSMSmock, phoneExists, emailExists} = require('../utils/helper')
+const {verifyToken, generateOTP, sendMail, sendSMSmock, phoneExists,
+     emailExists, geocode, geocode_mock, reverse_geocode, reverse_geocode_mock} = require('../utils/helper')
 const bcrypt = require('bcrypt')
 const date = require('date-and-time')
 const jwt = require('jsonwebtoken')
@@ -53,16 +54,14 @@ patients.get('/info', verifyToken(process.env.physio_secret_key, process.env.con
 })
 
 
-// signup to contain basic info like name, phone no and password
-// another route 'complete-profile' to enter other details
-
 patients.post('/signup', (req, res) => {
     return Promise.all([
         phoneExists(req.body.patient_phone),
         Patient.findOne({patient_phone: req.body.patient_phone}).exec(),
-        bcrypt.hash(req.body.password, 10)
+        bcrypt.hash(req.body.password, 10),
+        reverse_geocode_mock(req.body.lat, req.body.long)
     ])
-    .then(([phoneTaken, patient, hash]) => {
+    .then(([phoneTaken, patient, hash, geocode_response]) => {
         if(phoneTaken){
             res.status(400).json({message: 'phone number already taken'})
         }
@@ -72,11 +71,13 @@ patients.post('/signup', (req, res) => {
         else{
             return Promise.all([
                 new Patient({
-                    patient_id: req.body.patient_phone,
                     patient_phone: req.body.patient_phone,
                     password_hash: hash,
                     patient_name: req.body.patient_name,                   
                     patient_gender: req.body.patient_gender,
+                    patient_location: {lat: req.body.lat, long: req.body.long},
+                    patient_address: geocode_response[0].formattedAddress, // reverse geocoding
+                    address_updated: false,
                     date_joined: new Date(),
                     total_number_of_sessions: 0,
                     wallet_amount: 0
@@ -93,8 +94,11 @@ patients.post('/signup', (req, res) => {
 
 
 patients.post('/edit-profile', verifyToken(process.env.patient_secret_key), (req, res) => {
-    Patient.findOne({_id: req.authData.patient}).exec()
-    .then(patient => {
+    return Promise.all([
+        Patient.findOne({_id: req.authData.patient}).exec(),
+        geocode_mock(req.body.patient_address)
+    ])
+    .then(([patient, geocode_response]) => {
         if(req.body.patient_email){
             patient.patient_email = req.body.patient_email
             patient.email_verified = false
@@ -102,9 +106,11 @@ patients.post('/edit-profile', verifyToken(process.env.patient_secret_key), (req
         patient.patient_dob = req.body.patient_dob ? date.parse(req.body.patient_dob.toString(), 'YYYY-MM-DD') 
                                                    : patient.patient_dob 
         patient.patient_address = req.body.patient_address
-        if(req.body.ailment_description){
-            patient.ailment_history.push({date: new Date(), description: req.body.ailment_description})
+        patient.patient_location = {
+            lat: geocode_response[0].latitude, 
+            long: geocode_response[0].longitude
         }
+        patient.address_updated = true
         patient.save()
         .then(() => res.status(201).json({message: 'Profile edited'}))
     })
@@ -115,6 +121,7 @@ patients.post('/change-address', verifyToken(process.env.patient_secret_key), (r
     Patient.findOne({_id: req.authData.patient}).exec()
     .then(patient => {
         patient.patient_address = req.body.patient_address
+        patient.location = {} // geocoding
         patient.save()
         .then(() => res.status(201).json({message: 'Patient address updated'}))
     })
@@ -123,7 +130,7 @@ patients.post('/change-address', verifyToken(process.env.patient_secret_key), (r
 
 
 patients.post('/login', (req, res) => {
-    Patient.findOne({patient_id: req.body.patient_id}).exec()
+    Patient.findOne({patient_phone: req.body.patient_phone}).exec()
     .then((patient) => {
         if(!patient){
             res.status(403).json({message: 'patient does not exist'})
@@ -234,9 +241,16 @@ patients.get('/confirm-email/:token', (req, res) => {
 })
 
 
-patients.put('/change-phone', (req, res) => {
-    //
+patients.put('/change-phone', verifyToken(process.env.patient_secret_key), (req, res) => {
+    Patient.findOne({_id: req.authData.patient}).exec()
+    .then(patient => {
+        patient.patient_phone = req.body.phone_no
+        patient.save()
+        .then(() => res.status(201).json({message: 'Phone number updated'}))
+    })
+    .catch(error => res.status(500).json({error}))
 })
+
 
 patients.post('/update-password', verifyToken(process.env.patient_secret_key), (req, res) => {
     Patient.findOne({_id: req.authData.patient}).exec()
@@ -319,7 +333,6 @@ patients.get('/:patient_id', verifyToken(process.env.admin_secret_key), (req, re
             res.status(404).json('Invalid patient id')
         }
         else{
-            // info can be seen only by admin
             res.status(200).json({patient})
         }
     })

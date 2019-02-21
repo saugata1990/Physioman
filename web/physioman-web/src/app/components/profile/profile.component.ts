@@ -65,7 +65,7 @@ export class ProfileComponent implements OnInit, AfterViewChecked {
     $(document).ready(() => {
       // @ts-ignore
       $('#edit').modal('hide');
-      this.patientService.editProfile(form.value.email, form.value.dob, form.value.address, form.value.ailment)
+      this.patientService.editProfile(form.value.email, form.value.dob, form.value.address)
       .subscribe(response => {
         console.log(response);
         this.loadProfile();
