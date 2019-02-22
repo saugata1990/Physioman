@@ -18,6 +18,11 @@
   height: 100%;
 }
 
+.carousel-caption {
+  top: 500px;
+  bottom: auto;
+}
+
 .container {
     padding-top: 1%;
 }
