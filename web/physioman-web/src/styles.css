@@ -46,6 +46,8 @@ body {
   background-repeat: no-repeat;
   min-height: 100vh;
   margin-bottom: 0px;
+  position: relative;
+  padding-bottom: 200px; /* Height of the footer */
 }
 
 
