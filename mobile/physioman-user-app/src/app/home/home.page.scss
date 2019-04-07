@@ -1,0 +1,55 @@
+ion-toolbar {
+      --background: rgba(0,0,0, 0.4);
+    color: #fff;
+    --border-width: 0px !important;
+}
+ion-content {
+--offset-top: 60px !important;
+
+	    --background: #c92cdd; /* Old browsers */
+--background: -moz-linear-gradient(top, #c92cdd 0%, #fc8888 100%); /* FF3.6-15 */
+--background: -webkit-linear-gradient(top, #c92cdd 0%,#fc8888 100%); /* Chrome10-25,Safari5.1-6 */
+--background: linear-gradient(to bottom, #c92cdd 0%,#fc8888 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    --padding-start: 20px;
+    --padding-end: 20px;
+}
+
+.name-text{
+color: #fff;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.address{
+	color: #fff;
+    display: flex;
+    margin-bottom: 40px;
+}
+
+.address-details{
+	text-align: center;
+}
+
+ion-icon{
+	font-size: 40px;
+}
+
+.home-icon{
+	margin-right: 15px;
+}
+.edit-icon{
+	margin-left: 15px;
+}
+
+ion-item{
+	margin-bottom: 10px;
+	display: flex;
+}
+.arrow{
+	font-size: 25px;
+}
+.menu-text{
+	flex: 1;
+}

@@ -1,32 +1,39 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-menu-button slot="start"></ion-menu-button>
     <ion-title>Home</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content *ngIf="loaded" padding>
-  <ion-item>
-    Welcome, {{ first_name }}
-  </ion-item>
-  <ion-item>
-    Your address: {{ address }} <ion-button type="button" size="small" (click)="onEditProfile()">Change</ion-button>
-  </ion-item>
+  <div class="name-text">Welcome, {{ first_name }}</div>
+
+  <div class="address">
+    <ion-icon name="home" class="home-icon"></ion-icon> 
+    <p class="address-details">{{ address }}</p>
+    <ion-icon name="create" (click)="onEditProfile()" class="edit-icon"></ion-icon>
+  </div>
 
   <!-- use gridlayout for the following content -->
-  <ion-item *ngIf="dataService.hasBooking else show_appointment_button">
-    <ion-button size="large" expand="block" routerLink="/tabs/bookings" >View Booking status</ion-button>
+  <ion-item *ngIf="dataService.hasBooking else show_appointment_button" routerLink="/tabs/bookings">
+    <div class="menu-text">View Booking status</div>
+    <ion-icon name="arrow-forward" class="arrow"></ion-icon>
   </ion-item>
   <ng-template #show_appointment_button>
-    <ion-button size="large" expand="block" (click)="onBookAppointment()" >Book an Appointment</ion-button>
+    <ion-item (click)="onBookAppointment()">
+    <div class="menu-text">Book an Appointment</div>
+    <ion-icon name="arrow-forward" class="arrow"></ion-icon>
+  </ion-item>
   </ng-template>
 
-  <ion-item *ngIf="dataService.hasOrdered">
-    <ion-button size="large" expand="block" routerLink="/tabs/orders">View Orders</ion-button>
+  <ion-item *ngIf="dataService.hasOrdered" routerLink="/tabs/orders">
+    <div class="menu-text">View Orders</div>
+    <ion-icon name="arrow-forward" class="arrow"></ion-icon>
   </ion-item>
 
-  <ion-item>
-    <ion-button size="large" expand="block" routerLink="/tabs/shop">Medical Equipment</ion-button>
+  <ion-item routerLink="/tabs/shop">
+    <div class="menu-text">Medical Equipment</div>
+    <ion-icon name="arrow-forward" class="arrow"></ion-icon>
   </ion-item>
 
 </ion-content>

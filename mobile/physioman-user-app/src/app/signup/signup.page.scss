@@ -1,0 +1,33 @@
+ion-toolbar {
+      --background: rgba(0,0,0, 0.4);
+    color: #fff;
+    --border-width: 0px !important;
+}
+ion-content {
+--offset-top: 60px !important;
+	    --background: #c92cdd; /* Old browsers */
+--background: -moz-linear-gradient(top, #c92cdd 0%, #fc8888 100%); /* FF3.6-15 */
+--background: -webkit-linear-gradient(top, #c92cdd 0%,#fc8888 100%); /* Chrome10-25,Safari5.1-6 */
+--background: linear-gradient(to bottom, #c92cdd 0%,#fc8888 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+--padding-top: 30px;
+    --padding-start: 20px;
+    --padding-end: 20px;
+}
+
+ion-item{
+	margin-bottom: 15px;
+}
+
+ion-list-header{
+font-size: 20px;
+    padding: 0;
+    --color: #fff;
+    font-weight: bold;	
+}
+
+.sign-up-button{
+        background: #fff;
+    border-radius: 30px;
+    color: red !important;
+    margin-top: 30px;
+}

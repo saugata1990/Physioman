@@ -1,5 +1,5 @@
 app-login {
-    
+
 }
 
 $white-color: #fff;
@@ -13,15 +13,63 @@ ion-grid {
 
 ion-row {
     height: $height100;
+    background: #c92cdd; /* Old browsers */
+background: -moz-linear-gradient(top, #c92cdd 0%, #fc8888 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top, #c92cdd 0%,#fc8888 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom, #c92cdd 0%,#fc8888 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 }
 
 ion-col {
-    border: 1px solid #488aff;
-    background: $white-color;
+        background: #0606065e;
+    padding: 30px;
+}     
+.header-text {
+    font-size: 25px;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 ion-button {
     font-weight: 300;
+}
+
+.username-block{
+    margin-bottom: 15px;
+}
+
+.password-block{
+    margin-bottom: 15px;
+}
+
+.login-button{
+        background: #fff;
+    border-radius: 30px;
+    color: red !important;
+    margin-top: 30px;
+}
+
+.sign-up-text {
+    color: #fff;
+    border-top: 1px solid #fff;
+    margin-top: 50px;
+    padding-top: 15px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.forget-password-text{
+    color: #fff;
+    margin-top: 25px;
+    font-weight: bold;
+    text-align: right;
+}
+
+.sign-up-button{
+background: #0707075e;
+    border-radius: 30px;
+    color: #fff !important;
 }
 
 @media (min-width: 240px) and (max-width: 768px) {

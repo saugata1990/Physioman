@@ -1,20 +1,13 @@
 <ion-menu side="start" menuId="first" contentId="content">
-  <ion-header>
-    <ion-toolbar color="primary">
-      <ion-title>Options</ion-title>
-    </ion-toolbar>
-  </ion-header>
   <ion-content>
-    <ion-list>
-      <ion-item (click)="testFn()">Edit Profile</ion-item>
-      <ion-item (click)="testFn()">Add Account</ion-item>
-      <ion-item (click)="testFn()">Switch Account</ion-item>
-      <ion-item (click)="testFn()">Contact Us</ion-item>
-      <ion-item (click)="testFn()">About Us</ion-item>
-      <ion-item (click)="testFn()">Wallet Recharge</ion-item>
-      <ion-item (click)="testFn()">Refer a Friend</ion-item>
-      <ion-item (click)="onLogout()">Logout</ion-item>
-    </ion-list>
+      <div class="menu-item" (click)="testFn()"><ion-icon name="person"></ion-icon> Edit Profile</div>
+      <div class="menu-item" (click)="testFn()"><ion-icon name="person-add"></ion-icon> Add Account</div>
+      <div class="menu-item" (click)="testFn()"><ion-icon name="swap"></ion-icon> Switch Account</div>
+      <div class="menu-item" (click)="testFn()"><ion-icon name="call"></ion-icon>Contact Us</div>
+      <div class="menu-item" (click)="testFn()"><ion-icon name="contacts"></ion-icon>About Us</div>
+      <div class="menu-item" (click)="testFn()"><ion-icon name="wallet"></ion-icon> Wallet Recharge</div>
+      <div class="menu-item" (click)="testFn()"><ion-icon name="people"></ion-icon>Refer a Friend</div>
+      <div class="menu-item logout-button" (click)="onLogout()"><ion-icon name="log-out"></ion-icon>Logout</div>
   </ion-content>
 </ion-menu>
 

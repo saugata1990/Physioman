@@ -1,24 +1,24 @@
 <ion-grid>
   <ion-row justify-content-center>
-    <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
-      <ion-list-header>Login to your account</ion-list-header>
+    <ion-col align-self-center size-md="6" size-lg="5" size-xs="11">
+      <p class="header-text">PhysioMan</p>
         <form #loginForm="ngForm" (ngSubmit)="onLogin()">
-          <ion-item>
+          <ion-item class="username-block">
             <ion-input type="text" [(ngModel)]="phone" name="phone" placeholder="Registered Phone Number" required></ion-input>
           </ion-item>
-          <ion-item>
+          <ion-item class="password-block">
             <ion-input type="password" [(ngModel)]="password" name="password" placeholder="Password" required></ion-input>
           </ion-item>
-          <ion-item>
-            <ion-button type="submit" size="large" expand="block" [disabled]="loginForm.invalid">Login</ion-button>
-          </ion-item>
+          <ion-button type="submit" size="large" fill="clear" class="login-button" expand="block" [disabled]="loginForm.invalid">Login</ion-button>
         </form>
-      <ion-item text-center>
+      
+      <div class="sign-up-text">
+        New User?
+      </div>
+      <ion-button  size="large" expand="block" fill="clear" class="sign-up-button" routerLink="/signup">Register</ion-button>
+      <div class="forget-password-text">
         Forgot password?
-      </ion-item>
-      <ion-item padding text-center routerLink="/signup">
-        New User? Register!
-      </ion-item>
+      </div>
     </ion-col>
   </ion-row>
 </ion-grid>
